@@ -33,7 +33,8 @@ func boot(w container.Container) {
 			PublicKey:  privateKey.Public(),
 		}
 	}
-
+	var tg jwt.Generator
+	w.Bind(&tg, jwtGenerator)
 	w.Inject("jwtGenerator", jwtGenerator())
 }
 

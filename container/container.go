@@ -6,6 +6,7 @@ import (
 	"github.com/miniyus/go-fiber/database"
 	"gorm.io/gorm"
 	"log"
+	"reflect"
 	"strconv"
 )
 
@@ -17,6 +18,8 @@ type Container interface {
 	InjectMap(instances map[string]interface{})
 	Inject(key string, instance interface{})
 	Get(key string) interface{}
+	Bind(keyType interface{}, resolver interface{})
+	Resolve(keyType interface{}) interface{}
 }
 
 type Wrapper struct {
@@ -24,6 +27,7 @@ type Wrapper struct {
 	config    *config.Configs
 	database  *gorm.DB
 	instances map[string]interface{}
+	bindings  map[reflect.Type]interface{}
 }
 
 func NewContainer(app *fiber.App, config *config.Configs) *Wrapper {
@@ -32,6 +36,7 @@ func NewContainer(app *fiber.App, config *config.Configs) *Wrapper {
 		config:    config,
 		database:  database.DB(config.Database),
 		instances: make(map[string]interface{}),
+		bindings:  make(map[reflect.Type]interface{}),
 	}
 }
 
@@ -57,6 +62,33 @@ func (w *Wrapper) Inject(key string, instance interface{}) {
 
 func (w *Wrapper) Instances() map[string]interface{} {
 	return w.instances
+}
+
+func (w *Wrapper) Bind(keyType interface{}, resolver interface{}) {
+	resolverType := reflect.TypeOf(resolver)
+	if resolverType.Kind() == reflect.Func {
+		reflectedFunction := reflect.TypeOf(resolver)
+		argumentsCount := reflectedFunction.NumIn()
+		arguments := make([]reflect.Value, argumentsCount)
+		values := reflect.ValueOf(resolver).Call(arguments)
+
+		w.bindings[reflect.TypeOf(keyType)] = values[0].Interface()
+	} else {
+		w.bindings[reflect.TypeOf(keyType)] = resolver
+	}
+}
+
+func (w *Wrapper) Resolve(keyType interface{}) interface{} {
+	receiverType := reflect.TypeOf(keyType)
+
+	if receiverType.Kind() == reflect.Ptr {
+		bind := w.bindings[reflect.TypeOf(keyType)]
+		reflect.ValueOf(keyType).Elem().Set(reflect.ValueOf(bind))
+
+		return bind
+	}
+
+	return nil
 }
 
 func (w *Wrapper) Get(key string) interface{} {
