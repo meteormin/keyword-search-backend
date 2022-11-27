@@ -101,6 +101,7 @@ func test() map[string]any {
 type Configs struct {
 	AppEnv   string
 	AppPort  int
+	Locale   string
 	App      fiber.Config
 	Logger   loggerMiddleware.Config
 	Database DB
@@ -118,14 +119,15 @@ func GetConfigs() *Configs {
 	}
 
 	return &Configs{
-		os.Getenv("APP_ENV"),
-		port,
-		app(),
-		logger(),
-		database(),
-		GetPath(),
-		auth(),
-		test(),
+		AppEnv:   os.Getenv("APP_ENV"),
+		AppPort:  port,
+		Locale:   os.Getenv("LOCALE"),
+		App:      app(),
+		Logger:   logger(),
+		Database: database(),
+		Path:     GetPath(),
+		Auth:     auth(),
+		Test:     test(),
 	}
 }
 

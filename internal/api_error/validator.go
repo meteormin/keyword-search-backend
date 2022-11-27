@@ -1,17 +1,28 @@
 package api_error
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+)
 
 func newValidator() *validator.Validate {
 	return validator.New()
 }
 
-func Validate(err error) map[string]string {
-	fields := map[string]string{}
+func Validate(data interface{}) map[string]string {
+	validate := newValidator()
 
-	for _, err := range err.(validator.ValidationErrors) {
-		fields[err.Field()] = err.Error()
+	fields := map[string]string{}
+	errs := validate.Struct(data)
+
+	if errs != nil {
+		for _, err := range errs.(validator.ValidationErrors) {
+			if err != nil {
+				fields[err.Field()] = err.Error()
+			}
+		}
+
+		return fields
 	}
 
-	return fields
+	return nil
 }

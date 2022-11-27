@@ -20,15 +20,47 @@ func NewHandler(service Service) *HandlerStruct {
 	return &HandlerStruct{service: service}
 }
 
+func validateSignUp(signUp *SignUp) (bool, *api_error.ErrorResponse) {
+	if err := api_error.Validate(signUp); err != nil {
+		errRes := &api_error.ErrorResponse{
+			Status:       "error",
+			Code:         fiber.StatusBadRequest,
+			Message:      http.StatusText(fiber.StatusBadRequest),
+			FailedFields: err,
+		}
+
+		return false, errRes
+	}
+
+	if signUp.Password != signUp.PasswordConfirm {
+		errRes := &api_error.ErrorResponse{
+			Status:  "error",
+			Code:    fiber.StatusBadRequest,
+			Message: http.StatusText(fiber.StatusBadRequest),
+			FailedFields: map[string]string{
+				"PasswordConfirm": "패스워드와 패스워드 확인 필드가 같지 않습니다.",
+			},
+		}
+
+		return false, errRes
+	}
+
+	return true, nil
+}
+
 func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	signUp := &SignUp{}
 	err := ctx.BodyParser(signUp)
 	if err != nil {
 		errRes := api_error.ErrorResponse{
-			Code:         fiber.StatusBadRequest,
-			Message:      http.StatusText(fiber.StatusBadRequest),
-			FailedFields: api_error.Validate(err),
+			Status:  "error",
+			Code:    fiber.StatusBadRequest,
+			Message: http.StatusText(fiber.StatusBadRequest),
 		}
+		return errRes.Response(ctx)
+	}
+
+	if isValid, errRes := validateSignUp(signUp); !isValid {
 		return errRes.Response(ctx)
 	}
 
