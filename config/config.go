@@ -4,7 +4,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	loggerMiddleware "github.com/gofiber/fiber/v2/middleware/logger"
 	jwtWare "github.com/gofiber/jwt/v3"
-	"github.com/miniyus/go-fiber/internal/api_error"
 	rsGen "github.com/miniyus/go-fiber/pkg/rs256"
 	"log"
 	"os"
@@ -14,12 +13,12 @@ import (
 
 func app() fiber.Config {
 	return fiber.Config{
-		AppName:      os.Getenv("APP_NAME"),
-		ErrorHandler: api_error.OverrideDefaultErrorHandler,
+		AppName: os.Getenv("APP_NAME"),
 	}
 }
 
 func logger() loggerMiddleware.Config {
+
 	return loggerMiddleware.Config{
 		Format:     "[${time}] ${ip}:${port} | (${pid}) ${status} - ${method} ${path}\n",
 		TimeZone:   os.Getenv("TIME_ZONE"),
@@ -128,4 +127,10 @@ func GetConfigs() *Configs {
 		auth(),
 		test(),
 	}
+}
+
+func InjectConfigContext(ctx *fiber.Ctx) error {
+	ctx.Locals(Config, GetConfigs())
+
+	return ctx.Next()
 }

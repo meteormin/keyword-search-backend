@@ -1,25 +1,22 @@
 package register
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/miniyus/go-fiber/config"
 	"github.com/miniyus/go-fiber/container"
 	"github.com/miniyus/go-fiber/internal/api_error"
+	"github.com/miniyus/go-fiber/internal/auth"
+	"github.com/miniyus/go-fiber/internal/logger"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	rsGen "github.com/miniyus/go-fiber/pkg/rs256"
 	router "github.com/miniyus/go-fiber/routes"
+	"go.uber.org/zap"
 	"path"
 )
 
 // Boot is High Priority
 func boot(w container.Container) {
-	w.App().Use(func(ctx *fiber.Ctx) error {
-		ctx.Locals("configs", w.Config())
-		return ctx.Next()
-	})
-
 	w.Inject("app", w.App())
 	w.Inject("config", w.Config())
 	w.Inject("db", w.Database())
@@ -33,16 +30,26 @@ func boot(w container.Container) {
 			PublicKey:  privateKey.Public(),
 		}
 	}
+
 	var tg jwt.Generator
 	w.Bind(&tg, jwtGenerator)
-	w.Inject("jwtGenerator", jwtGenerator())
+	w.Resolve(&tg)
+	w.Inject("jwtGenerator", &tg)
+
+	var log *zap.SugaredLogger
+	w.Bind(&log, logger.GetLogger)
+	w.Resolve(&log)
+	w.Inject("logger", &log)
 }
 
 // Middlewares register middleware
 func middlewares(w container.Container) {
-	w.App().Use(logger.New(w.Config().Logger))
+	w.App().Use(flogger.New(w.Config().Logger))
+	w.App().Use(config.InjectConfigContext)
 	w.App().Use(recover.New())
+	w.App().Use(logger.Middleware)
 	w.App().Use(api_error.ErrorHandler)
+	w.App().Use(auth.GetUserFromJWT)
 }
 
 // Routes register Routes

@@ -65,30 +65,37 @@ func (w *Wrapper) Instances() map[string]interface{} {
 }
 
 func (w *Wrapper) Bind(keyType interface{}, resolver interface{}) {
-	resolverType := reflect.TypeOf(resolver)
-	if resolverType.Kind() == reflect.Func {
-		reflectedFunction := reflect.TypeOf(resolver)
-		argumentsCount := reflectedFunction.NumIn()
-		arguments := make([]reflect.Value, argumentsCount)
-		values := reflect.ValueOf(resolver).Call(arguments)
-
-		w.bindings[reflect.TypeOf(keyType)] = values[0].Interface()
-	} else {
-		w.bindings[reflect.TypeOf(keyType)] = resolver
-	}
+	w.bindings[reflect.TypeOf(keyType)] = resolver
 }
 
 func (w *Wrapper) Resolve(keyType interface{}) interface{} {
 	receiverType := reflect.TypeOf(keyType)
 
-	if receiverType.Kind() == reflect.Ptr {
-		bind := w.bindings[reflect.TypeOf(keyType)]
-		reflect.ValueOf(keyType).Elem().Set(reflect.ValueOf(bind))
+	bind := w.bindings[reflect.TypeOf(keyType)]
 
-		return bind
+	if reflect.TypeOf(bind).Kind() == reflect.Func {
+		bind = w.call(bind)
 	}
 
-	return nil
+	if receiverType.Kind() == reflect.Ptr {
+		reflect.ValueOf(keyType).Elem().Set(reflect.ValueOf(bind))
+	}
+
+	return bind
+}
+
+func (w *Wrapper) call(callable interface{}) interface{} {
+	resolverType := reflect.TypeOf(callable)
+	if resolverType.Kind() == reflect.Func {
+		reflectedFunction := reflect.TypeOf(callable)
+		argumentsCount := reflectedFunction.NumIn()
+		arguments := make([]reflect.Value, argumentsCount)
+		values := reflect.ValueOf(callable).Call(arguments)
+
+		return values[0].Interface()
+	} else {
+		return callable
+	}
 }
 
 func (w *Wrapper) Get(key string) interface{} {

@@ -21,7 +21,7 @@ func NewHandler(service Service) HandlerStruct {
 func (h HandlerStruct) GetTest(ctx *fiber.Ctx) error {
 	var data map[string]any
 
-	config := ctx.Locals("configs")
+	config := ctx.Locals(configure.Config)
 	if config != nil {
 		return errors.New("JUST")
 	}

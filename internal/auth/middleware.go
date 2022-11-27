@@ -34,7 +34,10 @@ func jwtError(c *fiber.Ctx, err error) error {
 }
 
 func GetUserFromJWT(c *fiber.Ctx) error {
-	jwtData := c.Locals("user").(*jwt.Token)
+	jwtData, ok := c.Locals("user").(*jwt.Token)
+	if !ok {
+		return c.Next()
+	}
 	claims := jwtData.Claims.(jwt.MapClaims)
 
 	userId := uint(claims["id"].(float64))

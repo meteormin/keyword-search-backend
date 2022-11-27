@@ -10,6 +10,7 @@ type ErrorInterface interface {
 }
 
 type ErrorResponse struct {
+	Status       string
 	Code         int
 	Message      string
 	FailedFields map[string]string
@@ -23,11 +24,11 @@ func NewFromError(err error) *ErrorResponse {
 	var errRes *ErrorResponse
 
 	if vErr, ok := err.(*fiber.Error); ok {
-		errRes = &ErrorResponse{Code: vErr.Code, Message: vErr.Message}
+		errRes = &ErrorResponse{Status: "error", Code: vErr.Code, Message: vErr.Message}
 	} else if vErr, ok := err.(error); ok {
-		errRes = &ErrorResponse{Code: fiber.StatusInternalServerError, Message: vErr.Error()}
+		errRes = &ErrorResponse{Status: "error", Code: fiber.StatusInternalServerError, Message: vErr.Error()}
 	} else {
-		errRes = &ErrorResponse{Code: fiber.StatusInternalServerError, Message: "Unknown Error"}
+		errRes = &ErrorResponse{Status: "error", Code: fiber.StatusInternalServerError, Message: "Unknown Error"}
 	}
 
 	return errRes
@@ -44,6 +45,7 @@ func (er *ErrorResponse) Response(ctx *fiber.Ctx) error {
 
 	if er.Code == fiber.StatusBadRequest && er.FailedFields != nil {
 		return ctx.Status(er.Code).JSON(fiber.Map{
+			"status":        er.Status,
 			"code":          er.Code,
 			"message":       er.Message,
 			"failed_fields": er.FailedFields,
@@ -51,6 +53,7 @@ func (er *ErrorResponse) Response(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(er.Code).JSON(fiber.Map{
+		"status":  er.Status,
 		"code":    er.Code,
 		"message": er.Message,
 	})
