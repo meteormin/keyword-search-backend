@@ -22,7 +22,7 @@ func boot(w container.Container) {
 	w.Inject("db", w.Database())
 
 	jwtGenerator := func() *jwt.GeneratorStruct {
-		dataPath := config.GetPath().DataPath
+		dataPath := w.Config().Path.DataPath
 		privateKey := rsGen.PrivatePemDecode(path.Join(dataPath, "secret/private.pem"))
 
 		return &jwt.GeneratorStruct{
