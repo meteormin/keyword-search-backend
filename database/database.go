@@ -33,3 +33,11 @@ func DB(config config.DB) *gorm.DB {
 
 	return db
 }
+
+func HandleResult(rs *gorm.DB) (*gorm.DB, error) {
+	if rs.Error != nil {
+		return nil, rs.Error
+	}
+
+	return rs, nil
+}

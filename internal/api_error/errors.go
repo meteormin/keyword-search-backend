@@ -15,7 +15,7 @@ type ErrorResponse struct {
 	FailedFields map[string]string
 }
 
-func NewErrorResponse(err error) *ErrorResponse {
+func NewFromError(err error) *ErrorResponse {
 	if err == nil {
 		return nil
 	}

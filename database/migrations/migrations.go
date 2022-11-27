@@ -11,6 +11,7 @@ func Migrate(db *gorm.DB) {
 	err := db.AutoMigrate(
 		&entity.TestEntity{},
 		&entity.User{},
+		&entity.AccessToken{},
 	)
 
 	if err != nil {

@@ -10,15 +10,15 @@ type Handler interface {
 	GetTest(ctx *fiber.Ctx) error
 }
 
-type HandlerImpl struct {
+type HandlerStruct struct {
 	service Service
 }
 
-func NewHandler(service Service) HandlerImpl {
-	return HandlerImpl{service: service}
+func NewHandler(service Service) HandlerStruct {
+	return HandlerStruct{service: service}
 }
 
-func (h HandlerImpl) GetTest(ctx *fiber.Ctx) error {
+func (h HandlerStruct) GetTest(ctx *fiber.Ctx) error {
 	var data map[string]any
 
 	config := ctx.Locals("configs")

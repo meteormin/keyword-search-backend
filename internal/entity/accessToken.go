@@ -7,6 +7,7 @@ import (
 
 type AccessToken struct {
 	gorm.Model
-	token     string    `gorm:"column:token;type:varchar(255);uniqueIndex;not null"`
-	expiresAt time.Time `gorm:"column:expires_at;not null;index"`
+	UserId    uint      `gorm:"column:user_id;foreignKey;references:users"`
+	Token     string    `gorm:"column:token;type:varchar(255);uniqueIndex;not null"`
+	ExpiresAt time.Time `gorm:"column:expires_at;not null;index"`
 }

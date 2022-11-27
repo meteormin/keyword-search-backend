@@ -3,10 +3,10 @@ package users
 type Service interface {
 }
 
-type ServiceImpl struct {
+type ServiceStruct struct {
 	repo Repository
 }
 
-func NewService(repo Repository) *ServiceImpl {
-	return &ServiceImpl{repo: repo}
+func NewService(repo Repository) *ServiceStruct {
+	return &ServiceStruct{repo: repo}
 }

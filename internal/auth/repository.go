@@ -1,70 +1,83 @@
 package auth
 
 import (
+	"github.com/miniyus/go-fiber/database"
 	"github.com/miniyus/go-fiber/internal/entity"
 	"gorm.io/gorm"
 )
 
-type Repository struct {
+type Repository interface {
+	All() ([]*entity.AccessToken, error)
+	Create(token entity.AccessToken) (*entity.AccessToken, error)
+	Find(pk uint) (*entity.AccessToken, error)
+	Update(token entity.AccessToken) (*entity.AccessToken, error)
+	Delete(pk uint) (bool, error)
+}
+
+type RepositoryStruct struct {
 	db *gorm.DB
 }
 
-func (repo *Repository) Create(token entity.AccessToken) (*entity.AccessToken, error) {
-	result := repo.db.Create(&token)
+func NewRepository(db *gorm.DB) *RepositoryStruct {
+	return &RepositoryStruct{db}
+}
 
-	if result.Error != nil {
-		return nil, result.Error
+func (repo *RepositoryStruct) All() ([]*entity.AccessToken, error) {
+	var tokens []*entity.AccessToken
+	result := repo.db.Find(&tokens)
+	_, err := database.HandleResult(result)
+	if err != nil {
+		return nil, err
 	}
 
-	if result.RowsAffected != 0 {
-		return &token, nil
+	return tokens, nil
+}
+
+func (repo *RepositoryStruct) Create(token entity.AccessToken) (*entity.AccessToken, error) {
+	result := repo.db.Create(&token)
+
+	_, err := database.HandleResult(result)
+	if err != nil {
+		return nil, err
 	}
 
 	return &token, nil
 }
 
-func (repo *Repository) Find(pk uint) (*entity.AccessToken, error) {
+func (repo *RepositoryStruct) Find(pk uint) (*entity.AccessToken, error) {
 	token := entity.AccessToken{}
 	result := repo.db.Find(&token, pk)
 
-	if result.Error != nil {
-		return nil, result.Error
+	_, err := database.HandleResult(result)
+	if err != nil {
+		return nil, err
 	}
 
-	if result.RowsAffected != 0 {
-		return &token, nil
-	}
-
-	return nil, nil
+	return &token, nil
 }
 
-func (repo *Repository) Update(token entity.AccessToken) (*entity.AccessToken, error) {
+func (repo *RepositoryStruct) Update(token entity.AccessToken) (*entity.AccessToken, error) {
 	result := repo.db.Save(&token)
 
-	if result.Error != nil {
-		return nil, result.Error
+	_, err := database.HandleResult(result)
+	if err != nil {
+		return nil, err
 	}
 
-	if result.RowsAffected != 0 {
-		return &token, nil
-	}
-
-	return nil, nil
+	return &token, nil
 }
 
-func (repo *Repository) Delete(pk uint) (bool, error) {
+func (repo *RepositoryStruct) Delete(pk uint) (bool, error) {
 	token, err := repo.Find(pk)
 
 	if token != nil && err == nil {
 		result := repo.db.Delete(&token)
-		if result.Error != nil {
+		_, err := database.HandleResult(result)
+		if err != nil {
 			return false, err
 		}
 
-		if result.RowsAffected != 0 {
-			return true, err
-		}
-
+		return true, nil
 	}
 
 	return false, err

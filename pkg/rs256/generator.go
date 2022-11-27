@@ -8,6 +8,7 @@ import (
 	"encoding/gob"
 	"encoding/pem"
 	"fmt"
+	"log"
 	"os"
 	"path"
 )
@@ -88,4 +89,51 @@ func checkError(err error) {
 		fmt.Println("Fatal error ", err.Error())
 		os.Exit(1)
 	}
+}
+
+func GobDecode(filename string) map[string]string {
+	var pubKey map[string]string
+
+	open, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	decoder := gob.NewDecoder(open)
+
+	err = decoder.Decode(&pubKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return pubKey
+}
+
+func PrivatePemDecode(filename string) *rsa.PrivateKey {
+	privatePem, err := os.ReadFile(filename)
+	if err != nil {
+		log.Println("not exists private.pem")
+	}
+
+	b, _ := pem.Decode(privatePem)
+	privateKey, _ := x509.ParsePKCS1PrivateKey(b.Bytes)
+
+	return privateKey
+}
+
+func PublicPemDecode(filename string) *rsa.PublicKey {
+	publicPem, err := os.ReadFile(filename)
+	publicKey := new(rsa.PublicKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	b, _ := pem.Decode(publicPem)
+	_, err = asn1.Unmarshal(b.Bytes, &publicKey)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return publicKey
 }

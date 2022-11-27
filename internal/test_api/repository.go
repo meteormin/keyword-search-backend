@@ -6,14 +6,14 @@ type Repository interface {
 	create()
 }
 
-type RepositoryImpl struct {
+type RepositoryStruct struct {
 	model *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) RepositoryImpl {
-	return RepositoryImpl{db}
+func NewRepository(db *gorm.DB) RepositoryStruct {
+	return RepositoryStruct{db}
 }
 
-func (repo RepositoryImpl) create() {
+func (repo RepositoryStruct) create() {
 
 }

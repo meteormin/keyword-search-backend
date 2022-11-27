@@ -9,7 +9,7 @@ func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 		return nil
 	}
 
-	errRes := NewErrorResponse(err)
+	errRes := NewFromError(err)
 
 	return errRes.Response(ctx)
 }
@@ -21,7 +21,7 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 		return nil
 	}
 
-	errRes := NewErrorResponse(err)
+	errRes := NewFromError(err)
 
 	return errRes.Response(ctx)
 }

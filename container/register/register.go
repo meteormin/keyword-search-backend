@@ -4,9 +4,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/miniyus/go-fiber/config"
 	"github.com/miniyus/go-fiber/container"
 	"github.com/miniyus/go-fiber/internal/api_error"
-	"github.com/miniyus/go-fiber/router"
+	"github.com/miniyus/go-fiber/pkg/jwt"
+	rsGen "github.com/miniyus/go-fiber/pkg/rs256"
+	router "github.com/miniyus/go-fiber/routes"
+	"path"
 )
 
 // Boot is High Priority
@@ -15,6 +19,22 @@ func boot(w container.Container) {
 		ctx.Locals("configs", w.Config())
 		return ctx.Next()
 	})
+
+	w.Inject("app", w.App())
+	w.Inject("config", w.Config())
+	w.Inject("db", w.Database())
+
+	jwtGenerator := func() *jwt.GeneratorStruct {
+		dataPath := config.GetPath().DataPath
+		privateKey := rsGen.PrivatePemDecode(path.Join(dataPath, "secret/private.pem"))
+
+		return &jwt.GeneratorStruct{
+			PrivateKey: privateKey,
+			PublicKey:  privateKey.Public(),
+		}
+	}
+
+	w.Inject("jwtGenerator", jwtGenerator())
 }
 
 // Middlewares register middleware

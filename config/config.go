@@ -79,17 +79,14 @@ func auth() Auth {
 		rsGen.Generate(secretPath, 4096)
 	}
 
-	publicKey := path.Join(secretPath, "public.pem")
+	privateKey := path.Join(secretPath, "private.pem")
 
-	open, err := os.Open(publicKey)
-	if err != nil {
-		log.Fatal(err)
-	}
+	priKey := rsGen.PrivatePemDecode(privateKey)
 
 	return Auth{
 		jwtWare.Config{
 			SigningMethod: "RS256",
-			SigningKey:    open,
+			SigningKey:    priKey.Public(),
 			TokenLookup:   "header:Authorization",
 		},
 	}
