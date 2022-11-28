@@ -19,7 +19,7 @@ func NewHandler(service Service) HandlerStruct {
 }
 
 func (h HandlerStruct) GetTest(ctx *fiber.Ctx) error {
-	var data map[string]any
+	var data *configure.Configs
 
 	config := ctx.Locals(configure.Config)
 	if config != nil {
@@ -27,7 +27,7 @@ func (h HandlerStruct) GetTest(ctx *fiber.Ctx) error {
 	}
 
 	if config, ok := config.(*configure.Configs); ok {
-		data = config.Test
+		data = config
 	}
 
 	return ctx.JSON(fiber.Map{
