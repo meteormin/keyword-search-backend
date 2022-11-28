@@ -20,7 +20,15 @@ func NewHandler(service Service) *HandlerStruct {
 }
 
 func (h *HandlerStruct) All(ctx *fiber.Ctx) error {
-	return ctx.JSON(fiber.Map{})
+	entities, err := h.service.All()
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(fiber.Map{
+		"data": entities,
+	})
 }
 
 func (h *HandlerStruct) Get(ctx *fiber.Ctx) error {
