@@ -2,13 +2,18 @@ package api_auth
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/go-fiber/config"
 	api_error2 "github.com/miniyus/go-fiber/internal/core/api_error"
+	"github.com/miniyus/go-fiber/internal/core/auth"
+	"go.uber.org/zap"
+	"log"
 	"net/http"
 )
 
 type Handler interface {
 	SignUp(ctx *fiber.Ctx) error
 	SignIn(ctx *fiber.Ctx) error
+	Me(ctx *fiber.Ctx) error
 	//Revoke(ctx *fiber.Ctx) error
 }
 
@@ -113,6 +118,20 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 		"token":      result.Token,
 		"expires_at": result.ExpiresAt,
 	})
+}
+
+func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
+	user, ok := ctx.Locals(config.AuthUser).(*auth.User)
+	if !ok {
+		logger, ok := ctx.Locals(config.Logger).(*zap.SugaredLogger)
+		log.Print(logger)
+		if !ok {
+			return fiber.NewError(500, "...")
+		}
+		logger.Debug(user)
+	}
+
+	return ctx.JSON(user)
 }
 
 //func (h *HandlerStruct) Revoke(ctx *fiber.Ctx) error {

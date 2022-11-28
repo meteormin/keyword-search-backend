@@ -7,7 +7,7 @@ import (
 
 func Register(router fiber.Router, handler Handler) {
 
-	usersApi := router.Group("/users", auth.JwtMiddleware)
+	usersApi := router.Group("/users", auth.JwtMiddleware, auth.GetUserFromJWT)
 
 	usersApi.Get("/", handler.All)
 	usersApi.Get("/:id", handler.Get)

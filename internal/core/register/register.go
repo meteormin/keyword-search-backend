@@ -2,10 +2,10 @@ package register
 
 import (
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/miniyus/go-fiber/config"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
-	"github.com/miniyus/go-fiber/internal/core/auth"
 	"github.com/miniyus/go-fiber/internal/core/container"
 	"github.com/miniyus/go-fiber/internal/core/logger"
 	router "github.com/miniyus/go-fiber/internal/routes"
@@ -46,15 +46,15 @@ func boot(w container.Container) {
 func middlewares(w container.Container) {
 	w.App().Use(flogger.New(w.Config().Logger))
 	w.App().Use(recover.New())
-	w.App().Use(config.InjectConfigContext)
 	w.App().Use(logger.Middleware)
 	w.App().Use(api_error.ErrorHandler)
-	w.App().Use(auth.GetUserFromJWT)
+	w.App().Use(config.InjectConfigContext)
 }
 
 // Routes register Routes
 func routes(w container.Container) {
 	router.SetRoutes(w)
+	w.App().Get("/metrics", monitor.New(monitor.Config{Title: "MyService Metrics Page"}))
 }
 
 func Resister(w container.Container) {

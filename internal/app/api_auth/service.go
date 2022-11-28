@@ -42,7 +42,7 @@ func hashCheck(hashPass string, password string) bool {
 
 func (s *ServiceStruct) generateToken(user *entity.User, exp int64) (*string, error) {
 	claims := jwtLib.MapClaims{
-		"userId":     user.ID,
+		"user_id":    user.ID,
 		"username":   user.Username,
 		"email":      user.Email,
 		"created_at": user.CreatedAt,

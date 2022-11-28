@@ -6,39 +6,46 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	configure "github.com/miniyus/go-fiber/config"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
-	"time"
+	"log"
 )
 
 // 공통 미들웨어 작성
 
 type User struct {
-	Id        uint
-	GroupId   uint
-	Username  string
-	Email     string
-	CreatedAt time.Time
+	Id        uint   `json:"id"`
+	GroupId   uint   `json:"group_id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	CreatedAt string `json:"created_at"`
+	ExpiresIn int64  `json:"expires_in"`
 }
 
 func GetUserFromJWT(c *fiber.Ctx) error {
 	jwtData, ok := c.Locals("user").(*jwt.Token)
 	if !ok {
+		log.Print("access guest")
 		return c.Next()
 	}
+
 	claims := jwtData.Claims.(jwt.MapClaims)
 
-	userId := uint(claims["id"].(float64))
-	groupId := uint(claims["group"].(float64))
+	userId := uint(claims["user_id"].(float64))
+	groupId := uint(claims["group_id"].(float64))
 	username := claims["username"].(string)
-	createdAt := claims["createdAt"].(time.Time)
+	email := claims["email"].(string)
+	createdAt := claims["created_at"].(string)
+	expiresIn := int64(claims["expires_in"].(float64))
 
 	currentUser := &User{
 		Id:        userId,
 		GroupId:   groupId,
 		Username:  username,
+		Email:     email,
 		CreatedAt: createdAt,
+		ExpiresIn: expiresIn,
 	}
 
-	c.Locals("authUser", currentUser)
+	c.Locals(configure.AuthUser, currentUser)
 	return c.Next()
 }
 

@@ -13,7 +13,7 @@ func Middleware(c *fiber.Ctx) error {
 	start := time.Now()
 	err := c.Next()
 	elapsed := time.Since(start).Milliseconds()
-	cu, ok := c.Locals(config.AuthUser).(auth.User)
+	cu, ok := c.Locals(config.AuthUser).(*auth.User)
 	userID := ""
 	if !ok {
 		userID = "guest"
