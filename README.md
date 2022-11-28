@@ -51,7 +51,12 @@ project-root
  - build: build된 파일이 저장
  - cmd: go 실행 및 makefile을 통한 cli 명령을 실행할 수 있는 go 파일 및 기능
  - config: 설정
- - container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
+ - core: 공통 기능
+  - api_error: api error, error response 관련 기능
+  - auth: 인증 관련 기능
+  - container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
+  - logger: 로거
+  - register: 컨테이너에 필요한 미들웨어, 구조체, 함수등을 등록
  - data: local data 저장소
  - database: database 연동
  - docker: docker 컨테이너 관련
