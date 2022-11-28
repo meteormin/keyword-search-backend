@@ -1,6 +1,8 @@
 package users
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+)
 
 func Register(router fiber.Router, handler Handler) {
 	usersApi := router.Group("/users")

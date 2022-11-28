@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/internal/auth"
+	"github.com/miniyus/go-fiber/core/auth"
 	"strconv"
 	"time"
 )

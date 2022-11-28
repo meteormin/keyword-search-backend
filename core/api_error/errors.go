@@ -10,10 +10,10 @@ type ErrorInterface interface {
 }
 
 type ErrorResponse struct {
-	Status       string
-	Code         int
-	Message      string
-	FailedFields map[string]string
+	Status       string            `json:"status"`
+	Code         int               `json:"code"`
+	Message      string            `json:"message"`
+	FailedFields map[string]string `json:"failed_fields"`
 }
 
 func NewFromError(err error) *ErrorResponse {
@@ -44,17 +44,8 @@ func (er *ErrorResponse) Response(ctx *fiber.Ctx) error {
 	}
 
 	if er.Code == fiber.StatusBadRequest && er.FailedFields != nil {
-		return ctx.Status(er.Code).JSON(fiber.Map{
-			"status":        er.Status,
-			"code":          er.Code,
-			"message":       er.Message,
-			"failed_fields": er.FailedFields,
-		})
+		return ctx.Status(er.Code).JSON(er)
 	}
 
-	return ctx.Status(er.Code).JSON(fiber.Map{
-		"status":  er.Status,
-		"code":    er.Code,
-		"message": er.Message,
-	})
+	return ctx.Status(er.Code).JSON(er)
 }

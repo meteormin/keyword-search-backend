@@ -1,4 +1,4 @@
-package auth
+package api_auth
 
 import (
 	"github.com/miniyus/go-fiber/internal/users"

@@ -1,14 +1,6 @@
-package auth
+package api_auth
 
 import "time"
-
-type User struct {
-	Id        uint
-	GroupId   uint
-	Username  string
-	Email     string
-	CreatedAt time.Time
-}
 
 type SignUp struct {
 	Username        string `json:"username" validate:"required"`
