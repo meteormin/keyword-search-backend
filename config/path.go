@@ -12,7 +12,7 @@ type Path struct {
 	LogPath  string
 }
 
-func GetPath() Path {
+func getPath() Path {
 	getWd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("Failed getwd %v", err)

@@ -34,7 +34,7 @@ func GetConfigs() *Configs {
 		App:      app(),
 		Logger:   logger(),
 		Database: database(),
-		Path:     GetPath(),
+		Path:     getPath(),
 		Auth:     auth(),
 	}
 }
