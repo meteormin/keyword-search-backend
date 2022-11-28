@@ -3,8 +3,8 @@ package api_auth
 import (
 	"github.com/gofiber/fiber/v2"
 	jwtLib "github.com/golang-jwt/jwt/v4"
+	"github.com/miniyus/go-fiber/internal/app/users"
 	"github.com/miniyus/go-fiber/internal/entity"
-	"github.com/miniyus/go-fiber/internal/users"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"time"

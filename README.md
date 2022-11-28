@@ -93,7 +93,7 @@ func NewContainer(app *fiber.App, config *config.Configs)
 ```
 
 **Register 패키지**
-> [container/register/register.go](core/register/register.go)
+> [container/register/register.go](internal/core/register/register.go)
 
 총 4개의 함수로 구성
 

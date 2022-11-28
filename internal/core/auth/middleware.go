@@ -5,7 +5,7 @@ import (
 	jwtWare "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
 	configure "github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/core/api_error"
+	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"time"
 )
 

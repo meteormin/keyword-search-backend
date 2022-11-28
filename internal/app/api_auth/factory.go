@@ -1,7 +1,7 @@
 package api_auth
 
 import (
-	"github.com/miniyus/go-fiber/internal/users"
+	"github.com/miniyus/go-fiber/internal/app/users"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	"gorm.io/gorm"
 )

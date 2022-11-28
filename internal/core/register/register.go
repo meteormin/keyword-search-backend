@@ -4,13 +4,13 @@ import (
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/core/api_error"
-	"github.com/miniyus/go-fiber/core/auth"
-	"github.com/miniyus/go-fiber/core/container"
-	logger "github.com/miniyus/go-fiber/core/logger"
+	"github.com/miniyus/go-fiber/internal/core/api_error"
+	"github.com/miniyus/go-fiber/internal/core/auth"
+	"github.com/miniyus/go-fiber/internal/core/container"
+	logger2 "github.com/miniyus/go-fiber/internal/core/logger"
+	router "github.com/miniyus/go-fiber/internal/routes"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	rsGen "github.com/miniyus/go-fiber/pkg/rs256"
-	router "github.com/miniyus/go-fiber/routes"
 	"go.uber.org/zap"
 	"path"
 )
@@ -37,7 +37,7 @@ func boot(w container.Container) {
 	w.Inject("jwtGenerator", &tg)
 
 	var log *zap.SugaredLogger
-	w.Bind(&log, logger.GetLogger)
+	w.Bind(&log, logger2.GetLogger)
 	w.Resolve(&log)
 	w.Inject("logger", &log)
 }
@@ -47,7 +47,7 @@ func middlewares(w container.Container) {
 	w.App().Use(flogger.New(w.Config().Logger))
 	w.App().Use(config.InjectConfigContext)
 	w.App().Use(recover.New())
-	w.App().Use(logger.Middleware)
+	w.App().Use(logger2.Middleware)
 	w.App().Use(api_error.ErrorHandler)
 	w.App().Use(auth.GetUserFromJWT)
 }

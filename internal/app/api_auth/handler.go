@@ -2,7 +2,7 @@ package api_auth
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/core/api_error"
+	api_error2 "github.com/miniyus/go-fiber/internal/core/api_error"
 	"net/http"
 )
 
@@ -20,9 +20,9 @@ func NewHandler(service Service) *HandlerStruct {
 	return &HandlerStruct{service: service}
 }
 
-func validateSignUp(signUp *SignUp) (bool, *api_error.ErrorResponse) {
-	if err := api_error.Validate(signUp); err != nil {
-		errRes := &api_error.ErrorResponse{
+func validateSignUp(signUp *SignUp) (bool, *api_error2.ErrorResponse) {
+	if err := api_error2.Validate(signUp); err != nil {
+		errRes := &api_error2.ErrorResponse{
 			Status:       "error",
 			Code:         fiber.StatusBadRequest,
 			Message:      http.StatusText(fiber.StatusBadRequest),
@@ -33,7 +33,7 @@ func validateSignUp(signUp *SignUp) (bool, *api_error.ErrorResponse) {
 	}
 
 	if signUp.Password != signUp.PasswordConfirm {
-		errRes := &api_error.ErrorResponse{
+		errRes := &api_error2.ErrorResponse{
 			Status:  "error",
 			Code:    fiber.StatusBadRequest,
 			Message: http.StatusText(fiber.StatusBadRequest),
@@ -52,7 +52,7 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	signUp := &SignUp{}
 	err := ctx.BodyParser(signUp)
 	if err != nil {
-		errRes := api_error.ErrorResponse{
+		errRes := api_error2.ErrorResponse{
 			Status:  "error",
 			Code:    fiber.StatusBadRequest,
 			Message: http.StatusText(fiber.StatusBadRequest),
@@ -72,9 +72,9 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	return ctx.JSON(result)
 }
 
-func validateSignIn(in *SignIn) (bool, *api_error.ErrorResponse) {
-	if err := api_error.Validate(in); err != nil {
-		errRes := &api_error.ErrorResponse{
+func validateSignIn(in *SignIn) (bool, *api_error2.ErrorResponse) {
+	if err := api_error2.Validate(in); err != nil {
+		errRes := &api_error2.ErrorResponse{
 			Status:       "error",
 			Code:         fiber.StatusBadRequest,
 			Message:      http.StatusText(fiber.StatusBadRequest),
@@ -91,7 +91,7 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 	signIn := &SignIn{}
 	err := ctx.BodyParser(signIn)
 	if err != nil {
-		errRes := api_error.ErrorResponse{
+		errRes := api_error2.ErrorResponse{
 			Status:  "error",
 			Code:    fiber.StatusBadRequest,
 			Message: http.StatusText(fiber.StatusBadRequest),
