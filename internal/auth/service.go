@@ -13,7 +13,7 @@ import (
 
 type Service interface {
 	SignIn(signIn *SignIn) (*entity.AccessToken, error)
-	SignUp(signUp *SignUp) (*entity.AccessToken, error)
+	SignUp(signUp *SignUp) (*SignUpResponse, error)
 }
 
 type ServiceStruct struct {
@@ -93,7 +93,7 @@ func (s *ServiceStruct) SignIn(in *SignIn) (*entity.AccessToken, error) {
 	return nil, fiber.NewError(fiber.StatusNotFound, "user not exists")
 }
 
-func (s *ServiceStruct) SignUp(up *SignUp) (*entity.AccessToken, error) {
+func (s *ServiceStruct) SignUp(up *SignUp) (*SignUpResponse, error) {
 	user, err := s.userRepo.FindByEntity(entity.User{
 		Username: up.Username,
 		Email:    up.Email,
@@ -114,10 +114,23 @@ func (s *ServiceStruct) SignUp(up *SignUp) (*entity.AccessToken, error) {
 			return nil, fiber.NewError(fiber.StatusConflict, "Can not Create User...")
 		}
 
-		return s.SignIn(&SignIn{
+		token, err := s.SignIn(&SignIn{
 			Username: up.Username,
 			Password: up.Password,
 		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		res := &SignUpResponse{
+			UserId: user.ID,
+			TokenInfo: TokenInfo{
+				Token:     token.Token,
+				ExpiresAt: token.ExpiresAt,
+			},
+		}
+		return res, nil
 	} else {
 		return nil, fiber.NewError(fiber.StatusConflict, "User already exists")
 	}

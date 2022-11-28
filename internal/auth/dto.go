@@ -21,3 +21,13 @@ type SignIn struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
+
+type TokenInfo struct {
+	Token     string    `json:"token"`
+	ExpiresAt time.Time `json:"expires_at"`
+}
+
+type SignUpResponse struct {
+	UserId uint `json:"user_id"`
+	TokenInfo
+}

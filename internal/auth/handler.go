@@ -69,10 +69,7 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(fiber.Map{
-		"token":      result.Token,
-		"expires_in": result.ExpiresAt,
-	})
+	return ctx.JSON(result)
 }
 
 func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
@@ -95,7 +92,7 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"token":      result.Token,
-		"expires_in": result.ExpiresAt,
+		"expires_at": result.ExpiresAt,
 	})
 }
 

@@ -18,13 +18,8 @@ func SetRoutes(container container.Container) {
 	users.Register(api, users.Factory(container.Database()))
 
 	var tokenGenerator jwt.Generator
+
 	container.Resolve(&tokenGenerator)
+
 	auth.Register(api, auth.Factory(container.Database(), tokenGenerator))
-
-	//if tokenGenerator, ok := container.Get("jwtGenerator").(jwt.Generator); ok {
-	//	auth.Register(api, auth.Factory(container.Database(), tokenGenerator))
-	//} else {
-	//	log.Fatalf("Failed Load Token Generator")
-	//}
-
 }
