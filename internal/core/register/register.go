@@ -45,8 +45,8 @@ func boot(w container.Container) {
 // Middlewares register middleware
 func middlewares(w container.Container) {
 	w.App().Use(flogger.New(w.Config().Logger))
-	w.App().Use(config.InjectConfigContext)
 	w.App().Use(recover.New())
+	w.App().Use(config.InjectConfigContext)
 	w.App().Use(logger.Middleware)
 	w.App().Use(api_error.ErrorHandler)
 	w.App().Use(auth.GetUserFromJWT)
