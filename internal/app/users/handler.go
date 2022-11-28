@@ -1,6 +1,9 @@
 package users
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"strconv"
+)
 
 type Handler interface {
 	All(ctx *fiber.Ctx) error
@@ -32,7 +35,19 @@ func (h *HandlerStruct) All(ctx *fiber.Ctx) error {
 }
 
 func (h *HandlerStruct) Get(ctx *fiber.Ctx) error {
-	return ctx.JSON(fiber.Map{})
+	prams := ctx.AllParams()
+	userId, err := strconv.ParseUint(prams["id"], 0, 64)
+	if err != nil {
+		return err
+	}
+
+	user, err := h.service.Get(uint(userId))
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(user)
 }
 
 func (h *HandlerStruct) Create(ctx *fiber.Ctx) error {

@@ -1,7 +1,10 @@
 package users
 
+import "github.com/miniyus/go-fiber/internal/entity"
+
 type Service interface {
 	All() ([]UserResponse, error)
+	Get(pk uint) (*UserResponse, error)
 }
 
 type ServiceStruct struct {
@@ -10,6 +13,17 @@ type ServiceStruct struct {
 
 func NewService(repo Repository) *ServiceStruct {
 	return &ServiceStruct{repo: repo}
+}
+
+func toUserResponseFromEntity(user *entity.User) UserResponse {
+	return UserResponse{
+		Id:              user.ID,
+		Username:        user.Username,
+		Email:           user.Email,
+		EmailVerifiedAt: user.EmailVerifiedAt,
+		CreatedAt:       user.CreatedAt,
+		UpdatedAt:       user.UpdatedAt,
+	}
 }
 
 func (s *ServiceStruct) All() ([]UserResponse, error) {
@@ -21,16 +35,21 @@ func (s *ServiceStruct) All() ([]UserResponse, error) {
 		return userRes, err
 	}
 
-	for _, entity := range entities {
-		userRes = append(userRes, UserResponse{
-			Id:              entity.ID,
-			Username:        entity.Username,
-			Email:           entity.Email,
-			EmailVerifiedAt: entity.EmailVerifiedAt,
-			CreatedAt:       entity.CreatedAt,
-			UpdatedAt:       entity.UpdatedAt,
-		})
+	for _, ent := range entities {
+		userRes = append(userRes, toUserResponseFromEntity(ent))
 	}
 
 	return userRes, nil
+}
+
+func (s *ServiceStruct) Get(pk uint) (*UserResponse, error) {
+	user, err := s.repo.Find(pk)
+	if err != nil {
+		return nil, err
+	}
+
+	userRes := toUserResponseFromEntity(user)
+
+	return &userRes, nil
+
 }
