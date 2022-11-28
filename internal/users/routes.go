@@ -2,10 +2,12 @@ package users
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/go-fiber/core/auth"
 )
 
 func Register(router fiber.Router, handler Handler) {
-	usersApi := router.Group("/users")
+
+	usersApi := router.Group("/users", auth.JwtMiddleware)
 
 	usersApi.Get("/", handler.All)
 	usersApi.Get("/:id", handler.Get)

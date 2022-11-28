@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"github.com/miniyus/go-fiber/core/auth"
 	"github.com/miniyus/go-fiber/core/container"
 	"github.com/miniyus/go-fiber/internal/api_auth"
 	"github.com/miniyus/go-fiber/internal/test_api"
@@ -22,7 +21,6 @@ func SetRoutes(container container.Container) {
 	test_api.Register(api, test_api.Factory(container.Database()))
 
 	// need jwt token
-	container.App().Use(auth.JwtMiddleware(container.Config().Auth.Jwt))
 
 	users.Register(api, users.Factory(container.Database()))
 

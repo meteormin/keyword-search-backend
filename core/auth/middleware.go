@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	jwtWare "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
+	configure "github.com/miniyus/go-fiber/config"
 	"github.com/miniyus/go-fiber/core/api_error"
 	"time"
 )
@@ -41,7 +42,18 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func JwtMiddleware(config jwtWare.Config) fiber.Handler {
+func JwtMiddleware(c *fiber.Ctx) error {
+	config, ok := c.Locals(configure.Config).(*configure.Configs)
+	if !ok {
+		return fiber.NewError(fiber.StatusInternalServerError, "Can not found Config Context...")
+	}
+
+	middleware := newJwtMiddleware(config.Auth.Jwt)
+
+	return middleware(c)
+}
+
+func newJwtMiddleware(config jwtWare.Config) fiber.Handler {
 	jwtConfig := config
 	jwtConfig.ErrorHandler = jwtError
 	return jwtWare.New(jwtConfig)

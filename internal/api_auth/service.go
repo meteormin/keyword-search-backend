@@ -7,7 +7,6 @@ import (
 	"github.com/miniyus/go-fiber/internal/users"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 	"time"
 )
 
@@ -63,7 +62,7 @@ func (s *ServiceStruct) SignIn(in *SignIn) (*entity.AccessToken, error) {
 
 	if user != nil {
 		if !hashCheck(user.Password, in.Password) {
-			return nil, fiber.NewError(fiber.StatusUnauthorized, http.StatusText(fiber.StatusUnauthorized))
+			return nil, fiber.NewError(fiber.StatusUnauthorized, "비밀번호가 틀렸습니다.")
 		}
 
 		expiresAt := time.Now().Add(time.Hour * 24)
