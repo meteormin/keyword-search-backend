@@ -14,7 +14,7 @@ var log *zap.SugaredLogger
 
 func init() {
 	today := time.Now().Format("2006-01-02")
-	logFilename := path.Join(config.GetPath().LogPath, fmt.Sprintf("log-%s.log", today))
+	logFilename := path.Join(config.GetConfigs().Path.LogPath, fmt.Sprintf("log-%s.log", today))
 
 	ll := &lumberjack.Logger{
 		Filename:   logFilename,

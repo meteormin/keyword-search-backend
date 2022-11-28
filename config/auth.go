@@ -13,12 +13,12 @@ type Auth struct {
 }
 
 func auth() Auth {
-	_, err := os.Stat(GetPath().DataPath)
+	_, err := os.Stat(getPath().DataPath)
 	if err != nil {
 		log.Fatalf("data path is not exists... %v", err)
 	}
 
-	secretPath := path.Join(GetPath().DataPath, "secret")
+	secretPath := path.Join(getPath().DataPath, "secret")
 
 	_, err = os.Stat(secretPath)
 	if err != nil {
