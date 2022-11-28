@@ -51,18 +51,21 @@ project-root
  - build: build된 파일이 저장
  - cmd: go 실행 및 makefile을 통한 cli 명령을 실행할 수 있는 go 파일 및 기능
  - config: 설정
- - core: 공통 기능
-  - api_error: api error, error response 관련 기능
-  - auth: 인증 관련 기능
-  - container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
-  - logger: 로거
-  - register: 컨테이너에 필요한 미들웨어, 구조체, 함수등을 등록
  - data: local data 저장소
  - database: database 연동
  - docker: docker 컨테이너 관련
  - internal: api를 실질적으로 구현하는 곳 입니다.
+  - core: 공통 기능
+   - api_error: api error, error response 관련 기능
+   - auth: 인증 관련 기능
+   - container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
+   - logger: 로거
+   - register: 컨테이너에 필요한 미들웨어, 구조체, 함수등을 등록
+  - app: 실제 api 코드
+  - entity: db 스키마를 가진 구조체 집합
+  - routes: 라우팅
  - pkg: 독립적인 기능을 수핼 할 수 있는 기능들의 집합입니다.
- - router: 라우터
+ 
 ```
 
 ### bootstrap
