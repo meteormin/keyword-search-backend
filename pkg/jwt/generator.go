@@ -33,3 +33,7 @@ func (g *GeneratorStruct) Generate(claims jwtLib.Claims, privateKey *rsa.Private
 func (g *GeneratorStruct) GetPrivateKey() *rsa.PrivateKey {
 	return g.PrivateKey
 }
+
+func (g *GeneratorStruct) GetExp() int {
+	return g.Exp
+}
