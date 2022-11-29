@@ -9,9 +9,12 @@ import (
 func Migrate(db *gorm.DB) {
 	log.Println("Auto Migrate...")
 	err := db.AutoMigrate(
-		&entity.TestEntity{},
 		&entity.User{},
 		&entity.AccessToken{},
+		&entity.Host{},
+		&entity.BookMark{},
+		&entity.Search{},
+		&entity.Tag{},
 	)
 
 	if err != nil {

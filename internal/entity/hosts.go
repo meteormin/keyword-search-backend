@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Hosts struct {
+type Host struct {
 	gorm.Model
 	Host        string `gorm:"column:host;type:varchar(100);uniqueIndex" json:"host"`
 	Subject     string `gorm:"column:subject;type:varchar(100)" json:"subject"`
