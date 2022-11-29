@@ -20,6 +20,15 @@ type User struct {
 	ExpiresIn int64  `json:"expires_in"`
 }
 
+func Middlewares() []fiber.Handler {
+	mws := []fiber.Handler{
+		JwtMiddleware,
+		GetUserFromJWT,
+	}
+
+	return mws
+}
+
 func GetUserFromJWT(c *fiber.Ctx) error {
 	jwtData, ok := c.Locals("user").(*jwt.Token)
 	if !ok {
