@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	jwtLib "github.com/golang-jwt/jwt/v4"
 	"github.com/miniyus/go-fiber/internal/app/users"
+	"github.com/miniyus/go-fiber/internal/core/auth"
 	"github.com/miniyus/go-fiber/internal/entity"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
@@ -16,12 +17,12 @@ type Service interface {
 }
 
 type ServiceStruct struct {
-	repo           Repository
+	repo           auth.Repository
 	userRepo       users.Repository
 	tokenGenerator jwt.Generator
 }
 
-func NewService(repo Repository, userRepo users.Repository, generator jwt.Generator) *ServiceStruct {
+func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.Generator) *ServiceStruct {
 	return &ServiceStruct{
 		repo:           repo,
 		userRepo:       userRepo,

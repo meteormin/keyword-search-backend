@@ -1,4 +1,4 @@
-package api_auth
+package auth
 
 import (
 	"github.com/miniyus/go-fiber/database"
@@ -10,6 +10,8 @@ type Repository interface {
 	All() ([]*entity.AccessToken, error)
 	Create(token entity.AccessToken) (*entity.AccessToken, error)
 	Find(pk uint) (*entity.AccessToken, error)
+	FindByToken(token string) (*entity.AccessToken, error)
+	FindByUserId(userId uint) (*entity.AccessToken, error)
 	Update(token entity.AccessToken) (*entity.AccessToken, error)
 	Delete(pk uint) (bool, error)
 }
@@ -81,4 +83,34 @@ func (repo *RepositoryStruct) Delete(pk uint) (bool, error) {
 	}
 
 	return false, err
+}
+
+func (repo *RepositoryStruct) FindByToken(token string) (*entity.AccessToken, error) {
+	ent := entity.AccessToken{}
+
+	result := repo.db.Where(&entity.AccessToken{
+		Token: token,
+	}).First(&ent)
+
+	_, err := database.HandleResult(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ent, nil
+}
+
+func (repo *RepositoryStruct) FindByUserId(userId uint) (*entity.AccessToken, error) {
+	ent := entity.AccessToken{}
+
+	result := repo.db.Where(&entity.AccessToken{
+		UserId: userId,
+	}).First(&ent)
+
+	_, err := database.HandleResult(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ent, nil
 }

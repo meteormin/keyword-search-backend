@@ -5,6 +5,7 @@ import (
 	jwtWare "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
 	configure "github.com/miniyus/go-fiber/config"
+	"github.com/miniyus/go-fiber/database"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"log"
 )
@@ -24,6 +25,7 @@ func Middlewares() []fiber.Handler {
 	mws := []fiber.Handler{
 		JwtMiddleware,
 		GetUserFromJWT,
+		CheckExpired,
 	}
 
 	return mws
@@ -85,6 +87,39 @@ func jwtError(c *fiber.Ctx, err error) error {
 	}
 
 	errRes = api_error.NewErrorResponse(c, fiber.StatusBadRequest, "Invalid or expired JWT!")
+
+	return errRes.Response()
+}
+
+func CheckExpired(c *fiber.Ctx) error {
+	config, ok := c.Locals(configure.Config).(configure.Configs)
+	if !ok {
+		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "JWT is expired")
+
+		return errRes.Response()
+	}
+
+	tokenRepository := NewRepository(database.DB(config.Database))
+
+	user, ok := c.Locals(configure.AuthUser).(*User)
+	if !ok {
+		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "JWT is expired")
+
+		return errRes.Response()
+	}
+
+	token, err := tokenRepository.FindByUserId(user.Id)
+	if err != nil {
+		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "JWT is expired")
+
+		return errRes.Response()
+	}
+
+	if token.ExpiresAt.Unix() > user.ExpiresIn {
+		return c.Next()
+	}
+
+	errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "JWT is expired")
 
 	return errRes.Response()
 }
