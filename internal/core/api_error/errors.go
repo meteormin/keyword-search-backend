@@ -17,7 +17,7 @@ type ErrorResponse struct {
 	FailedFields map[string]string `json:"failed_fields"`
 }
 
-func NewFromError(err error) *ErrorResponse {
+func NewFromError(ctx *fiber.Ctx, err error) *ErrorResponse {
 	if err == nil {
 		return nil
 	}
@@ -25,14 +25,23 @@ func NewFromError(err error) *ErrorResponse {
 	var errRes *ErrorResponse
 
 	if vErr, ok := err.(*fiber.Error); ok {
-		errRes = &ErrorResponse{Status: "error", Code: vErr.Code, Message: vErr.Message}
+		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: vErr.Code, Message: vErr.Message}
 	} else if vErr, ok := err.(error); ok {
-		errRes = &ErrorResponse{Status: "error", Code: fiber.StatusInternalServerError, Message: vErr.Error()}
+		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusInternalServerError, Message: vErr.Error()}
 	} else {
-		errRes = &ErrorResponse{Status: "error", Code: fiber.StatusInternalServerError, Message: "Unknown Error"}
+		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusInternalServerError, Message: "Unknown Error"}
 	}
 
 	return errRes
+}
+
+func NewErrorResponse(ctx *fiber.Ctx, code int, message string) ErrorResponse {
+	return ErrorResponse{
+		ctx:     ctx,
+		Status:  "error",
+		Code:    code,
+		Message: message,
+	}
 }
 
 func NewValidationError(ctx *fiber.Ctx) ErrorResponse {

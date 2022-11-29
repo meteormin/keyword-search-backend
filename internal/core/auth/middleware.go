@@ -70,20 +70,12 @@ func jwtError(c *fiber.Ctx, err error) error {
 	var errRes api_error.ErrorResponse
 
 	if err.Error() == "Missing or malformed JWT" {
-		errRes = api_error.ErrorResponse{
-			Status:  "error",
-			Code:    fiber.StatusBadRequest,
-			Message: err.Error(),
-		}
+		errRes = api_error.NewErrorResponse(c, fiber.StatusBadRequest, err.Error())
 
-		return errRes.Response(c)
+		return errRes.Response()
 	}
 
-	errRes = api_error.ErrorResponse{
-		Status:  "error",
-		Code:    fiber.StatusUnauthorized,
-		Message: "Invalid or expired JWT!",
-	}
+	errRes = api_error.NewErrorResponse(c, fiber.StatusBadRequest, "Invalid or expired JWT!")
 
-	return errRes.Response(c)
+	return errRes.Response()
 }

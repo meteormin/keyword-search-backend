@@ -11,8 +11,8 @@ func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 	if err == nil {
 		return nil
 	}
-	errRes := NewFromError(err)
-	return errRes.Response(ctx)
+	errRes := NewFromError(ctx, err)
+	return errRes.Response()
 }
 
 func ErrorHandler(ctx *fiber.Ctx) error {
@@ -29,11 +29,11 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 
 	logger.Errorln(err)
 
-	errRes := NewFromError(err)
+	errRes := NewFromError(ctx, err)
 
 	b, _ := json.Marshal(errRes)
 
 	logger.Errorln(string(b))
 
-	return errRes.Response(ctx)
+	return errRes.Response()
 }
