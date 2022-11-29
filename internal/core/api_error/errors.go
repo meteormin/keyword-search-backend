@@ -10,6 +10,7 @@ type ErrorInterface interface {
 }
 
 type ErrorResponse struct {
+	ctx          *fiber.Ctx
 	Status       string            `json:"status"`
 	Code         int               `json:"code"`
 	Message      string            `json:"message"`
@@ -34,7 +35,16 @@ func NewFromError(err error) *ErrorResponse {
 	return errRes
 }
 
-func (er *ErrorResponse) Response(ctx *fiber.Ctx) error {
+func NewValidationError(ctx *fiber.Ctx) ErrorResponse {
+	return ErrorResponse{
+		ctx:     ctx,
+		Status:  "error",
+		Code:    fiber.StatusBadRequest,
+		Message: http.StatusText(fiber.StatusBadRequest),
+	}
+}
+
+func (er *ErrorResponse) Response() error {
 	if er.Code == 0 {
 		er.Code = fiber.StatusInternalServerError
 	}
@@ -44,8 +54,8 @@ func (er *ErrorResponse) Response(ctx *fiber.Ctx) error {
 	}
 
 	if er.Code == fiber.StatusBadRequest && er.FailedFields != nil {
-		return ctx.Status(er.Code).JSON(er)
+		return er.ctx.Status(er.Code).JSON(er)
 	}
 
-	return ctx.Status(er.Code).JSON(er)
+	return er.ctx.Status(er.Code).JSON(er)
 }

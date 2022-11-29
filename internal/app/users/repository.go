@@ -10,7 +10,7 @@ type Repository interface {
 	Create(user entity.User) (*entity.User, error)
 	Find(pk uint) (*entity.User, error)
 	All() ([]*entity.User, error)
-	Update(user entity.User) (*entity.User, error)
+	Update(pk uint, user entity.User) (*entity.User, error)
 	Delete(pk uint) (bool, error)
 	FindByUsername(username string) (*entity.User, error)
 	FindByEntity(user entity.User) (*entity.User, error)
@@ -60,9 +60,18 @@ func (repo *RepositoryStruct) All() ([]*entity.User, error) {
 	return users, nil
 }
 
-func (repo *RepositoryStruct) Update(user entity.User) (*entity.User, error) {
+func (repo *RepositoryStruct) Update(pk uint, user entity.User) (*entity.User, error) {
+	exists, err := repo.Find(pk)
+	if err != nil {
+		return nil, err
+	}
+
+	user.ID = exists.ID
+
 	result := repo.db.Save(&user)
-	_, err := database.HandleResult(result)
+
+	_, err = database.HandleResult(result)
+
 	if err != nil {
 		return nil, err
 	}

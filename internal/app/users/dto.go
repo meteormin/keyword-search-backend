@@ -11,3 +11,12 @@ type UserResponse struct {
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 }
+
+type PatchUser struct {
+	Email string `json:"email"`
+}
+
+type ResetPasswordStruct struct {
+	Password        string `json:"password"`
+	PasswordConfirm string `json:"password_confirm"`
+}

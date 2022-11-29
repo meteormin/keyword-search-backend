@@ -3,11 +3,10 @@ package api_auth
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/config"
-	api_error2 "github.com/miniyus/go-fiber/internal/core/api_error"
+	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/auth"
 	"go.uber.org/zap"
 	"log"
-	"net/http"
 )
 
 type Handler interface {
@@ -25,29 +24,21 @@ func NewHandler(service Service) *HandlerStruct {
 	return &HandlerStruct{service: service}
 }
 
-func validateSignUp(signUp *SignUp) (bool, *api_error2.ErrorResponse) {
-	if err := api_error2.Validate(signUp); err != nil {
-		errRes := &api_error2.ErrorResponse{
-			Status:       "error",
-			Code:         fiber.StatusBadRequest,
-			Message:      http.StatusText(fiber.StatusBadRequest),
-			FailedFields: err,
-		}
+func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ErrorResponse) {
+	if err := api_error.Validate(signUp); err != nil {
+		errRes := api_error.NewValidationError(ctx)
+		errRes.FailedFields = err
 
-		return false, errRes
+		return false, &errRes
 	}
 
 	if signUp.Password != signUp.PasswordConfirm {
-		errRes := &api_error2.ErrorResponse{
-			Status:  "error",
-			Code:    fiber.StatusBadRequest,
-			Message: http.StatusText(fiber.StatusBadRequest),
-			FailedFields: map[string]string{
-				"PasswordConfirm": "패스워드와 패스워드 확인 필드가 같지 않습니다.",
-			},
+		errRes := api_error.NewValidationError(ctx)
+		errRes.FailedFields = map[string]string{
+			"PasswordConfirm": "패스워드와 패스워드 확인 필드가 같지 않습니다.",
 		}
 
-		return false, errRes
+		return false, &errRes
 	}
 
 	return true, nil
@@ -57,16 +48,12 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	signUp := &SignUp{}
 	err := ctx.BodyParser(signUp)
 	if err != nil {
-		errRes := api_error2.ErrorResponse{
-			Status:  "error",
-			Code:    fiber.StatusBadRequest,
-			Message: http.StatusText(fiber.StatusBadRequest),
-		}
-		return errRes.Response(ctx)
+		errRes := api_error.NewValidationError(ctx)
+		return errRes.Response()
 	}
 
-	if isValid, errRes := validateSignUp(signUp); !isValid {
-		return errRes.Response(ctx)
+	if isValid, errRes := validateSignUp(ctx, signUp); !isValid {
+		return errRes.Response()
 	}
 
 	result, err := h.service.SignUp(signUp)
@@ -77,16 +64,12 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	return ctx.JSON(result)
 }
 
-func validateSignIn(in *SignIn) (bool, *api_error2.ErrorResponse) {
-	if err := api_error2.Validate(in); err != nil {
-		errRes := &api_error2.ErrorResponse{
-			Status:       "error",
-			Code:         fiber.StatusBadRequest,
-			Message:      http.StatusText(fiber.StatusBadRequest),
-			FailedFields: err,
-		}
+func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ErrorResponse) {
+	if err := api_error.Validate(in); err != nil {
+		errRes := api_error.NewValidationError(ctx)
+		errRes.FailedFields = err
 
-		return false, errRes
+		return false, &errRes
 	}
 
 	return true, nil
@@ -96,17 +79,13 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 	signIn := &SignIn{}
 	err := ctx.BodyParser(signIn)
 	if err != nil {
-		errRes := api_error2.ErrorResponse{
-			Status:  "error",
-			Code:    fiber.StatusBadRequest,
-			Message: http.StatusText(fiber.StatusBadRequest),
-		}
+		errRes := api_error.NewValidationError(ctx)
 
-		return errRes.Response(ctx)
+		return errRes.Response()
 	}
 
-	if isValid, errRes := validateSignIn(signIn); !isValid {
-		return errRes.Response(ctx)
+	if isValid, errRes := validateSignIn(ctx, signIn); !isValid {
+		return errRes.Response()
 	}
 
 	result, err := h.service.SignIn(signIn)
