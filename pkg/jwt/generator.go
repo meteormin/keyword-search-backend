@@ -10,11 +10,13 @@ import (
 type Generator interface {
 	Generate(claims jwtLib.Claims, privateKey *rsa.PrivateKey) (*string, error)
 	GetPrivateKey() *rsa.PrivateKey
+	GetExp() int
 }
 
 type GeneratorStruct struct {
 	PrivateKey *rsa.PrivateKey
 	PublicKey  crypto.PublicKey
+	Exp        int
 }
 
 func (g *GeneratorStruct) Generate(claims jwtLib.Claims, privateKey *rsa.PrivateKey) (*string, error) {

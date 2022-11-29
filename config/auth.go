@@ -10,6 +10,7 @@ import (
 
 type Auth struct {
 	Jwt jwtWare.Config
+	Exp int
 }
 
 func auth() Auth {
@@ -35,10 +36,11 @@ func auth() Auth {
 	priKey := rsGen.PrivatePemDecode(privateKey)
 
 	return Auth{
-		jwtWare.Config{
+		Jwt: jwtWare.Config{
 			SigningMethod: "RS256",
 			SigningKey:    priKey.Public(),
 			TokenLookup:   "header:Authorization",
 		},
+		Exp: 86400,
 	}
 }

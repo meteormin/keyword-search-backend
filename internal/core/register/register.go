@@ -28,6 +28,7 @@ func boot(w container.Container) {
 		return &jwt.GeneratorStruct{
 			PrivateKey: privateKey,
 			PublicKey:  privateKey.Public(),
+			Exp:        w.Config().Auth.Exp,
 		}
 	}
 

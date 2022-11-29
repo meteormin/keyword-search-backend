@@ -65,9 +65,12 @@ func (s *ServiceStruct) SignIn(in *SignIn) (*entity.AccessToken, error) {
 		if !hashCheck(user.Password, in.Password) {
 			return nil, fiber.NewError(fiber.StatusUnauthorized, "비밀번호가 틀렸습니다.")
 		}
+		createdAt := time.Now()
+		expTime := time.Duration(s.tokenGenerator.GetExp())
 
-		expiresAt := time.Now().Add(time.Hour * 24)
-		token, err := s.generateToken(user, expiresAt.Unix())
+		expiresIn := createdAt.Add(time.Second * expTime)
+
+		token, err := s.generateToken(user, expiresIn.Unix())
 		if err != nil {
 			return nil, err
 		}
@@ -79,7 +82,7 @@ func (s *ServiceStruct) SignIn(in *SignIn) (*entity.AccessToken, error) {
 		accessToken := entity.AccessToken{
 			Token:     *token,
 			UserId:    user.ID,
-			ExpiresAt: expiresAt,
+			ExpiresAt: expiresIn,
 		}
 
 		t, err := s.repo.Create(accessToken)
