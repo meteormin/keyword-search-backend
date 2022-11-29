@@ -23,9 +23,9 @@ type User struct {
 
 func Middlewares() []fiber.Handler {
 	mws := []fiber.Handler{
-		JwtMiddleware,
-		GetUserFromJWT,
-		CheckExpired,
+		JwtMiddleware,  // check exists jwt
+		GetUserFromJWT, // get user information from jwt
+		CheckExpired,   // check expired jwt
 	}
 
 	return mws
