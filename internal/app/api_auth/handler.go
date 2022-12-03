@@ -61,7 +61,7 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(result)
+	return ctx.Status(fiber.StatusCreated).JSON(result)
 }
 
 func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ErrorResponse) {
@@ -93,7 +93,7 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(fiber.Map{
+	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"token":      result.Token,
 		"expires_at": result.ExpiresAt,
 	})

@@ -1,8 +1,6 @@
-package users
+package hosts
 
-import (
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 func New(db *gorm.DB) Handler {
 	repo := NewRepository(db)

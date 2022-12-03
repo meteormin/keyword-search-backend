@@ -5,7 +5,7 @@ import "github.com/miniyus/go-fiber/internal/entity"
 type Service interface {
 	All() ([]UserResponse, error)
 	Get(pk uint) (*UserResponse, error)
-	Update(pk uint, user PatchUser) (*UserResponse, error)
+	Update(pk uint, user *PatchUser) (*UserResponse, error)
 	ResetPassword(pk uint, passwordStruct ResetPasswordStruct) (*UserResponse, error)
 }
 
@@ -56,7 +56,7 @@ func (s *ServiceStruct) Get(pk uint) (*UserResponse, error) {
 
 }
 
-func (s *ServiceStruct) Update(pk uint, user PatchUser) (*UserResponse, error) {
+func (s *ServiceStruct) Update(pk uint, user *PatchUser) (*UserResponse, error) {
 	rsUser, err := s.repo.Update(pk, entity.User{
 		Email: user.Email,
 	})

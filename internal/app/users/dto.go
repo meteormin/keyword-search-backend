@@ -13,7 +13,7 @@ type UserResponse struct {
 }
 
 type PatchUser struct {
-	Email string `json:"email"`
+	Email string `json:"email" validate:"email"`
 }
 
 type ResetPasswordStruct struct {

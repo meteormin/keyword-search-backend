@@ -38,7 +38,7 @@ func (h *HandlerStruct) All(ctx *fiber.Ctx) error {
 
 func (h *HandlerStruct) Get(ctx *fiber.Ctx) error {
 	prams := ctx.AllParams()
-	userId, err := strconv.ParseUint(prams["id"], 0, 64)
+	userId, err := strconv.ParseUint(prams["id"], 10, 64)
 	if err != nil {
 		return err
 	}

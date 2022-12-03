@@ -1,8 +1,10 @@
 package config
 
 import (
+	gormLogger "gorm.io/gorm/logger"
 	"os"
 	"strconv"
+	"time"
 )
 
 type DB struct {
@@ -14,6 +16,7 @@ type DB struct {
 	TimeZone    string
 	SSLMode     bool
 	AutoMigrate bool
+	Logger      gormLogger.Config
 }
 
 func database() DB {
@@ -32,5 +35,11 @@ func database() DB {
 		TimeZone:    os.Getenv("TIME_ZONE"),
 		SSLMode:     false,
 		AutoMigrate: autoMigrate,
+		Logger: gormLogger.Config{
+			SlowThreshold:             time.Second,
+			LogLevel:                  gormLogger.Silent,
+			IgnoreRecordNotFoundError: true,
+			Colorful:                  true,
+		},
 	}
 }
