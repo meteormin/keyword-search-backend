@@ -1,6 +1,9 @@
 package hosts
 
+import "github.com/miniyus/go-fiber/internal/entity"
+
 type CreateHost struct {
+	UserId      uint   `json:"user_id"`
 	Host        string `json:"host" validate:"required"`
 	Subject     string `json:"subject" validate:"required,uri"`
 	Description string `json:"description" validate:"required"`
@@ -9,6 +12,8 @@ type CreateHost struct {
 }
 
 type UpdateHost struct {
+	UserId      uint   `json:"user_id"`
+	Host        string `json:"host" validate:"required"`
 	Subject     string `json:"subject" validate:"required"`
 	Description string `json:"description" validate:"required"`
 	Path        string `json:"path" validate:"required,dir"`
@@ -16,10 +21,12 @@ type UpdateHost struct {
 }
 
 type HostResponse struct {
-	Id          uint   `json:"id"`
-	Host        string `json:"host"`
-	Subject     string `json:"subject"`
-	Description string `json:"description"`
-	Path        string `json:"path"`
-	Publish     bool   `json:"publish"`
+	Id          uint            `json:"id"`
+	UserId      uint            `json:"user_id"`
+	Host        string          `json:"host"`
+	Subject     string          `json:"subject"`
+	Description string          `json:"description"`
+	Path        string          `json:"path"`
+	Publish     bool            `json:"publish"`
+	Search      []entity.Search `json:"search"`
 }

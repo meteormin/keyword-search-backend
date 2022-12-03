@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/utils"
+	"net/http"
 	"strconv"
 )
 
@@ -24,9 +25,14 @@ func NewHandler(service Service) *HandlerStruct {
 }
 
 func (h *HandlerStruct) Create(c *fiber.Ctx) error {
+	user, err := utils.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
 	dto := &CreateHost{}
 
-	err := c.BodyParser(dto)
+	err = c.BodyParser(dto)
 	if err != nil {
 		errRes := api_error.NewValidationError(c)
 		return errRes.Response()
@@ -36,6 +42,8 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	dto.UserId = user.Id
 
 	result, err := h.service.Create(dto)
 
@@ -66,6 +74,18 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return err
 	}
 
+	user, err := utils.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
+	exists, err := h.service.Find(uint(pk))
+	if exists.UserId != user.Id || err != nil {
+		status := fiber.StatusForbidden
+		errRes := api_error.NewErrorResponse(c, status, http.StatusText(status))
+		return errRes.Response()
+	}
+
 	result, err := h.service.Update(uint(pk), dto)
 
 	if err != nil {
@@ -83,16 +103,29 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 		return err
 	}
 
-	result, err := h.service.Find(uint(pk))
+	user, err := utils.GetAuthUser(c)
 	if err != nil {
 		return err
+	}
+
+	result, err := h.service.Find(uint(pk))
+
+	if result.UserId != user.Id || err != nil {
+		status := fiber.StatusForbidden
+		errRes := api_error.NewErrorResponse(c, status, http.StatusText(status))
+		return errRes.Response()
 	}
 
 	return c.JSON(result)
 }
 
 func (h *HandlerStruct) All(c *fiber.Ctx) error {
-	results, err := h.service.All()
+	user, err := utils.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
+	results, err := h.service.AllFromUser(user.Id)
 	if err != nil {
 		return err
 	}

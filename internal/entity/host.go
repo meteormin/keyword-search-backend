@@ -6,6 +6,8 @@ import (
 
 type Host struct {
 	gorm.Model
+	UserId      uint
+	User        User
 	Host        string   `gorm:"column:host;type:varchar(100);uniqueIndex" json:"host"`
 	Subject     string   `gorm:"column:subject;type:varchar(100)" json:"subject"`
 	Description string   `gorm:"column:description;type:varchar(255)" json:"description"`

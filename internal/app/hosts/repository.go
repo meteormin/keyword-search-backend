@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	All() ([]*entity.Host, error)
+	AllFromUser(userId uint) ([]*entity.Host, error)
 	Find(pk uint) (*entity.Host, error)
 	Create(host entity.Host) (*entity.Host, error)
 	Update(pk uint, host entity.Host) (*entity.Host, error)
@@ -26,6 +27,17 @@ func (r *RepositoryStruct) All() ([]*entity.Host, error) {
 	var hosts []*entity.Host
 
 	result := r.db.Find(&hosts)
+	_, err := database.HandleResult(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return hosts, nil
+}
+
+func (r *RepositoryStruct) AllFromUser(userId uint) ([]*entity.Host, error) {
+	var hosts []*entity.Host
+	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts)
 	_, err := database.HandleResult(result)
 	if err != nil {
 		return nil, err

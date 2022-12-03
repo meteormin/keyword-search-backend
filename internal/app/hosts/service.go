@@ -4,6 +4,7 @@ import "github.com/miniyus/go-fiber/internal/entity"
 
 type Service interface {
 	All() ([]*entity.Host, error)
+	AllFromUser(userId uint) ([]*entity.Host, error)
 	Find(pk uint) (*entity.Host, error)
 	Create(host *CreateHost) (*entity.Host, error)
 	Update(pk uint, host *UpdateHost) (*entity.Host, error)
@@ -19,7 +20,16 @@ func NewService(repo Repository) *ServiceStruct {
 }
 
 func (s *ServiceStruct) All() ([]*entity.Host, error) {
-	return s.repo.All()
+	hosts, err := s.repo.All()
+	if err != nil {
+		return nil, err
+	}
+
+	return hosts, nil
+}
+
+func (s *ServiceStruct) AllFromUser(userId uint) ([]*entity.Host, error) {
+	return s.repo.AllFromUser(userId)
 }
 
 func (s *ServiceStruct) Find(pk uint) (*entity.Host, error) {
