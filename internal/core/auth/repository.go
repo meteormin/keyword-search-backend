@@ -105,7 +105,7 @@ func (repo *RepositoryStruct) FindByUserId(userId uint) (*entity.AccessToken, er
 
 	result := repo.db.Where(&entity.AccessToken{
 		UserId: userId,
-	}).First(&ent)
+	}).Last(&ent)
 
 	_, err := database.HandleResult(result)
 	if err != nil {

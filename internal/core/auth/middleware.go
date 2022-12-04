@@ -8,6 +8,7 @@ import (
 	"github.com/miniyus/go-fiber/database"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"log"
+	"time"
 )
 
 // 공통 미들웨어 작성
@@ -92,9 +93,9 @@ func jwtError(c *fiber.Ctx, err error) error {
 }
 
 func CheckExpired(c *fiber.Ctx) error {
-	config, ok := c.Locals(configure.Config).(configure.Configs)
+	config, ok := c.Locals(configure.Config).(*configure.Configs)
 	if !ok {
-		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "JWT is expired")
+		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "Can't Find Config Context")
 
 		return errRes.Response()
 	}
@@ -103,19 +104,19 @@ func CheckExpired(c *fiber.Ctx) error {
 
 	user, ok := c.Locals(configure.AuthUser).(*User)
 	if !ok {
-		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "JWT is expired")
+		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "Can't Find User Context")
 
 		return errRes.Response()
 	}
 
 	token, err := tokenRepository.FindByUserId(user.Id)
 	if err != nil {
-		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "JWT is expired")
+		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "Can't Find User From Database")
 
 		return errRes.Response()
 	}
 
-	if token.ExpiresAt.Unix() > user.ExpiresIn {
+	if token.ExpiresAt.Unix() > time.Now().Unix() {
 		return c.Next()
 	}
 

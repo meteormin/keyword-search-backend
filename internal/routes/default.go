@@ -16,9 +16,10 @@ func SetRoutes(container container.Container) {
 	var tokenGenerator jwt.Generator
 
 	container.Resolve(&tokenGenerator)
+
 	api_auth.Register(api, api_auth.New(container.Database(), tokenGenerator))
 
-	// need jwt token
 	users.Register(api, users.New(container.Database()))
+
 	hosts.Register(api, hosts.New(container.Database()))
 }
