@@ -1,6 +1,8 @@
 package register
 
 import (
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -50,6 +52,8 @@ func middlewares(w container.Container) {
 	w.App().Use(logger.Middleware)
 	w.App().Use(api_error.ErrorHandler)
 	w.App().Use(config.InjectConfigContext)
+	w.App().Use(cors.New(w.Config().Cors))
+	w.App().Use(csrf.New(w.Config().Csrf))
 }
 
 // Routes register Routes

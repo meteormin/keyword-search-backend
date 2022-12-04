@@ -2,6 +2,8 @@ package config
 
 import (
 	"github.com/gofiber/fiber/v2"
+	fCors "github.com/gofiber/fiber/v2/middleware/cors"
+	fCsrf "github.com/gofiber/fiber/v2/middleware/csrf"
 	loggerMiddleware "github.com/gofiber/fiber/v2/middleware/logger"
 	"log"
 	"os"
@@ -17,6 +19,8 @@ type Configs struct {
 	Database DB
 	Path     Path
 	Auth     Auth
+	Cors     fCors.Config
+	Csrf     fCsrf.Config
 }
 
 func GetConfigs() *Configs {
@@ -36,6 +40,8 @@ func GetConfigs() *Configs {
 		Database: database(),
 		Path:     getPath(),
 		Auth:     auth(),
+		Cors:     cors(),
+		Csrf:     csrf(),
 	}
 }
 
