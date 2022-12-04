@@ -3,7 +3,6 @@ package container
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/database"
 	"gorm.io/gorm"
 	"log"
 	"reflect"
@@ -24,17 +23,17 @@ type Container interface {
 
 type Wrapper struct {
 	app       *fiber.App
-	config    *config.Configs
 	database  *gorm.DB
+	config    *config.Configs
 	instances map[string]interface{}
 	bindings  map[reflect.Type]interface{}
 }
 
-func NewContainer(app *fiber.App, config *config.Configs) *Wrapper {
+func NewContainer(app *fiber.App, db *gorm.DB, config *config.Configs) *Wrapper {
 	return &Wrapper{
 		app:       app,
+		database:  db,
 		config:    config,
-		database:  database.DB(config.Database),
 		instances: make(map[string]interface{}),
 		bindings:  make(map[reflect.Type]interface{}),
 	}
