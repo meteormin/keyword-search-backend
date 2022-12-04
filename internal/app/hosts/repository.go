@@ -8,11 +8,11 @@ import (
 
 type Repository interface {
 	All() ([]*entity.Host, error)
-	AllFromUser(userId uint) ([]*entity.Host, error)
-	Find(pk uint) (*entity.Host, error)
+	GetByUserId(userId uint) ([]*entity.Host, error)
+	Find(pk uint, userId uint) (*entity.Host, error)
 	Create(host entity.Host) (*entity.Host, error)
-	Update(pk uint, host entity.Host) (*entity.Host, error)
-	Delete(pk uint) (bool, error)
+	Update(pk uint, userId uint, host entity.Host) (*entity.Host, error)
+	Delete(pk uint, userId uint) (bool, error)
 }
 
 type RepositoryStruct struct {
@@ -35,7 +35,7 @@ func (r *RepositoryStruct) All() ([]*entity.Host, error) {
 	return hosts, nil
 }
 
-func (r *RepositoryStruct) AllFromUser(userId uint) ([]*entity.Host, error) {
+func (r *RepositoryStruct) GetByUserId(userId uint) ([]*entity.Host, error) {
 	var hosts []*entity.Host
 	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts)
 	_, err := database.HandleResult(result)
@@ -46,9 +46,9 @@ func (r *RepositoryStruct) AllFromUser(userId uint) ([]*entity.Host, error) {
 	return hosts, nil
 }
 
-func (r *RepositoryStruct) Find(pk uint) (*entity.Host, error) {
+func (r *RepositoryStruct) Find(pk uint, userId uint) (*entity.Host, error) {
 	host := entity.Host{}
-	result := r.db.Find(&host, pk)
+	result := r.db.Where(entity.Host{UserId: userId}).Find(&host, pk)
 	_, err := database.HandleResult(result)
 
 	if err != nil {
@@ -69,8 +69,8 @@ func (r *RepositoryStruct) Create(host entity.Host) (*entity.Host, error) {
 	return &host, nil
 }
 
-func (r *RepositoryStruct) Update(pk uint, host entity.Host) (*entity.Host, error) {
-	exists, err := r.Find(pk)
+func (r *RepositoryStruct) Update(pk uint, userId uint, host entity.Host) (*entity.Host, error) {
+	exists, err := r.Find(pk, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +85,8 @@ func (r *RepositoryStruct) Update(pk uint, host entity.Host) (*entity.Host, erro
 	return &host, nil
 }
 
-func (r *RepositoryStruct) Delete(pk uint) (bool, error) {
-	exists, err := r.Find(pk)
+func (r *RepositoryStruct) Delete(pk uint, userId uint) (bool, error) {
+	exists, err := r.Find(pk, userId)
 	if err != nil {
 		return false, nil
 	}

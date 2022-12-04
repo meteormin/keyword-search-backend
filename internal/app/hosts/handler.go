@@ -31,7 +31,6 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 	}
 
 	dto := &CreateHost{}
-
 	err = c.BodyParser(dto)
 	if err != nil {
 		errRes := api_error.NewValidationError(c)
@@ -46,7 +45,6 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 	dto.UserId = user.Id
 
 	result, err := h.service.Create(dto)
-
 	if err != nil {
 		return err
 	}
@@ -57,8 +55,8 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 	dto := &UpdateHost{}
 	params := c.AllParams()
-	pk, err := strconv.ParseUint(params["id"], 10, 64)
 
+	pk, err := strconv.ParseUint(params["id"], 10, 64)
 	if err != nil {
 		return err
 	}
@@ -79,15 +77,14 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return err
 	}
 
-	exists, err := h.service.Find(uint(pk))
+	exists, err := h.service.Find(uint(pk), user.Id)
 	if exists.UserId != user.Id || err != nil {
 		status := fiber.StatusForbidden
 		errRes := api_error.NewErrorResponse(c, status, http.StatusText(status))
 		return errRes.Response()
 	}
 
-	result, err := h.service.Update(uint(pk), dto)
-
+	result, err := h.service.Update(uint(pk), user.Id, dto)
 	if err != nil {
 		return err
 	}
@@ -108,8 +105,7 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 		return err
 	}
 
-	result, err := h.service.Find(uint(pk))
-
+	result, err := h.service.Find(uint(pk), user.Id)
 	if result.UserId != user.Id || err != nil {
 		status := fiber.StatusForbidden
 		errRes := api_error.NewErrorResponse(c, status, http.StatusText(status))
@@ -125,7 +121,7 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 		return err
 	}
 
-	results, err := h.service.AllFromUser(user.Id)
+	results, err := h.service.GetByUserId(user.Id)
 	if err != nil {
 		return err
 	}
@@ -141,8 +137,12 @@ func (h *HandlerStruct) Delete(c *fiber.Ctx) error {
 		return err
 	}
 
-	result, err := h.service.Delete(uint(pk))
+	user, err := utils.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
 
+	result, err := h.service.Delete(uint(pk), user.Id)
 	if err != nil {
 		return err
 	}
