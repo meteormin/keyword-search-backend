@@ -2,9 +2,9 @@ package utils
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/context"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/auth"
+	"github.com/miniyus/go-fiber/internal/core/context"
 	"net/http"
 	"time"
 )

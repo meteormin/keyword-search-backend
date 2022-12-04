@@ -10,5 +10,14 @@ func Register(router fiber.Router, handler Handler) {
 	authApi.Post("/register", handler.SignUp)
 	authApi.Post("/token", handler.SignIn)
 
-	authApi.Get("/me", auth.JwtMiddleware, auth.GetUserFromJWT, auth.CheckExpired, handler.Me)
+	authMiddlewares := auth.Middlewares()
+
+	meHandlers := append(authMiddlewares, handler.Me)
+	authApi.Get("/me", meHandlers...)
+
+	resetPassHandlers := append(authMiddlewares, handler.ResetPassword)
+	authApi.Patch("/password", resetPassHandlers...)
+
+	revokeHandlers := append(authMiddlewares, handler.RevokeToken)
+	authApi.Delete("/revoke", revokeHandlers...)
 }

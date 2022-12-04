@@ -51,6 +51,6 @@ func logger() LoggerConfig {
 		Compress:   true,
 		TimeKey:    "timestamp",
 		TimeZone:   os.Getenv("TIME_ZONE"),
-		LogLevel:   zapcore.InfoLevel,
+		LogLevel:   zapcore.DebugLevel,
 	}
 }

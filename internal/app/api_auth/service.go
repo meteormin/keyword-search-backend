@@ -7,6 +7,7 @@ import (
 	"github.com/miniyus/go-fiber/internal/core/auth"
 	"github.com/miniyus/go-fiber/internal/entity"
 	"github.com/miniyus/go-fiber/pkg/jwt"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -14,19 +15,23 @@ import (
 type Service interface {
 	SignIn(signIn *SignIn) (*entity.AccessToken, error)
 	SignUp(signUp *SignUp) (*SignUpResponse, error)
+	ResetPassword(pk uint, passwordStruct *ResetPasswordStruct) (*entity.User, error)
+	RevokeToken(pk uint, token string) (bool, error)
 }
 
 type ServiceStruct struct {
 	repo           auth.Repository
 	userRepo       users.Repository
 	tokenGenerator jwt.Generator
+	logger         *zap.SugaredLogger
 }
 
-func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.Generator) *ServiceStruct {
+func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.Generator, logger *zap.SugaredLogger) *ServiceStruct {
 	return &ServiceStruct{
 		repo:           repo,
 		userRepo:       userRepo,
 		tokenGenerator: generator,
+		logger:         logger,
 	}
 }
 
@@ -137,4 +142,42 @@ func (s *ServiceStruct) SignUp(up *SignUp) (*SignUpResponse, error) {
 	} else {
 		return nil, fiber.NewError(fiber.StatusConflict, "User already exists")
 	}
+}
+
+func (s *ServiceStruct) ResetPassword(pk uint, passwordStruct *ResetPasswordStruct) (*entity.User, error) {
+	if passwordStruct.Password != passwordStruct.PasswordConfirm {
+		return nil, fiber.NewError(fiber.StatusBadRequest, "패스워드와 패스워드확인 필드가 일치하지않습니다.")
+	}
+
+	rsUser, err := s.userRepo.Update(pk, entity.User{
+		Password: hashPassword(passwordStruct.Password),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return rsUser, nil
+}
+
+func (s *ServiceStruct) RevokeToken(pk uint, token string) (bool, error) {
+	user, err := s.userRepo.Find(pk)
+	if err != nil {
+		return false, err
+	}
+
+	entToken, err := s.repo.FindByToken(token)
+	if err != nil {
+		return false, err
+	}
+
+	if entToken.UserId == user.ID {
+		rs, err := s.repo.Delete(entToken.ID)
+		if err != nil {
+			return false, err
+		}
+		return rs, nil
+	}
+
+	return false, nil
 }

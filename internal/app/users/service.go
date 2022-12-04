@@ -1,12 +1,14 @@
 package users
 
-import "github.com/miniyus/go-fiber/internal/entity"
+import (
+	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/go-fiber/internal/utils"
+)
 
 type Service interface {
 	All() ([]UserResponse, error)
 	Get(pk uint) (*UserResponse, error)
 	Update(pk uint, user *PatchUser) (*UserResponse, error)
-	ResetPassword(pk uint, passwordStruct ResetPasswordStruct) (*UserResponse, error)
 }
 
 type ServiceStruct struct {
@@ -18,13 +20,15 @@ func NewService(repo Repository) *ServiceStruct {
 }
 
 func toUserResponseFromEntity(user *entity.User) UserResponse {
+	createdAt := utils.TimeIn(user.CreatedAt, "Asia/Seoul")
+	updatedAt := utils.TimeIn(user.UpdatedAt, "Asia/Seoul")
 	return UserResponse{
 		Id:              user.ID,
 		Username:        user.Username,
 		Email:           user.Email,
-		EmailVerifiedAt: user.EmailVerifiedAt,
-		CreatedAt:       user.CreatedAt,
-		UpdatedAt:       user.UpdatedAt,
+		EmailVerifiedAt: user.EmailVerifiedAt.Format("2006-01-02 15:04:05"),
+		CreatedAt:       createdAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:       updatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
 
@@ -59,20 +63,6 @@ func (s *ServiceStruct) Get(pk uint) (*UserResponse, error) {
 func (s *ServiceStruct) Update(pk uint, user *PatchUser) (*UserResponse, error) {
 	rsUser, err := s.repo.Update(pk, entity.User{
 		Email: user.Email,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	userRes := toUserResponseFromEntity(rsUser)
-
-	return &userRes, nil
-}
-
-func (s *ServiceStruct) ResetPassword(pk uint, passwordStruct ResetPasswordStruct) (*UserResponse, error) {
-	rsUser, err := s.repo.Update(pk, entity.User{
-		Password: passwordStruct.Password,
 	})
 
 	if err != nil {

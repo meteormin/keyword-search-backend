@@ -7,8 +7,8 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	configure "github.com/miniyus/go-fiber/config"
 	"github.com/miniyus/go-fiber/database"
-	"github.com/miniyus/go-fiber/internal/context"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
+	"github.com/miniyus/go-fiber/internal/core/context"
 	"go.uber.org/zap"
 	"log"
 	"strconv"
@@ -84,13 +84,18 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 	email := claims["email"].(string)
 	createdAt := claims["created_at"].(string)
 	expiresIn := int64(claims["expires_in"].(float64))
+	layout := "2006-01-02T15:04:05Z07:00"
+	createdAtTime, err := time.Parse(layout, createdAt)
+	if err != nil {
+		return err
+	}
 
 	currentUser := &User{
 		Id:        userId,
 		GroupId:   groupId,
 		Username:  username,
 		Email:     email,
-		CreatedAt: createdAt,
+		CreatedAt: createdAtTime.Format("2006-01-02 15:04:05"),
 		ExpiresIn: expiresIn,
 	}
 

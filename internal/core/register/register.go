@@ -6,9 +6,9 @@ import (
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/miniyus/go-fiber/internal/context"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/container"
+	"github.com/miniyus/go-fiber/internal/core/context"
 	"github.com/miniyus/go-fiber/internal/core/logger"
 	router "github.com/miniyus/go-fiber/internal/routes"
 	"github.com/miniyus/go-fiber/pkg/jwt"
@@ -19,9 +19,9 @@ import (
 
 // Boot is High Priority
 func boot(w container.Container) {
-	w.Inject("app", w.App())
-	w.Inject("config", w.Config())
-	w.Inject("db", w.Database())
+	w.Inject(context.App, w.App())
+	w.Inject(context.Config, w.Config())
+	w.Inject(context.Db, w.Database())
 
 	jwtGenerator := func() *jwt.GeneratorStruct {
 		dataPath := w.Config().Path.DataPath
@@ -61,16 +61,20 @@ func boot(w container.Container) {
 func middlewares(w container.Container) {
 	w.App().Use(flogger.New(w.Config().Logger))
 	w.App().Use(recover.New())
+
+	// Add Context Container
 	w.App().Use(func(ctx *fiber.Ctx) error {
 		ctx.Locals(context.Container, w)
 		return ctx.Next()
 	})
 
+	// Add Context Config
 	w.App().Use(func(ctx *fiber.Ctx) error {
 		ctx.Locals(context.Config, w.Config())
 		return ctx.Next()
 	})
 
+	// AAdd Context Logger
 	w.App().Use(func(ctx *fiber.Ctx) error {
 		zLogger := w.Get(context.Logger).(*zap.SugaredLogger)
 

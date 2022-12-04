@@ -23,3 +23,8 @@ type SignUpResponse struct {
 	UserId uint `json:"user_id"`
 	TokenInfo
 }
+
+type ResetPasswordStruct struct {
+	Password        string `json:"password" validate:"required"`
+	PasswordConfirm string `json:"password_confirm" validate:"required"`
+}
