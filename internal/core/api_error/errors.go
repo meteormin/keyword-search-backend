@@ -1,11 +1,7 @@
 package api_error
 
 import (
-	"encoding/json"
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/context"
-	"go.uber.org/zap"
-	"log"
 	"net/http"
 )
 
@@ -64,15 +60,6 @@ func (er *ErrorResponse) Response() error {
 
 	if er.Message == "" {
 		er.Message = http.StatusText(er.Code)
-	}
-
-	logger, ok := er.ctx.Locals(context.Logger).(*zap.SugaredLogger)
-	if ok {
-		b, err := json.Marshal(er)
-		if err != nil {
-			log.Fatal(err)
-		}
-		logger.Errorln(string(b))
 	}
 
 	return er.ctx.Status(er.Code).JSON(er)
