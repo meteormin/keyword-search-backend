@@ -2,7 +2,7 @@ package api_auth
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/config"
+	"github.com/miniyus/go-fiber/internal/context"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/auth"
 	"go.uber.org/zap"
@@ -100,9 +100,9 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 }
 
 func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
-	user, ok := ctx.Locals(config.AuthUser).(*auth.User)
+	user, ok := ctx.Locals(context.AuthUser).(*auth.User)
 	if !ok {
-		logger, ok := ctx.Locals(config.Logger).(*zap.SugaredLogger)
+		logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
 		log.Print(logger)
 		if !ok {
 			return fiber.NewError(500, "...")

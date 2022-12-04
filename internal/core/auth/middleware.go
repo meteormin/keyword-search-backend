@@ -1,13 +1,17 @@
 package auth
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	jwtWare "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
 	configure "github.com/miniyus/go-fiber/config"
 	"github.com/miniyus/go-fiber/database"
+	"github.com/miniyus/go-fiber/internal/context"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
+	"go.uber.org/zap"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -26,13 +30,46 @@ func Middlewares() []fiber.Handler {
 	mws := []fiber.Handler{
 		JwtMiddleware,  // check exists jwt
 		GetUserFromJWT, // get user information from jwt
-		CheckExpired,   // check expired jwt
+		AccessLogMiddleware,
+		CheckExpired, // check expired jwt
 	}
 
 	return mws
 }
 
+func AccessLogMiddleware(c *fiber.Ctx) error {
+	logger, ok := c.Locals(context.Logger).(*zap.SugaredLogger)
+	if !ok {
+		log.Print("Failed Load logger context")
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed Load logger context")
+	}
+
+	start := time.Now()
+	err := c.Next()
+	elapsed := time.Since(start).Milliseconds()
+	cu, ok := c.Locals(context.AuthUser).(*User)
+	userID := ""
+	if !ok {
+		userID = "guest"
+	} else {
+		userID = strconv.Itoa(int(cu.Id))
+	}
+	req := c.Path()
+	method := c.Method()
+
+	errString := ""
+	if err != nil {
+		errString = fmt.Sprintf("| %s", err.Error())
+	}
+
+	logger.Info(fmt.Sprintf("user: %4s | IP: %15s | %6dms | %s | %s %s",
+		userID, c.IP(), elapsed, method, req, errString))
+
+	return err
+}
+
 func GetUserFromJWT(c *fiber.Ctx) error {
+
 	jwtData, ok := c.Locals("user").(*jwt.Token)
 	if !ok {
 		log.Print("access guest")
@@ -57,12 +94,12 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 		ExpiresIn: expiresIn,
 	}
 
-	c.Locals(configure.AuthUser, currentUser)
+	c.Locals(context.AuthUser, currentUser)
 	return c.Next()
 }
 
 func JwtMiddleware(c *fiber.Ctx) error {
-	config, ok := c.Locals(configure.Config).(*configure.Configs)
+	config, ok := c.Locals(context.Config).(*configure.Configs)
 	if !ok {
 		return fiber.NewError(fiber.StatusInternalServerError, "Can not found Config Context...")
 	}
@@ -93,7 +130,7 @@ func jwtError(c *fiber.Ctx, err error) error {
 }
 
 func CheckExpired(c *fiber.Ctx) error {
-	config, ok := c.Locals(configure.Config).(*configure.Configs)
+	config, ok := c.Locals(context.Config).(*configure.Configs)
 	if !ok {
 		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "Can't Find Config Context")
 
@@ -102,7 +139,7 @@ func CheckExpired(c *fiber.Ctx) error {
 
 	tokenRepository := NewRepository(database.DB(config.Database))
 
-	user, ok := c.Locals(configure.AuthUser).(*User)
+	user, ok := c.Locals(context.AuthUser).(*User)
 	if !ok {
 		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "Can't Find User Context")
 

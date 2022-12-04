@@ -11,16 +11,17 @@ import (
 )
 
 type Configs struct {
-	AppEnv   string
-	AppPort  int
-	Locale   string
-	App      fiber.Config
-	Logger   loggerMiddleware.Config
-	Database DB
-	Path     Path
-	Auth     Auth
-	Cors     fCors.Config
-	Csrf     fCsrf.Config
+	AppEnv       string
+	AppPort      int
+	Locale       string
+	App          fiber.Config
+	Logger       loggerMiddleware.Config
+	CustomLogger LoggerConfig
+	Database     DB
+	Path         Path
+	Auth         Auth
+	Cors         fCors.Config
+	Csrf         fCsrf.Config
 }
 
 func GetConfigs() *Configs {
@@ -32,21 +33,16 @@ func GetConfigs() *Configs {
 	}
 
 	return &Configs{
-		AppEnv:   os.Getenv("APP_ENV"),
-		AppPort:  port,
-		Locale:   os.Getenv("LOCALE"),
-		App:      app(),
-		Logger:   logger(),
-		Database: database(),
-		Path:     getPath(),
-		Auth:     auth(),
-		Cors:     cors(),
-		Csrf:     csrf(),
+		AppEnv:       os.Getenv("APP_ENV"),
+		AppPort:      port,
+		Locale:       os.Getenv("LOCALE"),
+		App:          app(),
+		Logger:       flogger(),
+		CustomLogger: logger(),
+		Database:     database(),
+		Path:         getPath(),
+		Auth:         auth(),
+		Cors:         cors(),
+		Csrf:         csrf(),
 	}
-}
-
-func InjectConfigContext(ctx *fiber.Ctx) error {
-	ctx.Locals(Config, GetConfigs())
-
-	return ctx.Next()
 }

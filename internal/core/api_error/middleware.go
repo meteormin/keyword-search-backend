@@ -3,7 +3,7 @@ package api_error
 import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/config"
+	"github.com/miniyus/go-fiber/internal/context"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +22,7 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 		return nil
 	}
 
-	logger, ok := ctx.Locals(config.Logger).(*zap.SugaredLogger)
+	logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
 	if !ok {
 		return OverrideDefaultErrorHandler(ctx, err)
 	}

@@ -1,8 +1,7 @@
 package logger
 
 import (
-	"fmt"
-	"github.com/miniyus/go-fiber/config"
+	"github.com/miniyus/go-fiber/internal/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -10,46 +9,52 @@ import (
 	"time"
 )
 
-var log *zap.SugaredLogger
+type Config struct {
+	TimeFormat string
+	FilePath   string
+	Filename   string
+	MaxSize    int
+	MaxBackups int
+	MaxAge     int
+	Compress   bool
+	TimeKey    string
+	TimeZone   string
+	LogLevel   zapcore.Level
+}
 
-func init() {
-	today := time.Now().Format("2006-01-02")
-	logFilename := path.Join(config.GetConfigs().Path.LogPath, fmt.Sprintf("log-%s.log", today))
+func NewLogger(config Config) *zap.SugaredLogger {
+	logFilename := path.Join(config.FilePath, config.Filename)
 
 	ll := &lumberjack.Logger{
 		Filename:   logFilename,
-		MaxSize:    10,
-		MaxBackups: 30,
-		MaxAge:     30,
-		Compress:   true,
+		MaxSize:    config.MaxSize,
+		MaxBackups: config.MaxBackups,
+		MaxAge:     config.MaxAge,
+		Compress:   config.Compress,
 	}
 
 	ws := zapcore.AddSync(ll)
-
 	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.TimeKey = "timestamp"
+	encoderConfig.TimeKey = config.TimeKey
 
 	encoderConfig.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+		t = utils.TimeIn(t, config.TimeZone)
 		type appendTimeEncoder interface {
 			AppendTimeLayout(time.Time, string)
 		}
 
 		if enc, ok := enc.(appendTimeEncoder); ok {
-			enc.AppendTimeLayout(t, "2006-01-02 15:04:05")
+			enc.AppendTimeLayout(t, config.TimeFormat)
 			return
 		}
 
-		enc.AppendString(t.Format("2006-01-02 15:04:05"))
+		enc.AppendString(t.Format(config.TimeFormat))
 	}
 
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.StacktraceKey = ""
 
-	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), ws, zap.InfoLevel)
+	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), ws, config.LogLevel)
 	logger := zap.New(core, zap.AddCaller())
-	log = logger.Sugar()
-}
-
-func GetLogger() *zap.SugaredLogger {
-	return log
+	return logger.Sugar()
 }
