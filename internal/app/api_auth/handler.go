@@ -119,26 +119,22 @@ func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
 }
 
 func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
-
 	user, err := utils.GetAuthUser(ctx)
 	if err != nil {
-		h.logger.Error(err)
 		errRes := api_error.NewFromError(ctx, err)
 		return errRes.Response()
 	}
 
 	dto := &ResetPasswordStruct{}
-	h.logger.Debug("parse body...")
+
 	err = ctx.BodyParser(dto)
 	if err != nil {
-		h.logger.Error(err)
 		errRes := api_error.NewValidationError(ctx)
 		return errRes.Response()
 	}
 
 	failedFields := api_error.Validate(dto)
 	if failedFields != nil {
-		h.logger.Error(err)
 		errRes := api_error.NewValidationError(ctx)
 		errRes.FailedFields = failedFields
 		return errRes.Response()
@@ -154,7 +150,6 @@ func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 
 	rs, err := h.service.ResetPassword(user.Id, dto)
 	if err != nil {
-		h.logger.Error(err)
 		errRes := api_error.NewFromError(ctx, err)
 		return errRes.Response()
 	}
