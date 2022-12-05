@@ -19,9 +19,9 @@ import (
 
 // Boot is High Priority
 func boot(w container.Container) {
-	w.Inject(context.App, w.App())
-	w.Inject(context.Config, w.Config())
-	w.Inject(context.Db, w.Database())
+	w.Singleton(context.App, w.App())
+	w.Singleton(context.Config, w.Config())
+	w.Singleton(context.Db, w.Database())
 
 	jwtGenerator := func() *jwt.GeneratorStruct {
 		dataPath := w.Config().Path.DataPath
@@ -37,11 +37,11 @@ func boot(w container.Container) {
 	var tg jwt.Generator
 	w.Bind(&tg, jwtGenerator)
 	w.Resolve(&tg)
-	w.Inject(context.JwtGenerator, tg)
+	w.Singleton(context.JwtGenerator, tg)
 
 	var logs *zap.SugaredLogger
 	loggerConfig := w.Config().CustomLogger
-	w.Bind(&logs, logger.NewLogger(logger.Config{
+	w.Bind(&logs, logger.New(logger.Config{
 		TimeFormat: loggerConfig.TimeFormat,
 		FilePath:   loggerConfig.FilePath,
 		Filename:   loggerConfig.Filename,
@@ -54,7 +54,7 @@ func boot(w container.Container) {
 		LogLevel:   loggerConfig.LogLevel,
 	}))
 	w.Resolve(&logs)
-	w.Inject(context.Logger, logs)
+	w.Singleton(context.Logger, logs)
 }
 
 // Middlewares register middleware

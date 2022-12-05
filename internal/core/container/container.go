@@ -14,8 +14,7 @@ type Container interface {
 	Config() *config.Configs
 	Database() *gorm.DB
 	Instances() map[string]interface{}
-	InjectMap(instances map[string]interface{})
-	Inject(key string, instance interface{})
+	Singleton(key string, instance interface{})
 	Get(key string) interface{}
 	Bind(keyType interface{}, resolver interface{})
 	Resolve(keyType interface{}) interface{}
@@ -51,11 +50,7 @@ func (w *Wrapper) Database() *gorm.DB {
 	return w.database
 }
 
-func (w *Wrapper) InjectMap(instances map[string]interface{}) {
-	w.instances = instances
-}
-
-func (w *Wrapper) Inject(key string, instance interface{}) {
+func (w *Wrapper) Singleton(key string, instance interface{}) {
 	w.instances[key] = instance
 }
 

@@ -9,52 +9,41 @@ import (
 	"time"
 )
 
-type Config struct {
-	TimeFormat string
-	FilePath   string
-	Filename   string
-	MaxSize    int
-	MaxBackups int
-	MaxAge     int
-	Compress   bool
-	TimeKey    string
-	TimeZone   string
-	LogLevel   zapcore.Level
-}
+func New(config ...Config) *zap.SugaredLogger {
+	cfg := getDefaultConfig(config...)
 
-func NewLogger(config Config) *zap.SugaredLogger {
-	logFilename := path.Join(config.FilePath, config.Filename)
+	logFilename := path.Join(cfg.FilePath, cfg.Filename)
 
 	ll := &lumberjack.Logger{
 		Filename:   logFilename,
-		MaxSize:    config.MaxSize,
-		MaxBackups: config.MaxBackups,
-		MaxAge:     config.MaxAge,
-		Compress:   config.Compress,
+		MaxSize:    cfg.MaxSize,
+		MaxBackups: cfg.MaxBackups,
+		MaxAge:     cfg.MaxAge,
+		Compress:   cfg.Compress,
 	}
 
 	ws := zapcore.AddSync(ll)
 	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.TimeKey = config.TimeKey
+	encoderConfig.TimeKey = cfg.TimeKey
 
 	encoderConfig.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-		t = utils.TimeIn(t, config.TimeZone)
+		t = utils.TimeIn(t, cfg.TimeZone)
 		type appendTimeEncoder interface {
 			AppendTimeLayout(time.Time, string)
 		}
 
 		if enc, ok := enc.(appendTimeEncoder); ok {
-			enc.AppendTimeLayout(t, config.TimeFormat)
+			enc.AppendTimeLayout(t, cfg.TimeFormat)
 			return
 		}
 
-		enc.AppendString(t.Format(config.TimeFormat))
+		enc.AppendString(t.Format(cfg.TimeFormat))
 	}
 
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.StacktraceKey = ""
 
-	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), ws, config.LogLevel)
+	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), ws, cfg.LogLevel)
 	logger := zap.New(core, zap.AddCaller())
 	return logger.Sugar()
 }
