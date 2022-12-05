@@ -9,5 +9,5 @@ type BookMark struct {
 	Url         string `json:"url" gorm:"column:url;type:varchar(50)"`
 	Publish     bool   `json:"publish" gorm:"column:publish;type:bool"`
 	UserId      uint   `json:"user_id"`
-	User        User   `json:"user"`
+	User        User   `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }

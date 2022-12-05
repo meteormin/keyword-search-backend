@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type Search struct {
 	gorm.Model
 	HostId      uint   `json:"host_id"`
-	Host        Host   `json:"host"`
+	Host        Host   `json:"host" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Path        string `gorm:"column:path;type:varchar(50)" json:"path"`
 	Query       string `gorm:"column:path;type:varchar(50)" json:"query"`
 	Description string `gorm:"column:path;type:varchar(50)" json:"description"`
