@@ -6,10 +6,10 @@ import (
 
 type Service interface {
 	All() ([]*entity.Host, error)
-	GetByUserId(userId uint) ([]*entity.Host, error)
-	Find(pk uint, userId uint) (*entity.Host, error)
-	Create(host *CreateHost) (*entity.Host, error)
-	Update(pk uint, userId uint, host *UpdateHost) (*entity.Host, error)
+	GetByUserId(userId uint) ([]*HostResponse, error)
+	Find(pk uint, userId uint) (*HostResponse, error)
+	Create(host *CreateHost) (*HostResponse, error)
+	Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error)
 	Delete(pk uint, userId uint) (bool, error)
 }
 
@@ -30,15 +30,42 @@ func (s *ServiceStruct) All() ([]*entity.Host, error) {
 	return hosts, nil
 }
 
-func (s *ServiceStruct) GetByUserId(userId uint) ([]*entity.Host, error) {
-	return s.repo.GetByUserId(userId)
+func toResponseDto(host *entity.Host) *HostResponse {
+	return &HostResponse{
+		Id:          host.ID,
+		Host:        host.Host,
+		Path:        host.Path,
+		UserId:      host.UserId,
+		Subject:     host.Subject,
+		Description: host.Description,
+		Publish:     host.Publish,
+	}
 }
 
-func (s *ServiceStruct) Find(pk uint, userId uint) (*entity.Host, error) {
-	return s.repo.Find(pk, userId)
+func (s *ServiceStruct) GetByUserId(userId uint) ([]*HostResponse, error) {
+	ent, err := s.repo.GetByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var dto []*HostResponse
+	for _, e := range ent {
+		dto = append(dto, toResponseDto(e))
+	}
+
+	return dto, nil
 }
 
-func (s *ServiceStruct) Create(host *CreateHost) (*entity.Host, error) {
+func (s *ServiceStruct) Find(pk uint, userId uint) (*HostResponse, error) {
+	ent, err := s.repo.Find(pk, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return toResponseDto(ent), nil
+}
+
+func (s *ServiceStruct) Create(host *CreateHost) (*HostResponse, error) {
 	ent := entity.Host{
 		UserId:      host.UserId,
 		Host:        host.Host,
@@ -53,10 +80,10 @@ func (s *ServiceStruct) Create(host *CreateHost) (*entity.Host, error) {
 		return nil, err
 	}
 
-	return created, err
+	return toResponseDto(created), err
 }
 
-func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*entity.Host, error) {
+func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error) {
 	ent := entity.Host{
 		Subject:     host.Subject,
 		Description: host.Description,
@@ -69,7 +96,7 @@ func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*entity.
 		return nil, err
 	}
 
-	return updated, err
+	return toResponseDto(updated), err
 }
 
 func (s *ServiceStruct) Delete(pk uint, userId uint) (bool, error) {
