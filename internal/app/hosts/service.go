@@ -30,18 +30,6 @@ func (s *ServiceStruct) All() ([]*entity.Host, error) {
 	return hosts, nil
 }
 
-func toResponseDto(host *entity.Host) *HostResponse {
-	return &HostResponse{
-		Id:          host.ID,
-		Host:        host.Host,
-		Path:        host.Path,
-		UserId:      host.UserId,
-		Subject:     host.Subject,
-		Description: host.Description,
-		Publish:     host.Publish,
-	}
-}
-
 func (s *ServiceStruct) GetByUserId(userId uint) ([]*HostResponse, error) {
 	ent, err := s.repo.GetByUserId(userId)
 	if err != nil {
@@ -50,7 +38,7 @@ func (s *ServiceStruct) GetByUserId(userId uint) ([]*HostResponse, error) {
 
 	var dto []*HostResponse
 	for _, e := range ent {
-		dto = append(dto, toResponseDto(e))
+		dto = append(dto, ToHostResponse(e))
 	}
 
 	return dto, nil
@@ -62,7 +50,7 @@ func (s *ServiceStruct) Find(pk uint, userId uint) (*HostResponse, error) {
 		return nil, err
 	}
 
-	return toResponseDto(ent), nil
+	return ToHostResponse(ent), nil
 }
 
 func (s *ServiceStruct) Create(host *CreateHost) (*HostResponse, error) {
@@ -80,7 +68,7 @@ func (s *ServiceStruct) Create(host *CreateHost) (*HostResponse, error) {
 		return nil, err
 	}
 
-	return toResponseDto(created), err
+	return ToHostResponse(created), err
 }
 
 func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error) {
@@ -96,7 +84,7 @@ func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostRes
 		return nil, err
 	}
 
-	return toResponseDto(updated), err
+	return ToHostResponse(updated), err
 }
 
 func (s *ServiceStruct) Delete(pk uint, userId uint) (bool, error) {

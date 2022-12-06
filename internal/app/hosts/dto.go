@@ -1,5 +1,7 @@
 package hosts
 
+import "github.com/miniyus/go-fiber/internal/entity"
+
 type CreateHost struct {
 	UserId      uint   `json:"user_id"`
 	Host        string `json:"host" validate:"required"`
@@ -26,4 +28,16 @@ type HostResponse struct {
 	Description string `json:"description"`
 	Path        string `json:"path"`
 	Publish     bool   `json:"publish"`
+}
+
+func ToHostResponse(host *entity.Host) *HostResponse {
+	return &HostResponse{
+		Id:          host.ID,
+		Host:        host.Host,
+		Path:        host.Path,
+		UserId:      host.UserId,
+		Subject:     host.Subject,
+		Description: host.Description,
+		Publish:     host.Publish,
+	}
 }
