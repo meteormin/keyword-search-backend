@@ -48,7 +48,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint) ([]*entity.Host, error) {
 
 func (r *RepositoryStruct) Find(pk uint, userId uint) (*entity.Host, error) {
 	host := entity.Host{}
-	result := r.db.Where(entity.Host{UserId: userId}).Find(&host, pk)
+	result := r.db.Preload("Search").Where(entity.Host{UserId: userId}).Find(&host, pk)
 	_, err := database.HandleResult(result)
 
 	if err != nil {
