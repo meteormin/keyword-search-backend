@@ -19,11 +19,11 @@ import (
 
 type User struct {
 	Id        uint   `json:"id"`
-	GroupId   uint   `json:"group_id"`
+	GroupId   *uint  `json:"group_id"`
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 	CreatedAt string `json:"created_at"`
-	ExpiresIn int64  `json:"expires_in"`
+	ExpiresIn *int64 `json:"expires_in"`
 }
 
 func Middlewares() []fiber.Handler {
@@ -79,11 +79,21 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 	claims := jwtData.Claims.(jwt.MapClaims)
 
 	userId := uint(claims["user_id"].(float64))
-	groupId := uint(claims["group_id"].(float64))
+
+	var groupId uint
+	if claims["group_id"] != nil {
+		groupId = uint(claims["group_id"].(float64))
+	}
+
 	username := claims["username"].(string)
 	email := claims["email"].(string)
 	createdAt := claims["created_at"].(string)
-	expiresIn := int64(claims["expires_in"].(float64))
+
+	var expiresIn int64
+	if claims["expires_in"] != nil {
+		expiresIn = int64(claims["expires_in"].(float64))
+	}
+
 	layout := "2006-01-02T15:04:05Z07:00"
 	createdAtTime, err := time.Parse(layout, createdAt)
 	if err != nil {
@@ -92,11 +102,11 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 
 	currentUser := &User{
 		Id:        userId,
-		GroupId:   groupId,
+		GroupId:   &groupId,
 		Username:  username,
 		Email:     email,
 		CreatedAt: createdAtTime.Format("2006-01-02 15:04:05"),
-		ExpiresIn: expiresIn,
+		ExpiresIn: &expiresIn,
 	}
 
 	c.Locals(context.AuthUser, currentUser)

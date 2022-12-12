@@ -6,7 +6,7 @@ import (
 
 type Service interface {
 	All() ([]*entity.Host, error)
-	GetByUserId(userId uint) ([]*HostResponse, error)
+	GetByUserId(userId uint) ([]HostResponse, error)
 	Find(pk uint, userId uint) (*HostResponse, error)
 	Create(host *CreateHost) (*HostResponse, error)
 	Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error)
@@ -30,15 +30,21 @@ func (s *ServiceStruct) All() ([]*entity.Host, error) {
 	return hosts, nil
 }
 
-func (s *ServiceStruct) GetByUserId(userId uint) ([]*HostResponse, error) {
+func (s *ServiceStruct) GetByUserId(userId uint) ([]HostResponse, error) {
 	ent, err := s.repo.GetByUserId(userId)
+
+	var dto []HostResponse
+
 	if err != nil {
-		return nil, err
+		return make([]HostResponse, 0), err
 	}
 
-	var dto []*HostResponse
 	for _, e := range ent {
-		dto = append(dto, ToHostResponse(e))
+		dto = append(dto, *ToHostResponse(e))
+	}
+
+	if dto == nil {
+		return make([]HostResponse, 0), nil
 	}
 
 	return dto, nil

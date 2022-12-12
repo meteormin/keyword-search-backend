@@ -2,7 +2,7 @@ package api_error
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"net/http"
+	"github.com/gofiber/fiber/v2/utils"
 )
 
 type ErrorInterface interface {
@@ -49,7 +49,7 @@ func NewValidationError(ctx *fiber.Ctx) ErrorResponse {
 		ctx:     ctx,
 		Status:  "error",
 		Code:    fiber.StatusBadRequest,
-		Message: http.StatusText(fiber.StatusBadRequest),
+		Message: utils.StatusMessage(fiber.StatusBadRequest),
 	}
 }
 
@@ -59,7 +59,7 @@ func (er *ErrorResponse) Response() error {
 	}
 
 	if er.Message == "" {
-		er.Message = http.StatusText(er.Code)
+		er.Message = utils.StatusMessage(er.Code)
 	}
 
 	return er.ctx.Status(er.Code).JSON(er)

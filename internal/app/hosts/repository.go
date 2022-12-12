@@ -40,7 +40,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint) ([]*entity.Host, error) {
 	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts)
 	_, err := database.HandleResult(result)
 	if err != nil {
-		return nil, err
+		return hosts, err
 	}
 
 	return hosts, nil
@@ -88,13 +88,13 @@ func (r *RepositoryStruct) Update(pk uint, userId uint, host entity.Host) (*enti
 func (r *RepositoryStruct) Delete(pk uint, userId uint) (bool, error) {
 	exists, err := r.Find(pk, userId)
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 
 	result := r.db.Delete(exists)
 	_, err = database.HandleResult(result)
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 
 	return true, nil

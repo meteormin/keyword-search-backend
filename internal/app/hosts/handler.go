@@ -117,6 +117,7 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 
 func (h *HandlerStruct) All(c *fiber.Ctx) error {
 	user, err := utils.GetAuthUser(c)
+
 	if err != nil {
 		return err
 	}
@@ -126,7 +127,9 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(results)
+	return c.JSON(fiber.Map{
+		"data": results,
+	})
 }
 
 func (h *HandlerStruct) Delete(c *fiber.Ctx) error {

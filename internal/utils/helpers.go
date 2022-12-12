@@ -21,14 +21,14 @@ func HandleValidate(c *fiber.Ctx, data interface{}) error {
 }
 
 func GetAuthUser(c *fiber.Ctx) (*auth.User, error) {
-	user, ok := c.Locals(context.AuthUser).(auth.User)
+	user, ok := c.Locals(context.AuthUser).(*auth.User)
 	if !ok {
 		status := fiber.StatusUnauthorized
 		errRes := api_error.NewErrorResponse(c, status, http.StatusText(status))
 		return nil, errRes.Response()
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 func TimeIn(t time.Time, tz string) time.Time {

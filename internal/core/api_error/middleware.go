@@ -11,6 +11,14 @@ func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 	if err == nil {
 		return nil
 	}
+
+	logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
+	if !ok {
+		return err
+	}
+
+	logger.Errorln(err)
+
 	errRes := NewFromError(ctx, err)
 	return errRes.Response()
 }
