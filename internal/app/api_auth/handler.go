@@ -29,7 +29,7 @@ func NewHandler(service Service, logger *zap.SugaredLogger) *HandlerStruct {
 }
 
 func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ErrorResponse) {
-	if err := api_error.Validate(signUp); err != nil {
+	if err := utils.Validate(signUp); err != nil {
 		errRes := api_error.NewValidationError(ctx)
 		errRes.FailedFields = err
 
@@ -69,7 +69,7 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 }
 
 func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ErrorResponse) {
-	if err := api_error.Validate(in); err != nil {
+	if err := utils.Validate(in); err != nil {
 		errRes := api_error.NewValidationError(ctx)
 		errRes.FailedFields = err
 
@@ -133,7 +133,7 @@ func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	failedFields := api_error.Validate(dto)
+	failedFields := utils.Validate(dto)
 	if failedFields != nil {
 		errRes := api_error.NewValidationError(ctx)
 		errRes.FailedFields = failedFields

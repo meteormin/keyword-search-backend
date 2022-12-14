@@ -10,7 +10,7 @@ import (
 )
 
 func HandleValidate(c *fiber.Ctx, data interface{}) error {
-	failed := api_error.Validate(data)
+	failed := Validate(data)
 	if failed != nil {
 		errRes := api_error.NewValidationError(c)
 		errRes.FailedFields = failed
