@@ -27,6 +27,7 @@ type User struct {
 }
 
 func Middlewares() []fiber.Handler {
+	// 순서 중요함
 	mws := []fiber.Handler{
 		JwtMiddleware,  // check exists jwt
 		GetUserFromJWT, // get user information from jwt
@@ -35,6 +36,10 @@ func Middlewares() []fiber.Handler {
 	}
 
 	return mws
+}
+
+func HasPerm(c *fiber.Ctx) {
+
 }
 
 func AccessLogMiddleware(c *fiber.Ctx) error {

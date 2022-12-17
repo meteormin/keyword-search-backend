@@ -1,5 +1,20 @@
 version: '3'
 services:
+  debugger:
+    container_name: go-fiber_debugger
+    build:
+      context: .
+      dockerfile: ./docker/debug/Dockerfile
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '8000:${APP_PORT:-8000}'
+      - '2345:2345'
+    networks:
+      - go-web
+    depends_on:
+      - redis
+      - pgsql
   gofiber:
     container_name: go-fiber
     build:

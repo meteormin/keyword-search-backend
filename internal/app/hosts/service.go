@@ -24,10 +24,10 @@ func NewService(repo Repository) *ServiceStruct {
 func (s *ServiceStruct) All() ([]*entity.Host, error) {
 	hosts, err := s.repo.All()
 	if err != nil {
-		return nil, err
+		return make([]*entity.Host, 0), err
 	}
 
-	return hosts, nil
+	return hosts, err
 }
 
 func (s *ServiceStruct) GetByUserId(userId uint) ([]HostResponse, error) {

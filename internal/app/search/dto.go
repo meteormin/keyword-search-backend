@@ -1,4 +1,4 @@
-package searchs
+package search
 
 import (
 	"github.com/miniyus/go-fiber/internal/app/hosts"
@@ -31,7 +31,7 @@ type SearchResponse struct {
 	Publish     bool                `json:"publish"`
 }
 
-func ToSearchResponse(search entity.Search) *SearchResponse {
+func ToSearchResponse(search *entity.Search) *SearchResponse {
 	host := hosts.ToHostResponse(search.Host)
 
 	dto := &SearchResponse{
