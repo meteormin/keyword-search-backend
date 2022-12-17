@@ -17,6 +17,9 @@ type DB struct {
 	SSLMode     bool
 	AutoMigrate bool
 	Logger      gormLogger.Config
+	MaxIdleConn int
+	MaxOpenConn int
+	MaxLifeTime time.Duration
 }
 
 func database() DB {
@@ -41,5 +44,8 @@ func database() DB {
 			IgnoreRecordNotFoundError: true,
 			Colorful:                  true,
 		},
+		MaxIdleConn: 10,
+		MaxOpenConn: 100,
+		MaxLifeTime: time.Hour,
 	}
 }

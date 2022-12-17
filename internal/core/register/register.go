@@ -74,7 +74,7 @@ func middlewares(w container.Container) {
 		return ctx.Next()
 	})
 
-	// AAdd Context Logger
+	// Add Context Logger
 	w.App().Use(func(ctx *fiber.Ctx) error {
 		zLogger := w.Get(context.Logger).(*zap.SugaredLogger)
 

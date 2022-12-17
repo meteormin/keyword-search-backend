@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/database/migrations"
+	"github.com/miniyus/go-fiber/internal/core/database/migrations"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -39,6 +39,15 @@ func DB(config config.DB) *gorm.DB {
 	if config.AutoMigrate {
 		migrations.Migrate(db)
 	}
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatalf("Failed: Connect sqlDB %v", err)
+	}
+
+	sqlDB.SetConnMaxLifetime(config.MaxLifeTime)
+	sqlDB.SetMaxIdleConns(config.MaxIdleConn)
+	sqlDB.SetMaxOpenConns(config.MaxOpenConn)
 
 	return db
 }
