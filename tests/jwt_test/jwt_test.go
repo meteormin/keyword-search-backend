@@ -1,21 +1,21 @@
-package main
+package jwt_test
 
 import (
 	jwtLib "github.com/golang-jwt/jwt/v4"
 	"github.com/miniyus/go-fiber/config"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	rsGen "github.com/miniyus/go-fiber/pkg/rs256"
-	"log"
 	"path"
+	"testing"
 )
 
-func main() {
+func TestJwt(t *testing.T) {
 	c := jwtLib.MapClaims{
 		"id": "smyoo",
 	}
 
 	jwtGenerator := func() *jwt.GeneratorStruct {
-		dataPath := config.GetPath().DataPath
+		dataPath := config.GetConfigs().Path.DataPath
 		privateKey := rsGen.PrivatePemDecode(path.Join(dataPath, "secret/private.pem"))
 
 		return &jwt.GeneratorStruct{
@@ -25,11 +25,10 @@ func main() {
 	}
 
 	jwtGen := jwtGenerator()
-	t, err := jwtGen.Generate(c, jwtGen.GetPrivateKey())
+	token, err := jwtGen.Generate(c, jwtGen.GetPrivateKey())
 	if err != nil {
-		log.Fatal(err)
+		t.Errorf("Failed Generaate Token... %v", err)
 	}
 
-	log.Println(*t)
-	log.Println(len(*t))
+	t.Log(token)
 }
