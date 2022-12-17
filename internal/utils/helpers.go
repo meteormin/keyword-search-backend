@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/auth"
+	"github.com/miniyus/go-fiber/internal/core/container"
 	"github.com/miniyus/go-fiber/internal/core/context"
 	"net/http"
 	"time"
@@ -38,4 +39,20 @@ func TimeIn(t time.Time, tz string) time.Time {
 	}
 
 	return t.In(loc)
+}
+
+func FindContext(ctx *fiber.Ctx, dest interface{}) error {
+	wrapper, ok := ctx.Locals(context.Container).(container.Container)
+	if !ok {
+		statusCode := fiber.StatusInternalServerError
+		return fiber.NewError(statusCode, "Failed Get Container in Ctx")
+	}
+
+	result := wrapper.Resolve(dest)
+	if result == nil {
+		statusCode := fiber.StatusInternalServerError
+		return fiber.NewError(statusCode, "Failed Resolve...")
+	}
+
+	return nil
 }
