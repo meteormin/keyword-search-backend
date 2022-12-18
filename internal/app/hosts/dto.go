@@ -1,13 +1,15 @@
 package hosts
 
-import "github.com/miniyus/go-fiber/internal/entity"
+import (
+	"github.com/miniyus/go-fiber/internal/entity"
+)
 
 type CreateHost struct {
 	UserId      uint   `json:"user_id"`
-	Host        string `json:"host" validate:"required"`
-	Subject     string `json:"subject" validate:"required,uri"`
+	Host        string `json:"host" validate:"required,url"`
+	Subject     string `json:"subject" validate:"required"`
 	Description string `json:"description" validate:"required"`
-	Path        string `json:"path" validate:"required,dir"`
+	Path        string `json:"path" validate:"required"`
 	Publish     bool   `json:"publish" validate:"required,boolean"`
 }
 

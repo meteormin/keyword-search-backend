@@ -9,7 +9,7 @@ import (
 type Repository interface {
 	Create(user entity.User) (*entity.User, error)
 	Find(pk uint) (*entity.User, error)
-	All() ([]*entity.User, error)
+	All() ([]entity.User, error)
 	Update(pk uint, user entity.User) (*entity.User, error)
 	Delete(pk uint) (bool, error)
 	FindByUsername(username string) (*entity.User, error)
@@ -20,7 +20,7 @@ type RepositoryStruct struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *RepositoryStruct {
+func NewRepository(db *gorm.DB) Repository {
 	return &RepositoryStruct{db}
 }
 
@@ -49,8 +49,8 @@ func (repo *RepositoryStruct) Find(pk uint) (*entity.User, error) {
 	return &user, nil
 }
 
-func (repo *RepositoryStruct) All() ([]*entity.User, error) {
-	var users []*entity.User
+func (repo *RepositoryStruct) All() ([]entity.User, error) {
+	var users []entity.User
 	result := repo.db.Find(&users)
 	_, err := database.HandleResult(result)
 	if err != nil {

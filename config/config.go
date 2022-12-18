@@ -14,6 +14,7 @@ type Configs struct {
 	AppEnv       string
 	AppPort      int
 	Locale       string
+	TimeZone     string
 	App          fiber.Config
 	Logger       loggerMiddleware.Config
 	CustomLogger LoggerConfig
@@ -36,6 +37,7 @@ func GetConfigs() *Configs {
 		AppEnv:       os.Getenv("APP_ENV"),
 		AppPort:      port,
 		Locale:       os.Getenv("LOCALE"),
+		TimeZone:     os.Getenv("TIME_ZONE"),
 		App:          app(),
 		Logger:       flogger(),
 		CustomLogger: logger(),

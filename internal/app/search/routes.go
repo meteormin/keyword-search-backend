@@ -8,10 +8,11 @@ import (
 func Register(router fiber.Router, handler Handler) {
 	searchFromHostApi := router.Group("/hosts/:id/search", auth.Middlewares()...)
 	searchFromHostApi.Get("/", handler.GetByHostId)
+	searchFromHostApi.Post("/", auth.HasPerm(), handler.BatchCreate)
 
 	searchApi := router.Group("/search", auth.Middlewares()...)
 	searchApi.Get("/all", handler.All)
-	searchApi.Get("/", handler.Get)
+	searchApi.Get("/:id", handler.Get)
 	searchApi.Post("/", handler.Create)
 
 }

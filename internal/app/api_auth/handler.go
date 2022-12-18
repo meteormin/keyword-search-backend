@@ -24,7 +24,7 @@ type HandlerStruct struct {
 	logger  *zap.SugaredLogger
 }
 
-func NewHandler(service Service, logger *zap.SugaredLogger) *HandlerStruct {
+func NewHandler(service Service, logger *zap.SugaredLogger) Handler {
 	return &HandlerStruct{service: service, logger: logger}
 }
 

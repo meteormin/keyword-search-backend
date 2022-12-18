@@ -2,9 +2,9 @@ package hosts
 
 import (
 	"github.com/gofiber/fiber/v2"
+	fUtils "github.com/gofiber/fiber/v2/utils"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/utils"
-	"net/http"
 	"strconv"
 )
 
@@ -20,7 +20,7 @@ type HandlerStruct struct {
 	service Service
 }
 
-func NewHandler(service Service) *HandlerStruct {
+func NewHandler(service Service) Handler {
 	return &HandlerStruct{service: service}
 }
 
@@ -37,9 +37,9 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	err = utils.HandleValidate(c, dto)
-	if err != nil {
-		return err
+	errRes := utils.HandleValidate(c, dto)
+	if errRes != nil {
+		return errRes.Response()
 	}
 
 	dto.UserId = user.Id
@@ -67,9 +67,9 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	err = utils.HandleValidate(c, dto)
-	if err != nil {
-		return err
+	errRes := utils.HandleValidate(c, dto)
+	if errRes != nil {
+		return errRes.Response()
 	}
 
 	user, err := utils.GetAuthUser(c)
@@ -78,9 +78,17 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 	}
 
 	exists, err := h.service.Find(uint(pk), user.Id)
+	if exists == nil || exists.Id == 0 {
+		status := fiber.StatusNotFound
+		message := fUtils.StatusMessage(status)
+		errRes := api_error.NewErrorResponse(c, status, message)
+		return errRes.Response()
+	}
+
 	if exists.UserId != user.Id || err != nil {
 		status := fiber.StatusForbidden
-		errRes := api_error.NewErrorResponse(c, status, http.StatusText(status))
+		message := fUtils.StatusMessage(status)
+		errRes := api_error.NewErrorResponse(c, status, message)
 		return errRes.Response()
 	}
 
@@ -106,9 +114,18 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 	}
 
 	result, err := h.service.Find(uint(pk), user.Id)
+
+	if result == nil || result.Id == 0 {
+		status := fiber.StatusNotFound
+		message := fUtils.StatusMessage(status)
+		errRes := api_error.NewErrorResponse(c, status, message)
+		return errRes.Response()
+	}
+
 	if result.UserId != user.Id || err != nil {
 		status := fiber.StatusForbidden
-		errRes := api_error.NewErrorResponse(c, status, http.StatusText(status))
+		message := fUtils.StatusMessage(status)
+		errRes := api_error.NewErrorResponse(c, status, message)
 		return errRes.Response()
 	}
 

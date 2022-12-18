@@ -5,7 +5,7 @@ import (
 )
 
 type Service interface {
-	All() ([]*entity.Host, error)
+	All() ([]entity.Host, error)
 	GetByUserId(userId uint) ([]HostResponse, error)
 	Find(pk uint, userId uint) (*HostResponse, error)
 	Create(host *CreateHost) (*HostResponse, error)
@@ -17,14 +17,14 @@ type ServiceStruct struct {
 	repo Repository
 }
 
-func NewService(repo Repository) *ServiceStruct {
+func NewService(repo Repository) Service {
 	return &ServiceStruct{repo: repo}
 }
 
-func (s *ServiceStruct) All() ([]*entity.Host, error) {
+func (s *ServiceStruct) All() ([]entity.Host, error) {
 	hosts, err := s.repo.All()
 	if err != nil {
-		return make([]*entity.Host, 0), err
+		return make([]entity.Host, 0), err
 	}
 
 	return hosts, err
@@ -40,7 +40,7 @@ func (s *ServiceStruct) GetByUserId(userId uint) ([]HostResponse, error) {
 	}
 
 	for _, e := range ent {
-		dto = append(dto, *ToHostResponse(e))
+		dto = append(dto, *ToHostResponse(&e))
 	}
 
 	if dto == nil {

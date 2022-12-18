@@ -26,7 +26,7 @@ type ServiceStruct struct {
 	logger         *zap.SugaredLogger
 }
 
-func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.Generator, logger *zap.SugaredLogger) *ServiceStruct {
+func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.Generator, logger *zap.SugaredLogger) Service {
 	return &ServiceStruct{
 		repo:           repo,
 		userRepo:       userRepo,
@@ -53,6 +53,7 @@ func (s *ServiceStruct) generateToken(user *entity.User, exp int64) (*string, er
 		"email":      user.Email,
 		"created_at": user.CreatedAt,
 		"group_id":   user.GroupId,
+		"role":       user.Role,
 		"expires_in": exp,
 	}
 

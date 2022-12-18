@@ -5,6 +5,26 @@ import (
 	"time"
 )
 
+type Role string
+
+const (
+	Admin   Role = "admin"
+	Manager Role = "manager"
+	Member  Role = "member"
+)
+
+func (r Role) RoleToString() string {
+	switch r {
+	case Admin:
+		return "admin"
+	case Manager:
+		return "manager"
+	case Member:
+		return "member"
+	}
+	return "unknown"
+}
+
 type User struct {
 	gorm.Model
 	Username        string      `gorm:"column:username;type:varchar(50);uniqueIndex" json:"username"`

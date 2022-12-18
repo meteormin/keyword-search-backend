@@ -7,8 +7,8 @@ import (
 )
 
 type Repository interface {
-	All() ([]*entity.Host, error)
-	GetByUserId(userId uint) ([]*entity.Host, error)
+	All() ([]entity.Host, error)
+	GetByUserId(userId uint) ([]entity.Host, error)
 	Find(pk uint, userId uint) (*entity.Host, error)
 	Create(host entity.Host) (*entity.Host, error)
 	Update(pk uint, userId uint, host entity.Host) (*entity.Host, error)
@@ -19,12 +19,12 @@ type RepositoryStruct struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *RepositoryStruct {
+func NewRepository(db *gorm.DB) Repository {
 	return &RepositoryStruct{db: db}
 }
 
-func (r *RepositoryStruct) All() ([]*entity.Host, error) {
-	var hosts []*entity.Host
+func (r *RepositoryStruct) All() ([]entity.Host, error) {
+	var hosts []entity.Host
 
 	result := r.db.Find(&hosts)
 	_, err := database.HandleResult(result)
@@ -35,8 +35,8 @@ func (r *RepositoryStruct) All() ([]*entity.Host, error) {
 	return hosts, nil
 }
 
-func (r *RepositoryStruct) GetByUserId(userId uint) ([]*entity.Host, error) {
-	var hosts []*entity.Host
+func (r *RepositoryStruct) GetByUserId(userId uint) ([]entity.Host, error) {
+	var hosts []entity.Host
 	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts)
 	_, err := database.HandleResult(result)
 	if err != nil {

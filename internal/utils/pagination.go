@@ -7,14 +7,14 @@ import (
 )
 
 type Page struct {
-	Page     int
-	PageSize int
+	Page     int `json:"page"`
+	PageSize int `json:"page_size"`
 }
 
 type Paginator struct {
 	Page
-	TotalCount int64
-	Data       interface{}
+	TotalCount int64       `json:"total_count"`
+	Data       interface{} `json:"data"`
 }
 
 func GetPageFromCtx(c *fiber.Ctx) (Page, error) {

@@ -2,7 +2,6 @@ package users
 
 import (
 	"github.com/miniyus/go-fiber/internal/entity"
-	"github.com/miniyus/go-fiber/internal/utils"
 )
 
 type Service interface {
@@ -19,28 +18,6 @@ func NewService(repo Repository) *ServiceStruct {
 	return &ServiceStruct{repo: repo}
 }
 
-func toUserResponseFromEntity(user *entity.User) UserResponse {
-	createdAt := utils.TimeIn(user.CreatedAt, "Asia/Seoul")
-	updatedAt := utils.TimeIn(user.UpdatedAt, "Asia/Seoul")
-
-	var emailVerifiedAt *string
-	if user.EmailVerifiedAt == nil {
-		emailVerifiedAt = nil
-	} else {
-		formatString := user.EmailVerifiedAt.Format("2006-01-02 15:04:05")
-		emailVerifiedAt = &formatString
-	}
-
-	return UserResponse{
-		Id:              user.ID,
-		Username:        user.Username,
-		Email:           user.Email,
-		EmailVerifiedAt: emailVerifiedAt,
-		CreatedAt:       createdAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:       updatedAt.Format("2006-01-02 15:04:05"),
-	}
-}
-
 func (s *ServiceStruct) All() ([]UserResponse, error) {
 	var userRes []UserResponse
 
@@ -51,7 +28,7 @@ func (s *ServiceStruct) All() ([]UserResponse, error) {
 	}
 
 	for _, ent := range entities {
-		userRes = append(userRes, toUserResponseFromEntity(ent))
+		userRes = append(userRes, ToUserResponse(&ent))
 	}
 
 	return userRes, nil
@@ -63,7 +40,7 @@ func (s *ServiceStruct) Get(pk uint) (*UserResponse, error) {
 		return nil, err
 	}
 
-	userRes := toUserResponseFromEntity(user)
+	userRes := ToUserResponse(user)
 
 	return &userRes, nil
 
@@ -78,7 +55,7 @@ func (s *ServiceStruct) Update(pk uint, user *PatchUser) (*UserResponse, error) 
 		return nil, err
 	}
 
-	userRes := toUserResponseFromEntity(rsUser)
+	userRes := ToUserResponse(rsUser)
 
 	return &userRes, nil
 }

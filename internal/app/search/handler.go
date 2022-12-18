@@ -12,10 +12,15 @@ type Handler interface {
 	All(c *fiber.Ctx) error
 	Get(c *fiber.Ctx) error
 	GetByHostId(c *fiber.Ctx) error
+	BatchCreate(c *fiber.Ctx) error
 }
 
 type HandlerStruct struct {
 	service Service
+}
+
+func NewHandler(s Service) Handler {
+	return &HandlerStruct{service: s}
 }
 
 func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
@@ -47,9 +52,9 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 		return res.Response()
 	}
 
-	err = utils.HandleValidate(c, dto)
-	if err != nil {
-		return err
+	errRes := utils.HandleValidate(c, dto)
+	if errRes != nil {
+		return errRes.Response()
 	}
 
 	created, err := h.service.Create(dto)
@@ -81,12 +86,43 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	user, err := utils.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
 
-	search, err := h.service.Find(uint(pk))
+	search, err := h.service.Find(uint(pk), user.Id)
 
 	if err != nil {
 		return err
 	}
 
 	return c.Status(fiber.StatusOK).JSON(search)
+}
+
+func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
+	params := c.AllParams()
+	hostId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	dto := &MultiCreateSearch{}
+	err = c.BodyParser(dto)
+	if err != nil {
+		res := api_error.NewValidationError(c)
+		return res.Response()
+	}
+
+	errRes := utils.HandleValidate(c, dto)
+	if errRes != nil {
+		return errRes.Response()
+	}
+
+	create, err := h.service.BatchCreate(uint(hostId), dto.Search)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(create)
 }

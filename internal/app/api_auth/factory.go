@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func New(db *gorm.DB, generator jwt.Generator, logger *zap.SugaredLogger) *HandlerStruct {
+func New(db *gorm.DB, generator jwt.Generator, logger *zap.SugaredLogger) Handler {
 	repo := auth.NewRepository(db)
 	service := NewService(repo, users.NewRepository(db), generator, logger)
 	handler := NewHandler(service, logger)

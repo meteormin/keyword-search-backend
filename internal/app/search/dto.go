@@ -1,45 +1,54 @@
 package search
 
 import (
-	"github.com/miniyus/go-fiber/internal/app/hosts"
 	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/go-fiber/internal/utils"
 )
 
+type MultiCreateSearch struct {
+	Search []*CreateSearch `json:"search" validate:"required"`
+}
+
 type CreateSearch struct {
-	UserId      uint   `json:"user_id"`
-	HostId      uint   `json:"host_id"`
-	Path        string `json:"path"`
-	Query       string `json:"query"`
-	Description string `json:"description"`
-	Publish     bool   `json:"publish"`
+	HostId      uint   `json:"host_id" validate:"required"`
+	QueryKey    string `json:"query_key" validate:"required"`
+	Query       string `json:"query" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	Publish     bool   `json:"publish" validate:"required,boolean"`
 }
 
 type UpdateSearch struct {
-	UserId      uint   `json:"user_id"`
 	HostId      uint   `json:"host_id"`
-	Path        string `json:"path"`
+	QueryKey    string `json:"query_key"`
 	Query       string `json:"query"`
 	Description string `json:"description"`
 	Publish     bool   `json:"publish"`
 }
 
-type SearchResponse struct {
-	Host        *hosts.HostResponse `json:"host"`
-	Path        string              `json:"path"`
-	Query       string              `json:"query"`
-	Description string              `json:"description"`
-	Publish     bool                `json:"publish"`
+type Response struct {
+	Id          uint    `json:"id"`
+	ShortUrl    *string `json:"short_url"`
+	QueryKey    string  `json:"query_key"`
+	Query       string  `json:"query"`
+	Description string  `json:"description"`
+	Publish     bool    `json:"publish"`
+	CreatedAt   string  `json:"created_at"`
+	UpdatedAt   string  `json:"updated_at"`
 }
 
-func ToSearchResponse(search *entity.Search) *SearchResponse {
-	host := hosts.ToHostResponse(search.Host)
+func ToSearchResponse(search *entity.Search) *Response {
+	createdAt := utils.TimeIn(search.CreatedAt, "Asia/Seoul")
+	updatedAt := utils.TimeIn(search.UpdatedAt, "Asia/Seoul")
 
-	dto := &SearchResponse{
-		Host:        host,
+	dto := &Response{
+		Id:          search.ID,
+		ShortUrl:    search.ShortUrl,
 		Publish:     search.Publish,
-		Path:        search.Path,
+		QueryKey:    search.QueryKey,
 		Query:       search.Query,
 		Description: search.Description,
+		CreatedAt:   createdAt.Format(utils.DefaultDateLayout),
+		UpdatedAt:   updatedAt.Format(utils.DefaultDateLayout),
 	}
 
 	return dto

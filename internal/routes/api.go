@@ -3,6 +3,8 @@ package routes
 import (
 	"github.com/miniyus/go-fiber/internal/app/api_auth"
 	"github.com/miniyus/go-fiber/internal/app/hosts"
+	"github.com/miniyus/go-fiber/internal/app/search"
+	"github.com/miniyus/go-fiber/internal/app/short_url"
 	"github.com/miniyus/go-fiber/internal/app/users"
 	"github.com/miniyus/go-fiber/internal/core/container"
 	"github.com/miniyus/go-fiber/internal/core/context"
@@ -25,4 +27,8 @@ func SetRoutes(container container.Container) {
 	users.Register(api, users.New(container.Database()))
 
 	hosts.Register(api, hosts.New(container.Database()))
+
+	search.Register(api, search.New(container.Database()))
+
+	short_url.Register(api, short_url.New(container.Database()))
 }

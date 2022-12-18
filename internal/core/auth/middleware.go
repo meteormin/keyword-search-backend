@@ -9,6 +9,7 @@ import (
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/context"
 	"github.com/miniyus/go-fiber/internal/core/database"
+	"github.com/miniyus/go-fiber/internal/entity"
 	"go.uber.org/zap"
 	"log"
 	"strconv"
@@ -20,6 +21,7 @@ import (
 type User struct {
 	Id        uint   `json:"id"`
 	GroupId   *uint  `json:"group_id"`
+	Role      string `json:"role"`
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 	CreatedAt string `json:"created_at"`
@@ -38,8 +40,15 @@ func Middlewares() []fiber.Handler {
 	return mws
 }
 
-func HasPerm(c *fiber.Ctx) {
+func HasPerm(action ...entity.Action) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		currentUser := c.Locals(context.AuthUser).(*User)
+		if currentUser.Role == entity.Admin.RoleToString() {
+			return c.Next()
+		}
 
+		return fiber.ErrForbidden
+	}
 }
 
 func AccessLogMiddleware(c *fiber.Ctx) error {
@@ -90,6 +99,7 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 		groupId = uint(claims["group_id"].(float64))
 	}
 
+	role := claims["role"].(string)
 	username := claims["username"].(string)
 	email := claims["email"].(string)
 	createdAt := claims["created_at"].(string)
@@ -108,6 +118,7 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 	currentUser := &User{
 		Id:        userId,
 		GroupId:   &groupId,
+		Role:      role,
 		Username:  username,
 		Email:     email,
 		CreatedAt: createdAtTime.Format("2006-01-02 15:04:05"),
