@@ -5,7 +5,7 @@ if [ ! -z "$GO_USER" ]; then
 fi
 
 export GOPATH=/usr/local/go/bin
-export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$GOPATH
 
 /usr/local/go/bin/go mod download
 make build
