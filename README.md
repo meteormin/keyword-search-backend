@@ -46,32 +46,34 @@ DB_AUTO_MIGRATE=true
 ## Directory Structure
 
 ```shell
-project-root
- - bootstrap: fiber 앱 구동을 위한 기능
- - build: build된 파일이 저장
- - cmd: go 실행 및 makefile을 통한 cli 명령을 실행할 수 있는 go 파일 및 기능
- - config: 설정
- - data: local data 저장소
- - database: database 연동
- - docker: docker 컨테이너 관련
- - internal: api를 실질적으로 구현하는 곳 입니다.
-  - core: 공통 기능
-   - api_error: api error, error response 관련 기능
-   - auth: 인증 관련 기능
-   - container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
-   - logger: 로거
-   - register: 컨테이너에 필요한 미들웨어, 구조체, 함수등을 등록
-  - app: 실제 api 코드
-  - entity: db 스키마를 가진 구조체 집합
-  - routes: 라우팅
- - pkg: 독립적인 기능을 수핼 할 수 있는 기능들의 집합입니다.
+/project-root
+|-- build: build된 파일이 저장
+|-- cmd: go 실행 및 makefile을 통한 cli 명령을 실행할 수 있는 main.go 파일
+|-- config: 설정
+|-- data: local data 저장소
+|-- docker: docker 컨테이너 관련
+|-- internal: api를 실질적으로 구현하는 곳 입니다.
+  |-- app: api 요청 시, 수행되는 코드들
+    |-- dto: DTO 정의 및 매핑 함수 정의
+    |-- factory: Handler 생성을 위한 팩토리 패턴 적용
+    |-- handler: 요청을 받고 응답을 해준다.
+    |-- service: handler 요청의 비즈니스 로직 처리
+    |-- repositroy: db, entity를 통해 데이터 CRUD 동작 수행
+    |-- routes: 그룹화된 API 적용을 위한 서브 라우터
+  |-- core: 공통 기능
+   |-- api_error: api error, error response 관련 기능
+   |-- auth: 인증 관련 기능
+   |-- container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
+   |-- context: fiber context Locals를 통해 가져올 항목들을 미리 정의
+   |-- database: database, gorm 연결
+   |-- logger: 로거
+   |-- register: 컨테이너에 필요한 미들웨어, 구조체, 함수등을 등록
+  |-- entity: db 스키마를 가진 구조체 집합
+  |-- routes: 라우팅
+  |-- utils: 유틸 함수들
+|-- pkg: 독립적인 기능을 수핼 할 수 있는 기능들의 집합입니다.
  
 ```
-
-### bootstrap
-
-- 컨테이너 생성과 필요한 미들웨어와 라우팅 등록
-- 앱이 실질적으로 시작되는 지점이 되는 곳입니다.
 
 ### config
 
@@ -85,8 +87,9 @@ import (
 
 config.GetConfigs()
 ```
+### internal
 
-### container
+### core.container
 
 ```go
 // fiber 앱과 Configs 구조체를 인수로 받는다.
@@ -96,7 +99,7 @@ func NewContainer(app *fiber.App, config *config.Configs)
 ```
 
 **Register 패키지**
-> [container/register/register.go](internal/core/register/register.go)
+> [internal/core/register/register.go](internal/core/register/register.go)
 
 총 4개의 함수로 구성
 
