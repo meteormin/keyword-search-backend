@@ -18,6 +18,7 @@ type Container interface {
 	Get(key string) interface{}
 	Bind(keyType interface{}, resolver interface{})
 	Resolve(keyType interface{}) interface{}
+	Run()
 }
 
 type Wrapper struct {
@@ -28,7 +29,7 @@ type Wrapper struct {
 	bindings  map[reflect.Type]interface{}
 }
 
-func NewContainer(app *fiber.App, db *gorm.DB, config *config.Configs) *Wrapper {
+func NewContainer(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
 	return &Wrapper{
 		app:       app,
 		database:  db,

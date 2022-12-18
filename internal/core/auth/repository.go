@@ -20,7 +20,7 @@ type RepositoryStruct struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *RepositoryStruct {
+func NewRepository(db *gorm.DB) Repository {
 	return &RepositoryStruct{db}
 }
 
