@@ -2,12 +2,14 @@ package routes
 
 import (
 	"github.com/miniyus/go-fiber/internal/app/api_auth"
+	"github.com/miniyus/go-fiber/internal/app/host_search"
 	"github.com/miniyus/go-fiber/internal/app/hosts"
 	"github.com/miniyus/go-fiber/internal/app/search"
 	"github.com/miniyus/go-fiber/internal/app/short_url"
 	"github.com/miniyus/go-fiber/internal/app/users"
+	"github.com/miniyus/go-fiber/internal/core/auth"
 	"github.com/miniyus/go-fiber/internal/core/container"
-	"github.com/miniyus/go-fiber/internal/core/context"
+	"github.com/miniyus/go-fiber/internal/core/router"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	"go.uber.org/zap"
 )
@@ -15,20 +17,53 @@ import (
 const Prefix = "/api"
 
 func SetRoutes(container container.Container) {
-	api := container.App().Group(Prefix)
+	apiGroup := container.App().Group(Prefix)
+
+	apiRouter := router.New(apiGroup, "api")
 
 	var tokenGenerator jwt.Generator
-
 	container.Resolve(&tokenGenerator)
-	logger := container.Get(context.Logger).(*zap.SugaredLogger)
 
-	api_auth.Register(api, api_auth.New(container.Database(), tokenGenerator, logger))
+	var logger *zap.SugaredLogger
+	container.Resolve(&logger)
 
-	users.Register(api, users.New(container.Database()))
+	apiRouter.Route(
+		api_auth.Prefix,
+		api_auth.Register(api_auth.New(
+			container.Database(),
+			tokenGenerator,
+			logger,
+		)),
+	).Name("api.auth")
 
-	hosts.Register(api, hosts.New(container.Database()))
+	apiRouter.Route(
+		users.Prefix,
+		users.Register(users.New(container.Database())),
+		auth.Middlewares()...,
+	).Name("api.users")
 
-	search.Register(api, search.New(container.Database()))
+	apiRouter.Route(
+		hosts.Prefix,
+		hosts.Register(hosts.New(container.Database())),
+		auth.Middlewares()...,
+	).Name("api.hosts")
 
-	short_url.Register(api, short_url.New(container.Database()))
+	apiRouter.Route(
+		search.Prefix,
+		search.Register(search.New(container.Database())),
+		auth.Middlewares()...,
+	).Name("api.search")
+
+	apiRouter.Route(
+		host_search.Prefix,
+		host_search.Register(host_search.New(container.Database())),
+		auth.Middlewares()...,
+	).Name("api.hosts.search")
+
+	apiRouter.Route(
+		short_url.Prefix,
+		short_url.Register(short_url.New(container.Database())),
+		auth.Middlewares()...,
+	).Name("api.short_url")
+
 }

@@ -2,10 +2,15 @@ package short_url
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/auth"
+	"github.com/miniyus/go-fiber/internal/core/router"
 )
 
-func Register(router fiber.Router, handler Handler) {
-	shortUrlApi := router.Group("redirect/", auth.Middlewares()...)
-	shortUrlApi.Get("/:code", handler.Redirect)
+const Prefix = "/redirect"
+
+func Register(handler Handler) router.Register {
+
+	return func(router fiber.Router) {
+		router.Get("/:code", handler.Redirect)
+	}
+
 }

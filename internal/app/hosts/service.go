@@ -10,6 +10,7 @@ type Service interface {
 	Find(pk uint, userId uint) (*HostResponse, error)
 	Create(host *CreateHost) (*HostResponse, error)
 	Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error)
+	Patch(pk uint, userId uint, host *PatchHost) (*HostResponse, error)
 	Delete(pk uint, userId uint) (bool, error)
 }
 
@@ -86,6 +87,39 @@ func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostRes
 	}
 
 	updated, err := s.repo.Update(pk, userId, ent)
+	if err != nil {
+		return nil, err
+	}
+
+	return ToHostResponse(updated), err
+}
+
+func (s *ServiceStruct) Patch(pk uint, userId uint, host *PatchHost) (*HostResponse, error) {
+	ent, err := s.repo.Find(pk, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if host.Host != nil {
+		ent.Host = *host.Host
+	}
+	if host.Subject != nil {
+		ent.Subject = *host.Subject
+	}
+
+	if host.Description != nil {
+		ent.Description = *host.Description
+	}
+
+	if host.Path != nil {
+		ent.Path = *host.Path
+	}
+
+	if host.Publish != nil {
+		ent.Publish = *host.Publish
+	}
+
+	updated, err := s.repo.Update(pk, userId, *ent)
 	if err != nil {
 		return nil, err
 	}

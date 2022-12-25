@@ -48,6 +48,15 @@ func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ErrorRespo
 	return true, nil
 }
 
+// SignUp
+// @Summary Sign up
+// @Description sign up
+// @Tags Auth
+// @Success 200 {object} SignUpResponse
+// @Accept json
+// @Produce json
+// @Param request body SignUp true "sign up body"
+// @Router /api/auth/register [post]
 func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	signUp := &SignUp{}
 	err := ctx.BodyParser(signUp)

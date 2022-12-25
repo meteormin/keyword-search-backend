@@ -2,17 +2,16 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/auth"
+	"github.com/miniyus/go-fiber/internal/core/router"
 )
 
-func Register(router fiber.Router, handler Handler) {
-	searchFromHostApi := router.Group("/hosts/:id/search", auth.Middlewares()...)
-	searchFromHostApi.Get("/", handler.GetByHostId)
-	searchFromHostApi.Post("/", auth.HasPerm(), handler.BatchCreate)
+const Prefix = "/search"
 
-	searchApi := router.Group("/search", auth.Middlewares()...)
-	searchApi.Get("/all", handler.All)
-	searchApi.Get("/:id", handler.Get)
-	searchApi.Post("/", handler.Create)
+func Register(handler Handler) router.Register {
+	return func(router fiber.Router) {
+		router.Get("/all", handler.All)
+		router.Get("/:id", handler.Get)
+		router.Post("/", handler.Create)
+	}
 
 }

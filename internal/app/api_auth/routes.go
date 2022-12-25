@@ -5,19 +5,22 @@ import (
 	"github.com/miniyus/go-fiber/internal/core/auth"
 )
 
-func Register(router fiber.Router, handler Handler) {
-	authApi := router.Group("/auth")
-	authApi.Post("/register", handler.SignUp)
-	authApi.Post("/token", handler.SignIn)
+const Prefix = "/auth"
 
-	authMiddlewares := auth.Middlewares()
+func Register(handler Handler) func(router fiber.Router) {
+	return func(router fiber.Router) {
+		router.Post("/register", handler.SignUp)
+		router.Post("/token", handler.SignIn)
 
-	meHandlers := append(authMiddlewares, handler.Me)
-	authApi.Get("/me", meHandlers...)
+		authMiddlewares := auth.Middlewares()
 
-	resetPassHandlers := append(authMiddlewares, handler.ResetPassword)
-	authApi.Patch("/password", resetPassHandlers...)
+		meHandlers := append(authMiddlewares, handler.Me)
+		router.Get("/me", meHandlers...)
 
-	revokeHandlers := append(authMiddlewares, handler.RevokeToken)
-	authApi.Delete("/revoke", revokeHandlers...)
+		resetPassHandlers := append(authMiddlewares, handler.ResetPassword)
+		router.Patch("/password", resetPassHandlers...)
+
+		revokeHandlers := append(authMiddlewares, handler.RevokeToken)
+		router.Delete("/revoke", revokeHandlers...)
+	}
 }

@@ -2,16 +2,18 @@ package users
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/auth"
+	"github.com/miniyus/go-fiber/internal/core/router"
 )
 
-func Register(router fiber.Router, handler Handler) {
-	usersApi := router.Group("/users", auth.Middlewares()...)
+const Prefix = "/users"
 
-	usersApi.Get("/", handler.All)
-	usersApi.Get("/:id", handler.Get)
-	usersApi.Post("/", handler.Create)
-	usersApi.Put("/:id", handler.Update)
-	usersApi.Patch("/:id", handler.Patch)
-	usersApi.Delete("/:id", handler.Delete)
+func Register(handler Handler) router.Register {
+	return func(router fiber.Router) {
+		router.Get("/", handler.All)
+		router.Get("/:id", handler.Get)
+		router.Post("/", handler.Create)
+		router.Put("/:id", handler.Update)
+		router.Patch("/:id", handler.Patch)
+		router.Delete("/:id", handler.Delete)
+	}
 }

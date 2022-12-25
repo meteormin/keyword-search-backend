@@ -22,6 +22,14 @@ type UpdateHost struct {
 	Publish     bool   `json:"publish" validate:"required,boolean"`
 }
 
+type PatchHost struct {
+	Host        *string `json:"host,omitempty" validate:"omitempty,url"`
+	Subject     *string `json:"subject,omitempty" validate:"omitempty"`
+	Description *string `json:"description,omitempty" validate:"omitempty"`
+	Path        *string `json:"path,omitempty" validate:"omitempty,dir"`
+	Publish     *bool   `json:"publish,omitempty" validate:"omitempty,boolean"`
+}
+
 type HostResponse struct {
 	Id          uint   `json:"id"`
 	UserId      uint   `json:"user_id"`

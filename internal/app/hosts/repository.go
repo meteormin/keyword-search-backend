@@ -75,11 +75,16 @@ func (r *RepositoryStruct) Update(pk uint, userId uint, host entity.Host) (*enti
 		return nil, err
 	}
 
-	host.ID = exists.ID
-	result := r.db.Save(&host)
-	_, err = database.HandleResult(result)
-	if err != nil {
-		return nil, err
+	if host.ID == exists.ID { // patch
+		result := r.db.Save(&host)
+		_, err = database.HandleResult(result)
+		if err != nil {
+			return nil, err
+		}
+	} else { // put
+		host.ID = exists.ID
+		result := r.db.Save(&host)
+		_, err = database.HandleResult(result)
 	}
 
 	return &host, nil

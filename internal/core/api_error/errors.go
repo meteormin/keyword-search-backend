@@ -14,7 +14,7 @@ type ErrorResponse struct {
 	Status       string            `json:"status"`
 	Code         int               `json:"code"`
 	Message      string            `json:"message"`
-	FailedFields map[string]string `json:"failed_fields"`
+	FailedFields map[string]string `json:"failed_fields,omitempty"`
 }
 
 func NewFromError(ctx *fiber.Ctx, err error) *ErrorResponse {

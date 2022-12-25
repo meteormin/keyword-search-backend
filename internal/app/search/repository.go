@@ -100,7 +100,14 @@ func (r *RepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Sea
 		Where(&entity.Search{ShortUrl: &code}).
 		Find(&search)
 
-	_, err := database.HandleResult(rs)
+	rs, err := database.HandleResult(rs)
+	if err != nil {
+		return nil, err
+	}
+
+	if rs.RowsAffected == 0 {
+		return nil, nil
+	}
 
 	if search.Host.UserId != userId {
 		return nil, fiber.ErrForbidden

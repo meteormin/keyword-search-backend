@@ -32,7 +32,7 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 
 	logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
 	if !ok {
-		return OverrideDefaultErrorHandler(ctx, err)
+		return err
 	}
 
 	logger.Errorln(err)
