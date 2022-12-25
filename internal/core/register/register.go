@@ -6,6 +6,8 @@ import (
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/swagger"
+	_ "github.com/miniyus/go-fiber/api/gofiber"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/container"
 	"github.com/miniyus/go-fiber/internal/core/context"
@@ -89,7 +91,32 @@ func middlewares(w container.Container) {
 // Routes register Routes
 func routes(w container.Container) {
 	router.SetRoutes(w)
+
 	w.App().Get("/metrics", monitor.New(monitor.Config{Title: "MyService Metrics Page"}))
+	w.App().Get("/health-check", healthCheck)
+	w.App().Get("/swagger/*", swagger.HandlerDefault)
+}
+
+type healthCheckRes struct {
+	Status bool
+}
+
+// healthCheck
+// @Summary health check your server
+// @Description health check your server
+// @Success 200 {object} healthCheckRes
+// @Tags healthCheck
+// @Accept */*
+// @Produce json
+// @Router /health-check [get]
+func healthCheck(ctx *fiber.Ctx) error {
+
+	err := ctx.JSON(healthCheckRes{Status: true})
+	if err != nil {
+		return ctx.JSON(healthCheckRes{Status: false})
+	}
+
+	return err
 }
 
 func Resister(w container.Container) {

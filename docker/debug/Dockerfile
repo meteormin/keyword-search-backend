@@ -2,7 +2,7 @@ FROM golang:1.19-alpine
 WORKDIR /app
 EXPOSE 8000 2345
 
-COPY ./ ./
+COPY . .
 
 RUN CGO_ENABLED=0 go install -ldflags "-s -w -extldflags '-static'" github.com/go-delve/delve/cmd/dlv@latest
 RUN CGO_ENABLED=0 go mod download

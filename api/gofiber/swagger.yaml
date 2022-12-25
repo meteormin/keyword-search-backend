@@ -1,0 +1,90 @@
+basePath: /
+definitions:
+  api_auth.SignUp:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      password_confirm:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - password_confirm
+    - username
+    type: object
+  api_auth.SignUpResponse:
+    properties:
+      expires_at:
+        type: string
+      token:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  register.healthCheckRes:
+    properties:
+      status:
+        type: boolean
+    type: object
+host: localhost:9090
+info:
+  contact:
+    email: miniyu97@gmail.com
+    name: miniyus
+    url: https://miniyus.github.io
+  description: go-fiber API
+  license:
+    name: MIT
+  title: go-fiber Swagger API Documentation
+  version: 0.0.1
+paths:
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: sign up
+      parameters:
+      - description: sign up body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api_auth.SignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api_auth.SignUpResponse'
+      summary: Sign up
+      tags:
+      - Auth
+  /health-check:
+    get:
+      consumes:
+      - '*/*'
+      description: health check your server
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/register.healthCheckRes'
+      summary: health check your server
+      tags:
+      - healthCheck
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    description: Bearer token type
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
