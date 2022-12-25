@@ -88,6 +88,15 @@ func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ErrorResponse)
 	return true, nil
 }
 
+// SignIn
+// @Summary login
+// @Description login
+// @Tags Auth
+// @Success 200 {object} TokenInfo
+// @Accept json
+// @Produce json
+// @Param request body SignIn true "login  body"
+// @Router /api/auth/token [post]
 func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 	signIn := &SignIn{}
 	err := ctx.BodyParser(signIn)
@@ -106,9 +115,9 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"token":      result.Token,
-		"expires_at": result.ExpiresAt.Format("2006-01-02 15:04:05"),
+	return ctx.Status(fiber.StatusCreated).JSON(TokenInfo{
+		Token:     result.Token,
+		ExpiresAt: utils.JsonTime(result.ExpiresAt),
 	})
 }
 

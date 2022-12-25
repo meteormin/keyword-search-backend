@@ -6,6 +6,7 @@ import (
 	"github.com/miniyus/go-fiber/internal/app/users"
 	"github.com/miniyus/go-fiber/internal/core/auth"
 	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/go-fiber/internal/utils"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -136,7 +137,7 @@ func (s *ServiceStruct) SignUp(up *SignUp) (*SignUpResponse, error) {
 			UserId: user.ID,
 			TokenInfo: TokenInfo{
 				Token:     token.Token,
-				ExpiresAt: token.ExpiresAt,
+				ExpiresAt: utils.JsonTime(token.ExpiresAt),
 			},
 		}
 		return res, nil

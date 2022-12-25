@@ -1,6 +1,8 @@
 package api_auth
 
-import "time"
+import (
+	"github.com/miniyus/go-fiber/internal/utils"
+)
 
 type SignUp struct {
 	Username        string `json:"username" validate:"required"`
@@ -15,8 +17,8 @@ type SignIn struct {
 }
 
 type TokenInfo struct {
-	Token     string    `json:"token"`
-	ExpiresAt time.Time `json:"expires_at"`
+	Token     string         `json:"token"`
+	ExpiresAt utils.JsonTime `json:"expires_at"`
 }
 
 type SignUpResponse struct {

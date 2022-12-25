@@ -1,5 +1,15 @@
 basePath: /
 definitions:
+  api_auth.SignIn:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
   api_auth.SignUp:
     properties:
       email:
@@ -24,6 +34,13 @@ definitions:
         type: string
       user_id:
         type: integer
+    type: object
+  api_auth.TokenInfo:
+    properties:
+      expires_at:
+        type: string
+      token:
+        type: string
     type: object
   register.healthCheckRes:
     properties:
@@ -62,6 +79,28 @@ paths:
           schema:
             $ref: '#/definitions/api_auth.SignUpResponse'
       summary: Sign up
+      tags:
+      - Auth
+  /api/auth/token:
+    post:
+      consumes:
+      - application/json
+      description: login
+      parameters:
+      - description: login  body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api_auth.SignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api_auth.TokenInfo'
+      summary: login
       tags:
       - Auth
   /health-check:

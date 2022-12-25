@@ -87,12 +87,12 @@ func (JSON) GormDBDataType(db *gorm.DB, field *schema.Field) string {
 	return ""
 }
 
-func (js JSON) GormValue(ctx context.Context, db *gorm.DB) clause.Expr {
-	if len(js) == 0 {
+func (j JSON) GormValue(ctx context.Context, db *gorm.DB) clause.Expr {
+	if len(j) == 0 {
 		return gorm.Expr("NULL")
 	}
 
-	data, _ := js.MarshalJSON()
+	data, _ := j.MarshalJSON()
 
 	switch db.Dialector.Name() {
 	case "mysql":

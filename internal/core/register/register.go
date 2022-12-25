@@ -98,7 +98,7 @@ func routes(w container.Container) {
 }
 
 type healthCheckRes struct {
-	Status bool
+	Status bool `json:"status"`
 }
 
 // healthCheck
