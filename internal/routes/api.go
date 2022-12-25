@@ -14,10 +14,10 @@ import (
 	"go.uber.org/zap"
 )
 
-const Prefix = "/api"
+const ApiPrefix = "/api"
 
-func SetRoutes(container container.Container) {
-	apiGroup := container.App().Group(Prefix)
+func Api(container container.Container) {
+	apiGroup := container.App().Group(ApiPrefix)
 
 	apiRouter := router.New(apiGroup, "api")
 

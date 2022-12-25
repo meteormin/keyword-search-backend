@@ -9,12 +9,13 @@ type Register = func(router fiber.Router)
 
 type Router interface {
 	Route(prefix string, callback Register, middleware ...fiber.Handler) fiber.Router
+	GetRoutes() []fiber.Router
 }
 
 type Wrapper struct {
 	Router     fiber.Router
 	name       string
-	groupCount int
+	GroupCount int
 	routes     []fiber.Router
 }
 
@@ -29,7 +30,7 @@ func New(router fiber.Router, name ...string) Router {
 	return &Wrapper{
 		Router:     router,
 		name:       routeName,
-		groupCount: 1,
+		GroupCount: 1,
 		routes:     make([]fiber.Router, 0),
 	}
 }
@@ -38,8 +39,12 @@ func (r *Wrapper) Route(prefix string, callback Register, middleware ...fiber.Ha
 	grp := r.Router.Group(prefix, middleware...)
 	callback(grp)
 
-	r.groupCount += 1
+	r.GroupCount += 1
 	r.routes = append(r.routes, grp)
 
-	return grp.Name(r.name + strconv.Itoa(r.groupCount))
+	return grp.Name(r.name + strconv.Itoa(r.GroupCount))
+}
+
+func (r *Wrapper) GetRoutes() []fiber.Router {
+	return r.routes
 }

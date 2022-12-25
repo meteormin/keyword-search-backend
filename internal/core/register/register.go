@@ -88,15 +88,7 @@ func middlewares(w container.Container) {
 	w.App().Use(cors.New(w.Config().Cors))
 }
 
-// Routes register Routes
-func routes(w container.Container) {
-	router.SetRoutes(w)
-
-	w.App().Get("/metrics", monitor.New(monitor.Config{Title: "MyService Metrics Page"}))
-	w.App().Get("/health-check", healthCheck)
-	w.App().Get("/swagger/*", swagger.HandlerDefault)
-}
-
+// healthCHeckRes health check response
 type healthCheckRes struct {
 	Status bool `json:"status"`
 }
@@ -117,6 +109,15 @@ func healthCheck(ctx *fiber.Ctx) error {
 	}
 
 	return err
+}
+
+// routes register Routes
+func routes(w container.Container) {
+	router.Api(w)
+	w.App().Get("/metrics", monitor.New(monitor.Config{Title: "MyService Metrics Page"}))
+	w.App().Get("/health-check", healthCheck)
+	w.App().Get("/swagger/*", swagger.HandlerDefault)
+
 }
 
 func Resister(w container.Container) {

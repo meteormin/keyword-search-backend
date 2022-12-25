@@ -10,8 +10,16 @@ import (
 	"strconv"
 )
 
+type Env string
+
+const (
+	PRD   Env = "production"
+	DEV   Env = "development"
+	LOCAL Env = "local"
+)
+
 type Configs struct {
-	AppEnv       string
+	AppEnv       Env
 	AppPort      int
 	Locale       string
 	TimeZone     string
@@ -34,7 +42,7 @@ func GetConfigs() *Configs {
 	}
 
 	return &Configs{
-		AppEnv:       os.Getenv("APP_ENV"),
+		AppEnv:       Env(os.Getenv("APP_ENV")),
 		AppPort:      port,
 		Locale:       os.Getenv("LOCALE"),
 		TimeZone:     os.Getenv("TIME_ZONE"),
