@@ -19,5 +19,6 @@ import (
 // @name						Authorization
 // @description				   Bearer token type
 func main() {
-	core.Run()
+	container := core.New()
+	container.Run()
 }

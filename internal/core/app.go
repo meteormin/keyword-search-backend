@@ -8,10 +8,10 @@ import (
 	"github.com/miniyus/go-fiber/internal/core/register"
 )
 
-func Run() {
+func New() container.Container {
 	config := configure.GetConfigs()
 
-	wrapper := container.NewContainer(
+	wrapper := container.New(
 		fiber.New(config.App),
 		database.DB(config.Database),
 		config,
@@ -19,5 +19,5 @@ func Run() {
 
 	register.Resister(wrapper)
 
-	wrapper.Run()
+	return wrapper
 }

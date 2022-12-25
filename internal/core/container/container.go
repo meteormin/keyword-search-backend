@@ -29,7 +29,7 @@ type Wrapper struct {
 	bindings  map[reflect.Type]interface{}
 }
 
-func NewContainer(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
+func New(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
 	return &Wrapper{
 		app:       app,
 		database:  db,
