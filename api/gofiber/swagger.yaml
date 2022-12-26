@@ -1,5 +1,15 @@
 basePath: /
 definitions:
+  api_auth.ResetPasswordStruct:
+    properties:
+      password:
+        type: string
+      password_confirm:
+        type: string
+    required:
+    - password
+    - password_confirm
+    type: object
   api_auth.SignIn:
     properties:
       password:
@@ -42,7 +52,210 @@ definitions:
       token:
         type: string
     type: object
-  register.healthCheckRes:
+  api_error.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      failed_fields:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  auth.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      expires_in:
+        type: integer
+      group_id:
+        type: integer
+      id:
+        type: integer
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  hosts.CreateHost:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      path:
+        type: string
+      publish:
+        type: boolean
+      subject:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - description
+    - host
+    - path
+    - publish
+    - subject
+    type: object
+  hosts.HostResponse:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      id:
+        type: integer
+      path:
+        type: string
+      publish:
+        type: boolean
+      subject:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  hosts.PatchHost:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      path:
+        type: string
+      publish:
+        type: boolean
+      subject:
+        type: string
+    type: object
+  hosts.UpdateHost:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      path:
+        type: string
+      publish:
+        type: boolean
+      subject:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - description
+    - host
+    - path
+    - publish
+    - subject
+    type: object
+  search.CreateSearch:
+    properties:
+      description:
+        type: string
+      host_id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+    required:
+    - description
+    - host_id
+    - publish
+    - query
+    - query_key
+    type: object
+  search.MultiCreateSearch:
+    properties:
+      search:
+        items:
+          $ref: '#/definitions/search.CreateSearch'
+        type: array
+    required:
+    - search
+    type: object
+  search.PatchSearch:
+    properties:
+      description:
+        type: string
+      host_id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+    required:
+    - host_id
+    - publish
+    type: object
+  search.Response:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+      short_url:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  search.UpdateSearch:
+    properties:
+      description:
+        type: string
+      host_id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+    required:
+    - description
+    - host_id
+    - publish
+    - query
+    - query_key
+    type: object
+  short_url.RedirectResponse:
+    properties:
+      url:
+        type: string
+    type: object
+  utils.DataResponse:
+    properties:
+      data: {}
+    type: object
+  utils.Paginator:
+    properties:
+      data: {}
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  utils.StatusResponse:
     properties:
       status:
         type: boolean
@@ -59,6 +272,51 @@ info:
   title: go-fiber Swagger API Documentation
   version: 0.0.1
 paths:
+  /api/auth/me:
+    get:
+      consumes:
+      - application/json
+      description: get login user info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.User'
+      security:
+      - BearerAuth: []
+      summary: get my info
+      tags:
+      - Auth
+  /api/auth/password:
+    patch:
+      consumes:
+      - application/json
+      description: reset login user's password
+      parameters:
+      - description: reset password body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api_auth.ResetPasswordStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: reset password
+      tags:
+      - Auth
   /api/auth/register:
     post:
       consumes:
@@ -74,11 +332,36 @@ paths:
       produces:
       - application/json
       responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api_auth.SignUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      summary: Sign up
+      tags:
+      - Auth
+  /api/auth/revoke:
+    delete:
+      consumes:
+      - application/json
+      description: revoke current jwt token
+      produces:
+      - application/json
+      responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api_auth.SignUpResponse'
-      summary: Sign up
+            $ref: '#/definitions/utils.StatusResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: revoke token
       tags:
       - Auth
   /api/auth/token:
@@ -100,9 +383,527 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api_auth.TokenInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
       summary: login
       tags:
       - Auth
+  /api/hosts:
+    get:
+      consumes:
+      - application/json
+      description: get all hosts
+      parameters:
+      - description: host pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.DataResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get all hosts
+      tags:
+      - Hosts
+    post:
+      consumes:
+      - application/json
+      description: create host
+      parameters:
+      - description: create host
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/hosts.CreateHost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/hosts.HostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create host
+      tags:
+      - Hosts
+  /api/hosts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete host
+      parameters:
+      - description: host pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/utils.StatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete host
+      tags:
+      - Hosts
+    get:
+      consumes:
+      - application/json
+      description: patch host
+      parameters:
+      - description: host pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/hosts.HostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: patch host
+      tags:
+      - Hosts
+    patch:
+      consumes:
+      - application/json
+      description: patch host
+      parameters:
+      - description: host pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: patch host
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/hosts.PatchHost'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/hosts.HostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: patch host
+      tags:
+      - Hosts
+    put:
+      consumes:
+      - application/json
+      description: update host
+      parameters:
+      - description: host pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: update host
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/hosts.UpdateHost'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/hosts.HostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update host
+      tags:
+      - Hosts
+  /api/hosts/{id}/search:
+    get:
+      consumes:
+      - application/json
+      description: get by host id
+      parameters:
+      - description: host id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Paginator'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get by host id
+      tags:
+      - Hosts
+    post:
+      consumes:
+      - application/json
+      description: batch create search by host id
+      parameters:
+      - description: host id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: multi create search
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/search.MultiCreateSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/search.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: batch create search by host id
+      tags:
+      - Hosts
+  /api/redirect/{code}:
+    get:
+      consumes:
+      - application/json
+      description: create search
+      parameters:
+      - description: short url code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/short_url.RedirectResponse'
+        "302":
+          description: Found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: create search
+      tags:
+      - Redirect
+  /api/search:
+    post:
+      consumes:
+      - application/json
+      description: create search
+      parameters:
+      - description: create search
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/search.CreateSearch'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/search.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create search
+      tags:
+      - Search
+  /api/search/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: get search
+      parameters:
+      - description: search pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/utils.StatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get search
+      tags:
+      - Search
+    get:
+      consumes:
+      - application/json
+      description: get search
+      parameters:
+      - description: search pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/search.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get search
+      tags:
+      - Search
+    patch:
+      consumes:
+      - application/json
+      description: get search
+      parameters:
+      - description: search pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: update search
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/search.PatchSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/search.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get search
+      tags:
+      - Search
+    put:
+      consumes:
+      - application/json
+      description: get search
+      parameters:
+      - description: search pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: update search
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/search.UpdateSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/search.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get search
+      tags:
+      - Search
+  /api/search/all:
+    get:
+      consumes:
+      - application/json
+      description: create search
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Paginator'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create search
+      tags:
+      - Search
   /health-check:
     get:
       consumes:
@@ -114,7 +915,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/register.healthCheckRes'
+            $ref: '#/definitions/utils.StatusResponse'
       summary: health check your server
       tags:
       - healthCheck

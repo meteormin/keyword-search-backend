@@ -17,6 +17,7 @@ type Repository interface {
 	BatchCreate(entities []entity.Search) ([]entity.Search, error)
 	FindByShortUrl(code string, userId uint) (*entity.Search, error)
 	Update(pk uint, ent entity.Search) (*entity.Search, error)
+	Delete(pk uint) (bool, error)
 }
 
 type RepositoryStruct struct {
@@ -122,15 +123,40 @@ func (r *RepositoryStruct) Update(pk uint, search entity.Search) (*entity.Search
 		return nil, err
 	}
 
-	search.ID = exists.ID
+	if exists == nil {
+		return nil, gorm.ErrRecordNotFound
+	}
 
-	result := r.db.Save(&search)
-
-	_, err = database.HandleResult(result)
-
-	if err != nil {
-		return nil, err
+	if search.ID == exists.ID {
+		result := r.db.Save(&search)
+		_, err = database.HandleResult(result)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		search.ID = exists.ID
+		result := r.db.Save(&search)
+		_, err = database.HandleResult(result)
 	}
 
 	return &search, nil
+}
+
+func (r *RepositoryStruct) Delete(pk uint) (bool, error) {
+	exists, err := r.Find(pk)
+	if err != nil {
+		return false, err
+	}
+	if exists == nil {
+		return false, nil
+	}
+
+	result := r.db.Delete(exists)
+	_, err = database.HandleResult(result)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

@@ -1,8 +1,10 @@
 package api_error
 
 import (
+	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/utils"
+	"gorm.io/gorm"
 )
 
 type ErrorInterface interface {
@@ -27,6 +29,10 @@ func NewFromError(ctx *fiber.Ctx, err error) *ErrorResponse {
 	if vErr, ok := err.(*fiber.Error); ok {
 		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: vErr.Code, Message: vErr.Message}
 	} else if vErr, ok := err.(error); ok {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusNotFound, Message: vErr.Error()}
+		}
+
 		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusInternalServerError, Message: vErr.Error()}
 	} else {
 		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusInternalServerError, Message: "Unknown Error"}

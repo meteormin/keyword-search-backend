@@ -20,6 +20,17 @@ func NewHandler(service Service) Handler {
 	}
 }
 
+// Redirect
+// @Summary create search
+// @description create search
+// @Tags Redirect
+// @Param code path string true "short url code"
+// @Success 200 {object} RedirectResponse
+// @Success 302 {string} redirect
+// @Accept json
+// @Produce json
+// @Router /api/redirect/{code} [get]
+// @Security BearerAuth
 func (h *HandlerStruct) Redirect(c *fiber.Ctx) error {
 	allParams := c.AllParams()
 	code := allParams["code"]
@@ -38,8 +49,8 @@ func (h *HandlerStruct) Redirect(c *fiber.Ctx) error {
 	log.Print(realUrl)
 	err = c.Redirect(realUrl)
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"url": realUrl,
+		return c.JSON(RedirectResponse{
+			Url: realUrl,
 		})
 	}
 

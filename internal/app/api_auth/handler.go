@@ -8,7 +8,6 @@ import (
 	"github.com/miniyus/go-fiber/internal/core/context"
 	"github.com/miniyus/go-fiber/internal/utils"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type Handler interface {
@@ -52,7 +51,8 @@ func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ErrorRespo
 // @Summary Sign up
 // @Description sign up
 // @Tags Auth
-// @Success 200 {object} SignUpResponse
+// @Success 201 {object} SignUpResponse
+// @Failure 400 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
 // @Param request body SignUp true "sign up body"
@@ -93,6 +93,7 @@ func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ErrorResponse)
 // @Description login
 // @Tags Auth
 // @Success 200 {object} TokenInfo
+// @Failure 400 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
 // @Param request body SignIn true "login  body"
@@ -121,6 +122,15 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 	})
 }
 
+// Me
+// @Summary get my info
+// @description get login user info
+// @Tags Auth
+// @Success 200 {object} auth.User
+// @Accept json
+// @Produce json
+// @Router /api/auth/me [get]
+// @Security BearerAuth
 func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
 	user, ok := ctx.Locals(context.AuthUser).(*auth.User)
 	if !ok {
@@ -136,6 +146,17 @@ func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
 	return ctx.JSON(user)
 }
 
+// ResetPassword
+// @Summary reset password
+// @description reset login user's password
+// @Tags Auth
+// @Param request body ResetPasswordStruct true "reset password body"
+// @Success 200 {object} auth.User
+// @Failure 400 {object} api_error.ErrorResponse
+// @Accept json
+// @Produce json
+// @Router /api/auth/password [patch]
+// @Security BearerAuth
 func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 	user, err := utils.GetAuthUser(ctx)
 	if err != nil {
@@ -175,6 +196,16 @@ func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 	return ctx.JSON(rs)
 }
 
+// RevokeToken
+// @Summary revoke token
+// @description revoke current jwt token
+// @Tags Auth
+// @Success 200 {object} utils.StatusResponse
+// @Failure 403 {object} api_error.ErrorResponse
+// @Accept json
+// @Produce json
+// @Router /api/auth/revoke [delete]
+// @Security BearerAuth
 func (h *HandlerStruct) RevokeToken(ctx *fiber.Ctx) error {
 	user, err := utils.GetAuthUser(ctx)
 	if err != nil {
@@ -183,8 +214,7 @@ func (h *HandlerStruct) RevokeToken(ctx *fiber.Ctx) error {
 
 	tokenInfo, ok := ctx.Locals("user").(*jwt.Token)
 	if !ok {
-		errRes := api_error.NewErrorResponse(ctx, fiber.StatusForbidden, http.StatusText(fiber.StatusForbidden))
-		return errRes.Response()
+		return fiber.ErrForbidden
 	}
 
 	token := tokenInfo.Raw
@@ -194,7 +224,7 @@ func (h *HandlerStruct) RevokeToken(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.Status(fiber.StatusNoContent).JSON(fiber.Map{
-		"status": rs,
+	return ctx.Status(fiber.StatusNoContent).JSON(utils.StatusResponse{
+		Status: rs,
 	})
 }

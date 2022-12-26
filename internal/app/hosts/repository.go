@@ -9,10 +9,10 @@ import (
 type Repository interface {
 	All() ([]entity.Host, error)
 	GetByUserId(userId uint) ([]entity.Host, error)
-	Find(pk uint, userId uint) (*entity.Host, error)
+	Find(pk uint) (*entity.Host, error)
 	Create(host entity.Host) (*entity.Host, error)
-	Update(pk uint, userId uint, host entity.Host) (*entity.Host, error)
-	Delete(pk uint, userId uint) (bool, error)
+	Update(pk uint, host entity.Host) (*entity.Host, error)
+	Delete(pk uint) (bool, error)
 }
 
 type RepositoryStruct struct {
@@ -46,9 +46,9 @@ func (r *RepositoryStruct) GetByUserId(userId uint) ([]entity.Host, error) {
 	return hosts, nil
 }
 
-func (r *RepositoryStruct) Find(pk uint, userId uint) (*entity.Host, error) {
+func (r *RepositoryStruct) Find(pk uint) (*entity.Host, error) {
 	host := entity.Host{}
-	result := r.db.Preload("Search").Where(entity.Host{UserId: userId}).Find(&host, pk)
+	result := r.db.Preload("Search").Find(&host, pk)
 	_, err := database.HandleResult(result)
 
 	if err != nil {
@@ -69,10 +69,14 @@ func (r *RepositoryStruct) Create(host entity.Host) (*entity.Host, error) {
 	return &host, nil
 }
 
-func (r *RepositoryStruct) Update(pk uint, userId uint, host entity.Host) (*entity.Host, error) {
-	exists, err := r.Find(pk, userId)
+func (r *RepositoryStruct) Update(pk uint, host entity.Host) (*entity.Host, error) {
+	exists, err := r.Find(pk)
 	if err != nil {
 		return nil, err
+	}
+
+	if exists == nil {
+		return nil, gorm.ErrRecordNotFound
 	}
 
 	if host.ID == exists.ID { // patch
@@ -90,8 +94,8 @@ func (r *RepositoryStruct) Update(pk uint, userId uint, host entity.Host) (*enti
 	return &host, nil
 }
 
-func (r *RepositoryStruct) Delete(pk uint, userId uint) (bool, error) {
-	exists, err := r.Find(pk, userId)
+func (r *RepositoryStruct) Delete(pk uint) (bool, error) {
+	exists, err := r.Find(pk)
 	if err != nil {
 		return false, err
 	}

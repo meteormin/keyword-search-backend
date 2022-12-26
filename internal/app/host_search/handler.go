@@ -21,6 +21,18 @@ func NewHandler(s search.Service) Handler {
 	return &HandlerStruct{service: s}
 }
 
+// GetByHostId
+// @Summary get by host id
+// @description get by host id
+// @Tags Hosts
+// @Param id path int true "host id"
+// @Success 200 {object} utils.Paginator
+// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 403 {object} api_error.ErrorResponse
+// @Accept json
+// @Produce json
+// @Router /api/hosts/{id}/search [get]
+// @Security BearerAuth
 func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 	page, err := utils.GetPageFromCtx(c)
 	if err != nil {
@@ -41,6 +53,19 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(data)
 }
 
+// BatchCreate
+// @Summary batch create search by host id
+// @description batch create search by host id
+// @Tags Hosts
+// @Param id path int true "host id"
+// @Param request body search.MultiCreateSearch true "multi create search"
+// @Success 200 {object} search.Response
+// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 403 {object} api_error.ErrorResponse
+// @Accept json
+// @Produce json
+// @Router /api/hosts/{id}/search [post]
+// @Security BearerAuth
 func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 	params := c.AllParams()
 	hostId, err := strconv.ParseUint(params["id"], 10, 64)

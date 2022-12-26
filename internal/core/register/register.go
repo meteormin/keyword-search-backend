@@ -13,6 +13,7 @@ import (
 	"github.com/miniyus/go-fiber/internal/core/context"
 	"github.com/miniyus/go-fiber/internal/core/logger"
 	router "github.com/miniyus/go-fiber/internal/routes"
+	"github.com/miniyus/go-fiber/internal/utils"
 	"github.com/miniyus/go-fiber/pkg/jwt"
 	rsGen "github.com/miniyus/go-fiber/pkg/rs256"
 	"go.uber.org/zap"
@@ -88,24 +89,19 @@ func middlewares(w container.Container) {
 	w.App().Use(cors.New(w.Config().Cors))
 }
 
-// healthCHeckRes health check response
-type healthCheckRes struct {
-	Status bool `json:"status"`
-}
-
 // healthCheck
 // @Summary health check your server
 // @Description health check your server
-// @Success 200 {object} healthCheckRes
+// @Success 200 {object} utils.StatusResponse
 // @Tags healthCheck
 // @Accept */*
 // @Produce json
 // @Router /health-check [get]
 func healthCheck(ctx *fiber.Ctx) error {
 
-	err := ctx.JSON(healthCheckRes{Status: true})
+	err := ctx.JSON(utils.StatusResponse{Status: true})
 	if err != nil {
-		return ctx.JSON(healthCheckRes{Status: false})
+		return ctx.JSON(utils.StatusResponse{Status: false})
 	}
 
 	return err

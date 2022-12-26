@@ -1,6 +1,7 @@
 package hosts
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/entity"
 )
 
@@ -52,9 +53,17 @@ func (s *ServiceStruct) GetByUserId(userId uint) ([]HostResponse, error) {
 }
 
 func (s *ServiceStruct) Find(pk uint, userId uint) (*HostResponse, error) {
-	ent, err := s.repo.Find(pk, userId)
+	ent, err := s.repo.Find(pk)
 	if err != nil {
 		return nil, err
+	}
+
+	if ent == nil {
+		return nil, fiber.ErrNotFound
+	}
+
+	if ent.UserId != userId {
+		return nil, fiber.ErrForbidden
 	}
 
 	return ToHostResponse(ent), nil
@@ -79,6 +88,19 @@ func (s *ServiceStruct) Create(host *CreateHost) (*HostResponse, error) {
 }
 
 func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error) {
+	exists, err := s.repo.Find(pk)
+	if err != nil {
+		return nil, err
+	}
+
+	if exists == nil {
+		return nil, fiber.ErrNotFound
+	}
+
+	if exists.UserId != userId {
+		return nil, fiber.ErrForbidden
+	}
+
 	ent := entity.Host{
 		Subject:     host.Subject,
 		Description: host.Description,
@@ -86,7 +108,7 @@ func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostRes
 		Publish:     host.Publish,
 	}
 
-	updated, err := s.repo.Update(pk, userId, ent)
+	updated, err := s.repo.Update(pk, ent)
 	if err != nil {
 		return nil, err
 	}
@@ -95,9 +117,17 @@ func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostRes
 }
 
 func (s *ServiceStruct) Patch(pk uint, userId uint, host *PatchHost) (*HostResponse, error) {
-	ent, err := s.repo.Find(pk, userId)
+	ent, err := s.repo.Find(pk)
 	if err != nil {
 		return nil, err
+	}
+
+	if ent == nil {
+		return nil, fiber.ErrNotFound
+	}
+
+	if ent.UserId != userId {
+		return nil, fiber.ErrForbidden
 	}
 
 	if host.Host != nil {
@@ -119,7 +149,7 @@ func (s *ServiceStruct) Patch(pk uint, userId uint, host *PatchHost) (*HostRespo
 		ent.Publish = *host.Publish
 	}
 
-	updated, err := s.repo.Update(pk, userId, *ent)
+	updated, err := s.repo.Update(pk, *ent)
 	if err != nil {
 		return nil, err
 	}
@@ -128,5 +158,18 @@ func (s *ServiceStruct) Patch(pk uint, userId uint, host *PatchHost) (*HostRespo
 }
 
 func (s *ServiceStruct) Delete(pk uint, userId uint) (bool, error) {
-	return s.repo.Delete(pk, userId)
+	exists, err := s.repo.Find(pk)
+	if err != nil {
+		return false, err
+	}
+
+	if exists == nil {
+		return false, fiber.ErrNotFound
+	}
+
+	if exists.UserId != userId {
+		return false, fiber.ErrForbidden
+	}
+
+	return s.repo.Delete(pk)
 }
