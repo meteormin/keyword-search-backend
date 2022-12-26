@@ -33,7 +33,7 @@ func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.G
 		repo:            repo,
 		userRepo:        userRepo,
 		tokenGenerator:  generator,
-		HasLoggerStruct: logger.HasLoggerStruct{Logger: repo.GetLogger()},
+		HasLoggerStruct: logger.HasLoggerStruct{Logger: userRepo.GetLogger()},
 	}
 }
 

@@ -9,8 +9,8 @@ import (
 )
 
 func New(db *gorm.DB, generator jwt.Generator, logger *zap.SugaredLogger) Handler {
-	repo := auth.NewRepository(db, logger)
-	service := NewService(repo, users.NewRepository(db, repo.GetLogger()), generator)
+	repo := auth.NewRepository(db)
+	service := NewService(repo, users.NewRepository(db, logger), generator)
 	handler := NewHandler(service)
 
 	return handler
