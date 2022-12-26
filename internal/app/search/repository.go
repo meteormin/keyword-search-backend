@@ -3,8 +3,10 @@ package search
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/core/database"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/entity"
 	"github.com/miniyus/go-fiber/internal/utils"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -18,15 +20,18 @@ type Repository interface {
 	FindByShortUrl(code string, userId uint) (*entity.Search, error)
 	Update(pk uint, ent entity.Search) (*entity.Search, error)
 	Delete(pk uint) (bool, error)
+	logger.HasLogger
 }
 
 type RepositoryStruct struct {
 	db *gorm.DB
+	logger.HasLoggerStruct
 }
 
-func NewRepository(db *gorm.DB) Repository {
+func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
 	return &RepositoryStruct{
-		db: db,
+		db:              db,
+		HasLoggerStruct: logger.HasLoggerStruct{Logger: log},
 	}
 }
 

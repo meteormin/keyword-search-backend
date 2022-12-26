@@ -4,20 +4,29 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/app/search"
+	"github.com/miniyus/go-fiber/internal/core/logger"
+	"go.uber.org/zap"
 	"path"
 	"strings"
 )
 
 type Service interface {
 	FindRealUrl(code string, userId uint) (string, error)
+	logger.HasLogger
 }
 
 type ServiceStruct struct {
 	searchRepo search.Repository
+	logger.HasLoggerStruct
 }
 
-func NewService(repository search.Repository) Service {
-	return &ServiceStruct{searchRepo: repository}
+func NewService(repository search.Repository, log *zap.SugaredLogger) Service {
+	return &ServiceStruct{
+		searchRepo: repository,
+		HasLoggerStruct: logger.HasLoggerStruct{
+			Logger: log,
+		},
+	}
 }
 
 func (s *ServiceStruct) FindRealUrl(code string, userId uint) (string, error) {

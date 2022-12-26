@@ -10,7 +10,7 @@ const Prefix = "/hosts/:id/search"
 
 func Register(handler Handler) router.Register {
 	return func(router fiber.Router) {
-		router.Get("/", handler.GetByHostId)
-		router.Post("/", auth.HasPerm(), handler.BatchCreate)
+		router.Get("/", handler.GetByHostId).Name("api.hosts.id.search")
+		router.Post("/", auth.HasPerm(), handler.BatchCreate).Name("api.hosts.batch-create")
 	}
 }

@@ -2,7 +2,9 @@ package auth
 
 import (
 	"github.com/miniyus/go-fiber/internal/core/database"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/entity"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -14,14 +16,16 @@ type Repository interface {
 	FindByUserId(userId uint) (*entity.AccessToken, error)
 	Update(token entity.AccessToken) (*entity.AccessToken, error)
 	Delete(pk uint) (bool, error)
+	logger.HasLogger
 }
 
 type RepositoryStruct struct {
 	db *gorm.DB
+	logger.HasLoggerStruct
 }
 
-func NewRepository(db *gorm.DB) Repository {
-	return &RepositoryStruct{db}
+func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
+	return &RepositoryStruct{db, logger.HasLoggerStruct{Logger: log}}
 }
 
 func (repo *RepositoryStruct) All() ([]*entity.AccessToken, error) {

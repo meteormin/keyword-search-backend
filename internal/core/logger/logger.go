@@ -47,3 +47,15 @@ func New(config ...Config) *zap.SugaredLogger {
 	logger := zap.New(core, zap.AddCaller())
 	return logger.Sugar()
 }
+
+type HasLogger interface {
+	GetLogger() *zap.SugaredLogger
+}
+
+type HasLoggerStruct struct {
+	Logger *zap.SugaredLogger
+}
+
+func (hl HasLoggerStruct) GetLogger() *zap.SugaredLogger {
+	return hl.Logger
+}

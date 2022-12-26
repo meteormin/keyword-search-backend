@@ -10,7 +10,7 @@ const Prefix = "/redirect"
 func Register(handler Handler) router.Register {
 
 	return func(router fiber.Router) {
-		router.Get("/:code", handler.Redirect)
+		router.Get("/:code", handler.Redirect).Name("api.redirect.code")
 	}
 
 }

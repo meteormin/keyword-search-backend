@@ -2,7 +2,9 @@ package hosts
 
 import (
 	"github.com/miniyus/go-fiber/internal/core/database"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/entity"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -13,14 +15,19 @@ type Repository interface {
 	Create(host entity.Host) (*entity.Host, error)
 	Update(pk uint, host entity.Host) (*entity.Host, error)
 	Delete(pk uint) (bool, error)
+	logger.HasLogger
 }
 
 type RepositoryStruct struct {
 	db *gorm.DB
+	logger.HasLoggerStruct
 }
 
-func NewRepository(db *gorm.DB) Repository {
-	return &RepositoryStruct{db: db}
+func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
+	return &RepositoryStruct{
+		db:              db,
+		HasLoggerStruct: logger.HasLoggerStruct{Logger: log},
+	}
 }
 
 func (r *RepositoryStruct) All() ([]entity.Host, error) {

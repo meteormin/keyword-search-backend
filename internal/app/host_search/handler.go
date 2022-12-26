@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/app/search"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/utils"
 	"strconv"
 )
@@ -11,14 +12,21 @@ import (
 type Handler interface {
 	GetByHostId(c *fiber.Ctx) error
 	BatchCreate(c *fiber.Ctx) error
+	logger.HasLogger
 }
 
 type HandlerStruct struct {
 	service search.Service
+	logger.HasLoggerStruct
 }
 
 func NewHandler(s search.Service) Handler {
-	return &HandlerStruct{service: s}
+	return &HandlerStruct{
+		service: s,
+		HasLoggerStruct: logger.HasLoggerStruct{
+			Logger: s.GetLogger(),
+		},
+	}
 }
 
 // GetByHostId

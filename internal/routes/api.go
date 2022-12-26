@@ -38,31 +38,31 @@ func Api(container container.Container) {
 
 	apiRouter.Route(
 		users.Prefix,
-		users.Register(users.New(container.Database())),
+		users.Register(users.New(container.Database(), logger)),
 		auth.Middlewares()...,
 	).Name("api.users")
 
 	apiRouter.Route(
 		hosts.Prefix,
-		hosts.Register(hosts.New(container.Database())),
+		hosts.Register(hosts.New(container.Database(), logger)),
 		auth.Middlewares()...,
 	).Name("api.hosts")
 
 	apiRouter.Route(
 		search.Prefix,
-		search.Register(search.New(container.Database())),
+		search.Register(search.New(container.Database(), logger)),
 		auth.Middlewares()...,
 	).Name("api.search")
 
 	apiRouter.Route(
 		host_search.Prefix,
-		host_search.Register(host_search.New(container.Database())),
+		host_search.Register(host_search.New(container.Database(), logger)),
 		auth.Middlewares()...,
 	).Name("api.hosts.search")
 
 	apiRouter.Route(
 		short_url.Prefix,
-		short_url.Register(short_url.New(container.Database())),
+		short_url.Register(short_url.New(container.Database(), logger)),
 		auth.Middlewares()...,
 	).Name("api.short_url")
 

@@ -5,10 +5,10 @@ import (
 	jwtLib "github.com/golang-jwt/jwt/v4"
 	"github.com/miniyus/go-fiber/internal/app/users"
 	"github.com/miniyus/go-fiber/internal/core/auth"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/entity"
 	"github.com/miniyus/go-fiber/internal/utils"
 	"github.com/miniyus/go-fiber/pkg/jwt"
-	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -18,21 +18,22 @@ type Service interface {
 	SignUp(signUp *SignUp) (*SignUpResponse, error)
 	ResetPassword(pk uint, passwordStruct *ResetPasswordStruct) (*entity.User, error)
 	RevokeToken(pk uint, token string) (bool, error)
+	logger.HasLogger
 }
 
 type ServiceStruct struct {
 	repo           auth.Repository
 	userRepo       users.Repository
 	tokenGenerator jwt.Generator
-	logger         *zap.SugaredLogger
+	logger.HasLoggerStruct
 }
 
-func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.Generator, logger *zap.SugaredLogger) Service {
+func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.Generator) Service {
 	return &ServiceStruct{
-		repo:           repo,
-		userRepo:       userRepo,
-		tokenGenerator: generator,
-		logger:         logger,
+		repo:            repo,
+		userRepo:        userRepo,
+		tokenGenerator:  generator,
+		HasLoggerStruct: logger.HasLoggerStruct{Logger: repo.GetLogger()},
 	}
 }
 

@@ -2,7 +2,9 @@ package users
 
 import (
 	"github.com/miniyus/go-fiber/internal/core/database"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/entity"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -14,14 +16,16 @@ type Repository interface {
 	Delete(pk uint) (bool, error)
 	FindByUsername(username string) (*entity.User, error)
 	FindByEntity(user entity.User) (*entity.User, error)
+	logger.HasLogger
 }
 
 type RepositoryStruct struct {
 	db *gorm.DB
+	logger.HasLoggerStruct
 }
 
-func NewRepository(db *gorm.DB) Repository {
-	return &RepositoryStruct{db}
+func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
+	return &RepositoryStruct{db, logger.HasLoggerStruct{Logger: log}}
 }
 
 func (repo *RepositoryStruct) Create(user entity.User) (*entity.User, error) {

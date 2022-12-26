@@ -3,6 +3,7 @@ package search
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/utils"
 	"strconv"
 )
@@ -14,14 +15,21 @@ type Handler interface {
 	Update(c *fiber.Ctx) error
 	Patch(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
+	logger.HasLogger
 }
 
 type HandlerStruct struct {
 	service Service
+	logger.HasLoggerStruct
 }
 
 func NewHandler(s Service) Handler {
-	return &HandlerStruct{service: s}
+	return &HandlerStruct{
+		service: s,
+		HasLoggerStruct: logger.HasLoggerStruct{
+			Logger: s.GetLogger(),
+		},
+	}
 }
 
 // Create

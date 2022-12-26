@@ -2,6 +2,7 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/entity"
 	"github.com/miniyus/go-fiber/internal/utils"
 	"log"
@@ -17,15 +18,20 @@ type Service interface {
 	Update(pk uint, userId uint, search *UpdateSearch) (*Response, error)
 	Patch(pk uint, userId uint, search *PatchSearch) (*Response, error)
 	Delete(pk uint, userId uint) (bool, error)
+	logger.HasLogger
 }
 
 type ServiceStruct struct {
 	repo Repository
+	logger.HasLoggerStruct
 }
 
 func NewService(repo Repository) Service {
 	return &ServiceStruct{
 		repo: repo,
+		HasLoggerStruct: logger.HasLoggerStruct{
+			Logger: repo.GetLogger(),
+		},
 	}
 }
 

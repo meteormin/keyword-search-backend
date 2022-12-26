@@ -6,8 +6,8 @@ import (
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/auth"
 	"github.com/miniyus/go-fiber/internal/core/context"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/utils"
-	"go.uber.org/zap"
 )
 
 type Handler interface {
@@ -16,15 +16,19 @@ type Handler interface {
 	Me(ctx *fiber.Ctx) error
 	ResetPassword(ctx *fiber.Ctx) error
 	RevokeToken(ctx *fiber.Ctx) error
+	logger.HasLogger
 }
 
 type HandlerStruct struct {
 	service Service
-	logger  *zap.SugaredLogger
+	logger.HasLoggerStruct
 }
 
-func NewHandler(service Service, logger *zap.SugaredLogger) Handler {
-	return &HandlerStruct{service: service, logger: logger}
+func NewHandler(service Service) Handler {
+	return &HandlerStruct{
+		service:         service,
+		HasLoggerStruct: logger.HasLoggerStruct{Logger: service.GetLogger()},
+	}
 }
 
 func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ErrorResponse) {
@@ -134,12 +138,7 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
 	user, ok := ctx.Locals(context.AuthUser).(*auth.User)
 	if !ok {
-		logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
-
-		if !ok {
-			return fiber.NewError(500, "Can't Load Context Logger")
-		}
-		logger.Error(user)
+		h.GetLogger().Error(user)
 		return fiber.NewError(500, "Can't Load Context AuthUser")
 	}
 

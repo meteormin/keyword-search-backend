@@ -2,21 +2,26 @@ package short_url
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/utils"
+	"go.uber.org/zap"
 	"log"
 )
 
 type Handler interface {
 	Redirect(c *fiber.Ctx) error
+	logger.HasLogger
 }
 
 type HandlerStruct struct {
 	service Service
+	logger.HasLoggerStruct
 }
 
-func NewHandler(service Service) Handler {
+func NewHandler(service Service, log *zap.SugaredLogger) Handler {
 	return &HandlerStruct{
-		service: service,
+		service:         service,
+		HasLoggerStruct: logger.HasLoggerStruct{Logger: log},
 	}
 }
 
