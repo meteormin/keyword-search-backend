@@ -207,27 +207,32 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 // @Summary get all hosts
 // @description get all hosts
 // @Tags Hosts
-// @Param id path int true "host pk"
-// @Success 200 {object} utils.DataResponse
+// @Success 200 {object} HostListResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts [get]
 // @Security BearerAuth
 func (h *HandlerStruct) All(c *fiber.Ctx) error {
+	page, err := utils.GetPageFromCtx(c)
+	if err != nil {
+		return err
+	}
+
 	user, err := utils.GetAuthUser(c)
 
 	if err != nil {
 		return err
 	}
 
-	results, err := h.service.GetByUserId(user.Id)
+	results, err := h.service.GetByUserId(user.Id, page)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(utils.DataResponse{
-		Data: results,
+	return c.JSON(HostListResponse{
+		Paginator: results,
+		Data:      results.Data.([]HostResponse),
 	})
 }
 

@@ -1,3 +1,16 @@
+FROM golang:1.19 as build
+
+RUN mkdir /fiber
+
+WORKDIR /fiber
+
+COPY . .
+
+RUN go mod download
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+RUN make build
+
 FROM ubuntu:22.04
 
 LABEL maintainer="miniyu97@gmail.com"
@@ -23,8 +36,11 @@ RUN useradd -ms /bin/bash --no-user-group -g $GO_GROUP -u 1337 gofiber
 
 WORKDIR /home/gofiber
 
-RUN curl -O -L "https://golang.org/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz"
-RUN tar xvzf go${GO_VERSION}.linux-${ARCH}.tar.gz -C /usr/local  &&  rm "go${GO_VERSION}.linux-${ARCH}.tar.gz"
+#RUN curl -O -L "https://golang.org/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz"
+#RUN tar xvzf go${GO_VERSION}.linux-${ARCH}.tar.gz -C /usr/local  &&  rm "go${GO_VERSION}.linux-${ARCH}.tar.gz"
+
+COPY --from=build /fiber/build ./build
+COPY --from=build /fiber/.env .
 
 COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start-container.sh /usr/local/bin/start-container
@@ -34,8 +50,8 @@ RUN chgrp -R $GO_GROUP /home/gofiber
 
 RUN chmod +x /usr/local/bin/start-container
 
-RUN export GOPATH=/usr/local/go/bin
-RUN export PATH=$PATH:/usr/local/go/bin
+#RUN export GOPATH=/usr/local/go/bin
+#RUN export PATH=$PATH:/usr/local/go/bin
 
 EXPOSE $APP_PORT
 

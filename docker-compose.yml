@@ -1,24 +1,24 @@
 version: '3'
 services:
-  debugger:
-    container_name: go-fiber_debugger
+#  debugger:
+#    container_name: go-fiber_debugger
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.debug
+#    extra_hosts:
+#      - 'host.docker.internal:host-gateway'
+#    ports:
+#      - '8000:${APP_PORT:-8000}'
+#      - '2345:2345'
+#    networks:
+#      - go-web
+#    depends_on:
+#      - redis
+#      - pgsql
+  go-fiber:
+    container_name: keyword-search-go
     build:
       context: .
-      dockerfile: ./docker/debug/Dockerfile
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    ports:
-      - '8000:${APP_PORT:-8000}'
-      - '2345:2345'
-    networks:
-      - go-web
-    depends_on:
-      - redis
-      - pgsql
-  gofiber:
-    container_name: go-fiber
-    build:
-      context: ./docker
       dockerfile: Dockerfile
       args:
         GO_GROUP: '${GO_GROUP:-1000}'
@@ -33,7 +33,7 @@ services:
       GO_USER: '${GO_USER:-1000}'
       TIME_ZONE: '${TIME_ZONE}'
     volumes:
-      - '.:/home/gofiber'
+      - './data:/home/gofiber/data'
     networks:
       - go-web
     depends_on:

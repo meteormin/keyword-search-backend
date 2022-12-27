@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  api_auth.ResetPasswordStruct:
+  github_com_miniyus_go-fiber_internal_app_api_auth.ResetPasswordStruct:
     properties:
       password:
         type: string
@@ -10,7 +10,7 @@ definitions:
     - password
     - password_confirm
     type: object
-  api_auth.SignIn:
+  github_com_miniyus_go-fiber_internal_app_api_auth.SignIn:
     properties:
       password:
         type: string
@@ -20,7 +20,7 @@ definitions:
     - password
     - username
     type: object
-  api_auth.SignUp:
+  github_com_miniyus_go-fiber_internal_app_api_auth.SignUp:
     properties:
       email:
         type: string
@@ -36,7 +36,7 @@ definitions:
     - password_confirm
     - username
     type: object
-  api_auth.SignUpResponse:
+  github_com_miniyus_go-fiber_internal_app_api_auth.SignUpResponse:
     properties:
       expires_at:
         type: string
@@ -45,44 +45,14 @@ definitions:
       user_id:
         type: integer
     type: object
-  api_auth.TokenInfo:
+  github_com_miniyus_go-fiber_internal_app_api_auth.TokenInfo:
     properties:
       expires_at:
         type: string
       token:
         type: string
     type: object
-  api_error.ErrorResponse:
-    properties:
-      code:
-        type: integer
-      failed_fields:
-        additionalProperties:
-          type: string
-        type: object
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  auth.User:
-    properties:
-      created_at:
-        type: string
-      email:
-        type: string
-      expires_in:
-        type: integer
-      group_id:
-        type: integer
-      id:
-        type: integer
-      role:
-        type: string
-      username:
-        type: string
-    type: object
-  hosts.CreateHost:
+  github_com_miniyus_go-fiber_internal_app_hosts.CreateHost:
     properties:
       description:
         type: string
@@ -103,7 +73,20 @@ definitions:
     - publish
     - subject
     type: object
-  hosts.HostResponse:
+  github_com_miniyus_go-fiber_internal_app_hosts.HostListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.HostResponse'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  github_com_miniyus_go-fiber_internal_app_hosts.HostResponse:
     properties:
       description:
         type: string
@@ -120,7 +103,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  hosts.PatchHost:
+  github_com_miniyus_go-fiber_internal_app_hosts.PatchHost:
     properties:
       description:
         type: string
@@ -133,7 +116,7 @@ definitions:
       subject:
         type: string
     type: object
-  hosts.UpdateHost:
+  github_com_miniyus_go-fiber_internal_app_hosts.UpdateHost:
     properties:
       description:
         type: string
@@ -154,7 +137,7 @@ definitions:
     - publish
     - subject
     type: object
-  search.CreateSearch:
+  github_com_miniyus_go-fiber_internal_app_search.CreateSearch:
     properties:
       description:
         type: string
@@ -173,16 +156,16 @@ definitions:
     - query
     - query_key
     type: object
-  search.MultiCreateSearch:
+  github_com_miniyus_go-fiber_internal_app_search.MultiCreateSearch:
     properties:
       search:
         items:
-          $ref: '#/definitions/search.CreateSearch'
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_search.CreateSearch'
         type: array
     required:
     - search
     type: object
-  search.PatchSearch:
+  github_com_miniyus_go-fiber_internal_app_search.PatchSearch:
     properties:
       description:
         type: string
@@ -198,7 +181,7 @@ definitions:
     - host_id
     - publish
     type: object
-  search.Response:
+  github_com_miniyus_go-fiber_internal_app_search.Response:
     properties:
       created_at:
         type: string
@@ -217,7 +200,20 @@ definitions:
       updated_at:
         type: string
     type: object
-  search.UpdateSearch:
+  github_com_miniyus_go-fiber_internal_app_search.ResponseAll:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_entity.Search'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  github_com_miniyus_go-fiber_internal_app_search.UpdateSearch:
     properties:
       description:
         type: string
@@ -236,16 +232,148 @@ definitions:
     - query
     - query_key
     type: object
-  short_url.RedirectResponse:
+  github_com_miniyus_go-fiber_internal_app_short_url.RedirectResponse:
     properties:
       url:
         type: string
     type: object
-  utils.DataResponse:
+  github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse:
     properties:
-      data: {}
+      code:
+        type: integer
+      failed_fields:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        type: string
+      status:
+        type: string
     type: object
-  utils.Paginator:
+  github_com_miniyus_go-fiber_internal_core_auth.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      expires_in:
+        type: integer
+      group_id:
+        type: integer
+      id:
+        type: integer
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  github_com_miniyus_go-fiber_internal_entity.BookMark:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      id:
+        type: integer
+      publish:
+        type: boolean
+      subject:
+        type: string
+      updatedAt:
+        type: string
+      url:
+        type: string
+      user:
+        $ref: '#/definitions/github_com_miniyus_go-fiber_internal_entity.User'
+      user_id:
+        type: integer
+    type: object
+  github_com_miniyus_go-fiber_internal_entity.Host:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      host:
+        type: string
+      id:
+        type: integer
+      path:
+        type: string
+      publish:
+        type: boolean
+      search:
+        items:
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_entity.Search'
+        type: array
+      subject:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/github_com_miniyus_go-fiber_internal_entity.User'
+      user_id:
+        type: integer
+    type: object
+  github_com_miniyus_go-fiber_internal_entity.Search:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      host:
+        $ref: '#/definitions/github_com_miniyus_go-fiber_internal_entity.Host'
+      host_id:
+        type: integer
+      id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+      short_url:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  github_com_miniyus_go-fiber_internal_entity.User:
+    properties:
+      bookmarks:
+        items:
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_entity.BookMark'
+        type: array
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      email_verified_at:
+        type: string
+      group_id:
+        type: integer
+      hosts:
+        items:
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_entity.Host'
+        type: array
+      id:
+        type: integer
+      role:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+  github_com_miniyus_go-fiber_internal_utils.Paginator:
     properties:
       data: {}
       page:
@@ -255,10 +383,246 @@ definitions:
       total_count:
         type: integer
     type: object
-  utils.StatusResponse:
+  github_com_miniyus_go-fiber_internal_utils.StatusResponse:
     properties:
       status:
         type: boolean
+    type: object
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  internal_app_api_auth.ResetPasswordStruct:
+    properties:
+      password:
+        type: string
+      password_confirm:
+        type: string
+    required:
+    - password
+    - password_confirm
+    type: object
+  internal_app_api_auth.SignIn:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  internal_app_api_auth.SignUp:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      password_confirm:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - password_confirm
+    - username
+    type: object
+  internal_app_api_auth.SignUpResponse:
+    properties:
+      expires_at:
+        type: string
+      token:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  internal_app_api_auth.TokenInfo:
+    properties:
+      expires_at:
+        type: string
+      token:
+        type: string
+    type: object
+  internal_app_hosts.CreateHost:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      path:
+        type: string
+      publish:
+        type: boolean
+      subject:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - description
+    - host
+    - path
+    - publish
+    - subject
+    type: object
+  internal_app_hosts.HostListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_app_hosts.HostResponse'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  internal_app_hosts.HostResponse:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      id:
+        type: integer
+      path:
+        type: string
+      publish:
+        type: boolean
+      subject:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  internal_app_hosts.PatchHost:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      path:
+        type: string
+      publish:
+        type: boolean
+      subject:
+        type: string
+    type: object
+  internal_app_hosts.UpdateHost:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      path:
+        type: string
+      publish:
+        type: boolean
+      subject:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - description
+    - host
+    - path
+    - publish
+    - subject
+    type: object
+  internal_app_search.CreateSearch:
+    properties:
+      description:
+        type: string
+      host_id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+    required:
+    - description
+    - host_id
+    - publish
+    - query
+    - query_key
+    type: object
+  internal_app_search.PatchSearch:
+    properties:
+      description:
+        type: string
+      host_id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+    required:
+    - host_id
+    - publish
+    type: object
+  internal_app_search.Response:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+      short_url:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  internal_app_search.ResponseAll:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_entity.Search'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  internal_app_search.UpdateSearch:
+    properties:
+      description:
+        type: string
+      host_id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+    required:
+    - description
+    - host_id
+    - publish
+    - query
+    - query_key
+    type: object
+  internal_app_short_url.RedirectResponse:
+    properties:
+      url:
+        type: string
     type: object
 host: localhost:9090
 info:
@@ -283,7 +647,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.User'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_auth.User'
       security:
       - BearerAuth: []
       summary: get my info
@@ -300,18 +664,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/api_auth.ResetPasswordStruct'
+          $ref: '#/definitions/internal_app_api_auth.ResetPasswordStruct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.User'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_auth.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: reset password
@@ -328,18 +692,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/api_auth.SignUp'
+          $ref: '#/definitions/internal_app_api_auth.SignUp'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/api_auth.SignUpResponse'
+            $ref: '#/definitions/internal_app_api_auth.SignUpResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       summary: Sign up
       tags:
       - Auth
@@ -354,11 +718,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.StatusResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_utils.StatusResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: revoke token
@@ -375,18 +739,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/api_auth.SignIn'
+          $ref: '#/definitions/internal_app_api_auth.SignIn'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api_auth.TokenInfo'
+            $ref: '#/definitions/internal_app_api_auth.TokenInfo'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       summary: login
       tags:
       - Auth
@@ -395,23 +759,17 @@ paths:
       consumes:
       - application/json
       description: get all hosts
-      parameters:
-      - description: host pk
-        in: path
-        name: id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.DataResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.HostListResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get all hosts
@@ -427,18 +785,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/hosts.CreateHost'
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.CreateHost'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: create host
@@ -461,19 +819,19 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/utils.StatusResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_utils.StatusResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Delete host
@@ -495,19 +853,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: patch host
@@ -528,26 +886,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/hosts.PatchHost'
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.PatchHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: patch host
@@ -568,26 +926,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/hosts.UpdateHost'
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.UpdateHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: update host
@@ -610,15 +968,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.Paginator'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_utils.Paginator'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get by host id
@@ -639,22 +997,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/search.MultiCreateSearch'
+          $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_search.MultiCreateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/search.Response'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: batch create search by host id
@@ -677,7 +1035,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/short_url.RedirectResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_app_short_url.RedirectResponse'
         "302":
           description: Found
           schema:
@@ -698,18 +1056,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/search.CreateSearch'
+          $ref: '#/definitions/internal_app_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
@@ -732,19 +1090,19 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/utils.StatusResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_utils.StatusResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -766,19 +1124,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -799,26 +1157,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/search.PatchSearch'
+          $ref: '#/definitions/internal_app_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -839,26 +1197,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/search.UpdateSearch'
+          $ref: '#/definitions/internal_app_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -886,19 +1244,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.Paginator'
+            $ref: '#/definitions/internal_app_search.ResponseAll'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_core_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
@@ -915,7 +1273,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.StatusResponse'
+            $ref: '#/definitions/github_com_miniyus_go-fiber_internal_utils.StatusResponse'
       summary: health check your server
       tags:
       - healthCheck

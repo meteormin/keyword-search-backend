@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/core/api_error"
 	"github.com/miniyus/go-fiber/internal/core/logger"
+	"github.com/miniyus/go-fiber/internal/entity"
 	"github.com/miniyus/go-fiber/internal/utils"
 	"strconv"
 )
@@ -71,7 +72,7 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 // @Tags Search
 // @Param page query int true "page number"
 // @Param page_size query int true "page size"
-// @Success 200 {object} utils.Paginator
+// @Success 200 {object} ResponseAll
 // @Failure 400 {object} api_error.ErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Failure 404 {object} api_error.ErrorResponse
@@ -91,7 +92,10 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(all)
+	return c.JSON(ResponseAll{
+		Paginator: all,
+		Data:      all.Data.([]entity.Search),
+	})
 }
 
 // Get

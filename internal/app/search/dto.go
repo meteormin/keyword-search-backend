@@ -44,6 +44,11 @@ type Response struct {
 	UpdatedAt   string  `json:"updated_at"`
 }
 
+type ResponseAll struct {
+	utils.Paginator
+	Data []entity.Search `json:"data"`
+}
+
 func ToSearchResponse(search *entity.Search) *Response {
 	createdAt := utils.TimeIn(search.CreatedAt, "Asia/Seoul")
 	updatedAt := utils.TimeIn(search.UpdatedAt, "Asia/Seoul")

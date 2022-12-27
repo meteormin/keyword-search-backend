@@ -4,11 +4,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/go-fiber/internal/utils"
 )
 
 type Service interface {
-	All() ([]entity.Host, error)
-	GetByUserId(userId uint) ([]HostResponse, error)
+	All(page utils.Page) (utils.Paginator, error)
+	GetByUserId(userId uint, page utils.Page) (utils.Paginator, error)
 	Find(pk uint, userId uint) (*HostResponse, error)
 	Create(host *CreateHost) (*HostResponse, error)
 	Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error)
@@ -29,22 +30,36 @@ func NewService(repo Repository) Service {
 	}
 }
 
-func (s *ServiceStruct) All() ([]entity.Host, error) {
-	hosts, err := s.repo.All()
+func (s *ServiceStruct) All(page utils.Page) (utils.Paginator, error) {
+	hosts, count, err := s.repo.All(page)
 	if err != nil {
-		return make([]entity.Host, 0), err
+		hosts = make([]entity.Host, 0)
+		return utils.Paginator{
+			Page:       page,
+			TotalCount: 0,
+			Data:       hosts,
+		}, err
 	}
 
-	return hosts, err
+	return utils.Paginator{
+		Page:       page,
+		TotalCount: count,
+		Data:       hosts,
+	}, err
 }
 
-func (s *ServiceStruct) GetByUserId(userId uint) ([]HostResponse, error) {
-	ent, err := s.repo.GetByUserId(userId)
+func (s *ServiceStruct) GetByUserId(userId uint, page utils.Page) (utils.Paginator, error) {
+	ent, count, err := s.repo.GetByUserId(userId, page)
 
 	var dto []HostResponse
 
 	if err != nil {
-		return make([]HostResponse, 0), err
+		dto = make([]HostResponse, 0)
+		return utils.Paginator{
+			Page:       page,
+			TotalCount: 0,
+			Data:       ent,
+		}, err
 	}
 
 	for _, e := range ent {
@@ -52,10 +67,19 @@ func (s *ServiceStruct) GetByUserId(userId uint) ([]HostResponse, error) {
 	}
 
 	if dto == nil {
-		return make([]HostResponse, 0), nil
+		dto = make([]HostResponse, 0)
+		return utils.Paginator{
+			Page:       page,
+			TotalCount: 0,
+			Data:       ent,
+		}, err
 	}
 
-	return dto, nil
+	return utils.Paginator{
+		Page:       page,
+		TotalCount: count,
+		Data:       dto,
+	}, err
 }
 
 func (s *ServiceStruct) Find(pk uint, userId uint) (*HostResponse, error) {

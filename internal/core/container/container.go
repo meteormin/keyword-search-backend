@@ -3,7 +3,6 @@ package container
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/internal/core/router"
 	"gorm.io/gorm"
 	"log"
 	"reflect"
@@ -28,7 +27,6 @@ type Wrapper struct {
 	app       *fiber.App
 	database  *gorm.DB
 	config    *config.Configs
-	router    []router.Router
 	instances map[string]interface{}
 	bindings  map[reflect.Type]interface{}
 }
@@ -38,7 +36,6 @@ func New(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
 		app:       app,
 		database:  db,
 		config:    config,
-		router:    make([]router.Router, 0),
 		instances: make(map[string]interface{}),
 		bindings:  make(map[reflect.Type]interface{}),
 	}

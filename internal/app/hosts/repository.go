@@ -4,13 +4,14 @@ import (
 	"github.com/miniyus/go-fiber/internal/core/database"
 	"github.com/miniyus/go-fiber/internal/core/logger"
 	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/go-fiber/internal/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 type Repository interface {
-	All() ([]entity.Host, error)
-	GetByUserId(userId uint) ([]entity.Host, error)
+	All(page utils.Page) ([]entity.Host, int64, error)
+	GetByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error)
 	Find(pk uint) (*entity.Host, error)
 	Create(host entity.Host) (*entity.Host, error)
 	Update(pk uint, host entity.Host) (*entity.Host, error)
@@ -30,27 +31,40 @@ func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
 	}
 }
 
-func (r *RepositoryStruct) All() ([]entity.Host, error) {
-	var hosts []entity.Host
+func (r *RepositoryStruct) Count(host *entity.Host) (int64, error) {
+	var count int64 = 0
 
-	result := r.db.Find(&hosts)
-	_, err := database.HandleResult(result)
-	if err != nil {
-		return nil, err
-	}
+	rs := r.db.Model(host).Count(&count)
+	_, err := database.HandleResult(rs)
 
-	return hosts, nil
+	return count, err
 }
 
-func (r *RepositoryStruct) GetByUserId(userId uint) ([]entity.Host, error) {
+func (r *RepositoryStruct) All(page utils.Page) ([]entity.Host, int64, error) {
 	var hosts []entity.Host
-	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts)
-	_, err := database.HandleResult(result)
-	if err != nil {
-		return hosts, err
+	count, err := r.Count(&entity.Host{})
+
+	if count != 0 {
+		result := r.db.Scopes(utils.Paginate(page)).Find(&hosts)
+		_, err = database.HandleResult(result)
 	}
 
-	return hosts, nil
+	return hosts, count, err
+}
+
+func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []entity.Host, count int64, e error) {
+	var hosts []entity.Host
+	var cnt int64 = 0
+
+	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts).Count(&cnt)
+	_, err := database.HandleResult(result)
+
+	if cnt != 0 {
+		result = r.db.Scopes(utils.Paginate(page)).Where(entity.Host{UserId: userId}).Find(&hosts)
+		_, err = database.HandleResult(result)
+	}
+
+	return make([]entity.Host, 0), cnt, err
 }
 
 func (r *RepositoryStruct) Find(pk uint) (*entity.Host, error) {

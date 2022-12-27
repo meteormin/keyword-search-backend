@@ -2,6 +2,7 @@ package hosts
 
 import (
 	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/go-fiber/internal/utils"
 )
 
 type CreateHost struct {
@@ -38,6 +39,16 @@ type HostResponse struct {
 	Description string `json:"description"`
 	Path        string `json:"path"`
 	Publish     bool   `json:"publish"`
+}
+
+type HostListResponse struct {
+	utils.Paginator
+	Data []HostResponse
+}
+
+type HostResponseAll struct {
+	utils.Paginator
+	Data []entity.Host
 }
 
 func ToHostResponse(host *entity.Host) *HostResponse {
