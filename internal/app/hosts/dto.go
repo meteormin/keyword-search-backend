@@ -15,7 +15,6 @@ type CreateHost struct {
 }
 
 type UpdateHost struct {
-	UserId      uint   `json:"user_id"`
 	Host        string `json:"host" validate:"required"`
 	Subject     string `json:"subject" validate:"required"`
 	Description string `json:"description" validate:"required"`
