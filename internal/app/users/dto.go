@@ -1,8 +1,8 @@
 package users
 
 import (
-	"github.com/miniyus/go-fiber/internal/entity"
-	"github.com/miniyus/go-fiber/internal/utils"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
 )
 
 type UserResponse struct {

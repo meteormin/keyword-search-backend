@@ -2,7 +2,7 @@ package api_auth
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/auth"
+	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 )
 
 const Prefix = "/auth"

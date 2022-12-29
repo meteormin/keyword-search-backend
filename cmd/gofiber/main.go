@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/miniyus/go-fiber/internal/core"
+	"github.com/miniyus/keyword-search-backend/internal/core"
 )
 
-// @title go-fiber Swagger API Documentation
+// @title keyword-search-backend Swagger API Documentation
 // @version 0.0.1
-// @description go-fiber API
+// @description keyword-search-backend API
 // @contact.name miniyus
 // @contact.url https://miniyus.github.io
 // @contact.email miniyu97@gmail.com

@@ -1,7 +1,7 @@
 package users
 
 import (
-	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
 )
 
 type Service interface {

@@ -2,8 +2,8 @@ package database
 
 import (
 	"fmt"
-	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/internal/core/database/migrations"
+	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/core/database/migrations"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

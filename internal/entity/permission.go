@@ -1,7 +1,7 @@
 package entity
 
 import (
-	dataTypes "github.com/miniyus/go-fiber/internal/entity/dataTypes"
+	dataTypes "github.com/miniyus/keyword-search-backend/internal/entity/dataTypes"
 	"gorm.io/gorm"
 )
 

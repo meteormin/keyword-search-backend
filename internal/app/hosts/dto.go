@@ -1,8 +1,8 @@
 package hosts
 
 import (
-	"github.com/miniyus/go-fiber/internal/entity"
-	"github.com/miniyus/go-fiber/internal/utils"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
 )
 
 type CreateHost struct {
@@ -42,12 +42,12 @@ type HostResponse struct {
 
 type HostListResponse struct {
 	utils.Paginator
-	Data []HostResponse
+	Data []HostResponse `json:"data"`
 }
 
 type HostResponseAll struct {
 	utils.Paginator
-	Data []entity.Host
+	Data []entity.Host `json:"data"`
 }
 
 func ToHostResponse(host *entity.Host) *HostResponse {

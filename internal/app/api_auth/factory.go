@@ -1,9 +1,9 @@
 package api_auth
 
 import (
-	"github.com/miniyus/go-fiber/internal/app/users"
-	"github.com/miniyus/go-fiber/internal/core/auth"
-	"github.com/miniyus/go-fiber/pkg/jwt"
+	"github.com/miniyus/keyword-search-backend/internal/app/users"
+	"github.com/miniyus/keyword-search-backend/internal/core/auth"
+	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )

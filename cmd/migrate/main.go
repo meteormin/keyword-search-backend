@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/internal/core/database"
-	"github.com/miniyus/go-fiber/internal/core/database/migrations"
+	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/core/database"
+	"github.com/miniyus/keyword-search-backend/internal/core/database/migrations"
 )
 
 func main() {

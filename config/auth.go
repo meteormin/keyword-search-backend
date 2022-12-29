@@ -2,7 +2,7 @@ package config
 
 import (
 	jwtWare "github.com/gofiber/jwt/v3"
-	rsGen "github.com/miniyus/go-fiber/pkg/rs256"
+	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
 	"log"
 	"os"
 	"path"

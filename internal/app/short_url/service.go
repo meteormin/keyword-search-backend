@@ -3,8 +3,8 @@ package short_url
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/app/search"
-	"github.com/miniyus/go-fiber/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/app/search"
+	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"go.uber.org/zap"
 	"path"
 	"strings"

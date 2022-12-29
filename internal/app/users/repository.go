@@ -1,9 +1,9 @@
 package users
 
 import (
-	"github.com/miniyus/go-fiber/internal/core/database"
-	"github.com/miniyus/go-fiber/internal/core/logger"
-	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/core/database"
+	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )

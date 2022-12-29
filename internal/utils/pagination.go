@@ -39,7 +39,7 @@ func GetPageFromCtx(c *fiber.Ctx) (Page, error) {
 func Paginate(pageInfo Page) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		page := pageInfo.Page
-		if page == 0 {
+		if page <= 0 {
 			page = 1
 		}
 

@@ -1,4 +1,4 @@
-.PHONY: start
+PHONY: start
 start:
 	go run ./cmd/gofiber/main.go
 

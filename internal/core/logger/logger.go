@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/miniyus/go-fiber/internal/utils"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

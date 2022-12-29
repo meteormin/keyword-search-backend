@@ -3,12 +3,12 @@ package api_auth
 import (
 	"github.com/gofiber/fiber/v2"
 	jwtLib "github.com/golang-jwt/jwt/v4"
-	"github.com/miniyus/go-fiber/internal/app/users"
-	"github.com/miniyus/go-fiber/internal/core/auth"
-	"github.com/miniyus/go-fiber/internal/core/logger"
-	"github.com/miniyus/go-fiber/internal/entity"
-	"github.com/miniyus/go-fiber/internal/utils"
-	"github.com/miniyus/go-fiber/pkg/jwt"
+	"github.com/miniyus/keyword-search-backend/internal/app/users"
+	"github.com/miniyus/keyword-search-backend/internal/core/auth"
+	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
+	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )

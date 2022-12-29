@@ -2,9 +2,9 @@ package hosts
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/logger"
-	"github.com/miniyus/go-fiber/internal/entity"
-	"github.com/miniyus/go-fiber/internal/utils"
+	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
 )
 
 type Service interface {
@@ -71,7 +71,7 @@ func (s *ServiceStruct) GetByUserId(userId uint, page utils.Page) (utils.Paginat
 		return utils.Paginator{
 			Page:       page,
 			TotalCount: 0,
-			Data:       ent,
+			Data:       dto,
 		}, err
 	}
 

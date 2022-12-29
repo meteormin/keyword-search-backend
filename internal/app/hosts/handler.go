@@ -2,9 +2,9 @@ package hosts
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/api_error"
-	"github.com/miniyus/go-fiber/internal/core/logger"
-	"github.com/miniyus/go-fiber/internal/utils"
+	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
+	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"strconv"
 )
 

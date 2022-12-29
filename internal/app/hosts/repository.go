@@ -1,10 +1,10 @@
 package hosts
 
 import (
-	"github.com/miniyus/go-fiber/internal/core/database"
-	"github.com/miniyus/go-fiber/internal/core/logger"
-	"github.com/miniyus/go-fiber/internal/entity"
-	"github.com/miniyus/go-fiber/internal/utils"
+	"github.com/miniyus/keyword-search-backend/internal/core/database"
+	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -59,12 +59,14 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts).Count(&cnt)
 	_, err := database.HandleResult(result)
 
-	if cnt != 0 {
-		result = r.db.Scopes(utils.Paginate(page)).Where(entity.Host{UserId: userId}).Find(&hosts)
-		_, err = database.HandleResult(result)
+	if cnt == 0 {
+		return make([]entity.Host, 0), cnt, err
 	}
 
-	return make([]entity.Host, 0), cnt, err
+	result = r.db.Debug().Scopes(utils.Paginate(page)).Where(entity.Host{UserId: userId}).Find(&hosts)
+	_, err = database.HandleResult(result)
+
+	return hosts, cnt, err
 }
 
 func (r *RepositoryStruct) Find(pk uint) (*entity.Host, error) {

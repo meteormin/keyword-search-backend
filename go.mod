@@ -1,4 +1,4 @@
-module github.com/miniyus/go-fiber
+module github.com/miniyus/keyword-search-backend
 
 go 1.19
 

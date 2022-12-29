@@ -3,7 +3,7 @@ package api_error
 import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/context"
+	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"go.uber.org/zap"
 	"runtime/debug"
 )

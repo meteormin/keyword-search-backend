@@ -2,11 +2,11 @@ package utils
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/internal/core/api_error"
-	"github.com/miniyus/go-fiber/internal/core/auth"
-	"github.com/miniyus/go-fiber/internal/core/container"
-	"github.com/miniyus/go-fiber/internal/core/context"
+	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
+	"github.com/miniyus/keyword-search-backend/internal/core/auth"
+	"github.com/miniyus/keyword-search-backend/internal/core/container"
+	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"net/http"
 	"time"
 )

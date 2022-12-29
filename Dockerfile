@@ -1,4 +1,10 @@
-FROM golang:1.19 as build
+FROM golang:1.19-alpine as build
+
+RUN apk --no-cache add tzdata && \
+	cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+	echo "Asia/Seoul" > /etc/timezone
+
+RUN apk add --no-cache make
 
 RUN mkdir /fiber
 
@@ -9,7 +15,8 @@ COPY . .
 RUN go mod download
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
-RUN make build
+RUN swag init --parseDependency --parseInternal --parseDepth 1 -g ./cmd/gofiber/main.go --output ./api/gofiber
+RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} go build -o build/gofiber ./cmd/gofiber/main.go
 
 FROM ubuntu:22.04
 
@@ -19,25 +26,24 @@ RUN mkdir /home/gofiber
 
 ARG GO_GROUP
 ARG GO_VERSION
-ARG ARCH
-
-RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
 
 RUN apt -y upgrade \
     && apt update \
+    && apt install -y tzdata \
     && apt install -y supervisor \
     && apt install -y vim \
     && apt install -y curl \
     && apt install -y wget \
     && apt install -y make
 
+RUN ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo ${TIME_ZONE} > /etc/timezone
 RUN groupadd --force -g $GO_GROUP gofiber
 RUN useradd -ms /bin/bash --no-user-group -g $GO_GROUP -u 1337 gofiber
 
 WORKDIR /home/gofiber
 
 #RUN curl -O -L "https://golang.org/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz"
-#RUN tar xvzf go${GO_VERSION}.linux-${ARCH}.tar.gz -C /usr/local  &&  rm "go${GO_VERSION}.linux-${ARCH}.tar.gz"
+#RUN tar xvzf go${GO_VERSION}.${GOOS}-${GOARCH}.tar.gz -C /usr/local  &&  rm "go${GO_VERSION}.linux-${GOARCH}.tar.gz"
 
 COPY --from=build /fiber/build ./build
 COPY --from=build /fiber/.env .

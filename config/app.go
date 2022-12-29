@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/api_error"
+	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"os"
 )
 

@@ -1,8 +1,8 @@
 package bookmarks
 
 import (
-	"github.com/miniyus/go-fiber/internal/core/database"
-	"github.com/miniyus/go-fiber/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/core/database"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"gorm.io/gorm"
 )
 

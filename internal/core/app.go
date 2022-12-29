@@ -2,10 +2,10 @@ package core
 
 import (
 	"github.com/gofiber/fiber/v2"
-	configure "github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/internal/core/container"
-	"github.com/miniyus/go-fiber/internal/core/database"
-	"github.com/miniyus/go-fiber/internal/core/register"
+	configure "github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/core/container"
+	"github.com/miniyus/keyword-search-backend/internal/core/database"
+	"github.com/miniyus/keyword-search-backend/internal/core/register"
 )
 
 func New() container.Container {

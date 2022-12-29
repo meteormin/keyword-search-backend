@@ -2,7 +2,7 @@ package short_url
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/internal/core/router"
+	"github.com/miniyus/keyword-search-backend/internal/core/router"
 )
 
 const Prefix = "/redirect"

@@ -1,7 +1,7 @@
 package api_auth
 
 import (
-	"github.com/miniyus/go-fiber/internal/utils"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
 )
 
 type SignUp struct {

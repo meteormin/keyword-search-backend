@@ -2,7 +2,7 @@ package container
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/go-fiber/config"
+	"github.com/miniyus/keyword-search-backend/config"
 	"gorm.io/gorm"
 	"log"
 	"reflect"

@@ -1,16 +1,16 @@
 package routes
 
 import (
-	"github.com/miniyus/go-fiber/internal/app/api_auth"
-	"github.com/miniyus/go-fiber/internal/app/host_search"
-	"github.com/miniyus/go-fiber/internal/app/hosts"
-	"github.com/miniyus/go-fiber/internal/app/search"
-	"github.com/miniyus/go-fiber/internal/app/short_url"
-	"github.com/miniyus/go-fiber/internal/app/users"
-	"github.com/miniyus/go-fiber/internal/core/auth"
-	"github.com/miniyus/go-fiber/internal/core/container"
-	"github.com/miniyus/go-fiber/internal/core/router"
-	"github.com/miniyus/go-fiber/pkg/jwt"
+	"github.com/miniyus/keyword-search-backend/internal/app/api_auth"
+	"github.com/miniyus/keyword-search-backend/internal/app/host_search"
+	"github.com/miniyus/keyword-search-backend/internal/app/hosts"
+	"github.com/miniyus/keyword-search-backend/internal/app/search"
+	"github.com/miniyus/keyword-search-backend/internal/app/short_url"
+	"github.com/miniyus/keyword-search-backend/internal/app/users"
+	"github.com/miniyus/keyword-search-backend/internal/core/auth"
+	"github.com/miniyus/keyword-search-backend/internal/core/container"
+	"github.com/miniyus/keyword-search-backend/internal/core/router"
+	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	"go.uber.org/zap"
 )
 
