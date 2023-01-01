@@ -39,7 +39,7 @@ func auth() Auth {
 		Jwt: jwtWare.Config{
 			SigningMethod: "RS256",
 			SigningKey:    priKey.Public(),
-			TokenLookup:   "header:Authorization",
+			TokenLookup:   "header:Authorization,query:token",
 		},
 		Exp: 86400,
 	}

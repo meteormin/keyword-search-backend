@@ -34,7 +34,7 @@ func NewHandler(s search.Service) Handler {
 // @description get by host id
 // @Tags Hosts
 // @Param id path int true "host id"
-// @Success 200 {object} utils.Paginator
+// @Success 200 {object} search.ResponseByHost
 // @Failure 400 {object} api_error.ErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
@@ -58,7 +58,13 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(data)
+	return c.Status(fiber.StatusOK).JSON(search.ResponseByHost{
+		Paginator: utils.Paginator{
+			Page:       data.Page,
+			TotalCount: data.TotalCount,
+		},
+		Data: data.Data.([]search.Response),
+	})
 }
 
 // BatchCreate

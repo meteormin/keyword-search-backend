@@ -57,11 +57,10 @@ func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginat
 	data, count, err := s.repo.GetByHostId(hostId, page)
 
 	if err != nil {
-		data = make([]entity.Search, 0)
 		return utils.Paginator{
 			Page:       page,
 			TotalCount: 0,
-			Data:       data,
+			Data:       make([]Response, 0),
 		}, err
 	}
 

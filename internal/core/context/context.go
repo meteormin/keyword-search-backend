@@ -3,7 +3,7 @@ package context
 const (
 	Container    = "container"
 	App          = "app"
-	Db           = "db"
+	DB           = "db"
 	Config       = "config"
 	Logger       = "logger"
 	AuthUser     = "authUser"

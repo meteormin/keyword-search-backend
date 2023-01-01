@@ -24,7 +24,7 @@ import (
 func boot(w container.Container) {
 	w.Singleton(context.App, w.App())
 	w.Singleton(context.Config, w.Config())
-	w.Singleton(context.Db, w.Database())
+	w.Singleton(context.DB, w.Database())
 
 	jwtGenerator := func() *jwt.GeneratorStruct {
 		dataPath := w.Config().Path.DataPath

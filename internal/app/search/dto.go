@@ -43,7 +43,10 @@ type Response struct {
 	CreatedAt   string  `json:"created_at"`
 	UpdatedAt   string  `json:"updated_at"`
 }
-
+type ResponseByHost struct {
+	utils.Paginator
+	Data []Response `json:"data"`
+}
 type ResponseAll struct {
 	utils.Paginator
 	Data []entity.Search `json:"data"`

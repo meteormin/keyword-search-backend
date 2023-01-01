@@ -7,8 +7,8 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	configure "github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
+	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
-	"github.com/miniyus/keyword-search-backend/internal/core/database"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"go.uber.org/zap"
 	"log"
@@ -161,34 +161,30 @@ func jwtError(c *fiber.Ctx, err error) error {
 }
 
 func CheckExpired(c *fiber.Ctx) error {
-	config, ok := c.Locals(context.Config).(*configure.Configs)
+	wrapper, ok := c.Locals(context.Container).(container.Container)
 	if !ok {
-		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "Can't Find Config Context")
-
-		return errRes.Response()
+		statusCode := fiber.StatusInternalServerError
+		return fiber.NewError(statusCode, "Failed Get Container in Ctx")
 	}
 
-	tokenRepository := NewRepository(database.DB(config.Database))
+	tokenRepository := NewRepository(wrapper.Database())
 
 	user, ok := c.Locals(context.AuthUser).(*User)
 	if !ok {
-		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "Can't Find User Context")
-
-		return errRes.Response()
+		statusCode := fiber.StatusUnauthorized
+		return fiber.NewError(statusCode, "Can't Find User Context")
 	}
 
 	token, err := tokenRepository.FindByUserId(user.Id)
 	if err != nil {
-		errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "Can't Find User From Database")
-
-		return errRes.Response()
+		statusCode := fiber.StatusUnauthorized
+		return fiber.NewError(statusCode, "Can't Find User From Database")
 	}
 
-	if token.ExpiresAt.Unix() > time.Now().Unix() {
-		return c.Next()
+	if token.ExpiresAt.Unix() < time.Now().Unix() {
+		statusCode := fiber.StatusUnauthorized
+		return fiber.NewError(statusCode, "JWT is expired")
 	}
 
-	errRes := api_error.NewErrorResponse(c, fiber.StatusUnauthorized, "JWT is expired")
-
-	return errRes.Response()
+	return c.Next()
 }
