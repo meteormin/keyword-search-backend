@@ -48,14 +48,7 @@ func hashCheck(hashPass string, password string) bool {
 	return err == nil
 }
 
-func (s *ServiceStruct) generateToken(user *entity.User, exp ...int64) (*string, error) {
-	var expiresIn int64
-	if len(exp) != 0 {
-		expiresIn = exp[0]
-	} else {
-		expiresIn = int64(s.tokenGenerator.GetExp())
-	}
-
+func (s *ServiceStruct) generateToken(user *entity.User, exp int64) (*string, error) {
 	claims := jwtLib.MapClaims{
 		"user_id":    user.ID,
 		"username":   user.Username,
@@ -63,7 +56,7 @@ func (s *ServiceStruct) generateToken(user *entity.User, exp ...int64) (*string,
 		"created_at": user.CreatedAt,
 		"group_id":   user.GroupId,
 		"role":       user.Role,
-		"expires_in": expiresIn,
+		"expires_in": exp,
 	}
 
 	return s.tokenGenerator.Generate(claims, s.tokenGenerator.GetPrivateKey())
@@ -85,7 +78,7 @@ func (s *ServiceStruct) SignIn(in *SignIn) (*entity.AccessToken, error) {
 
 		expiresAt := createdAt.Add(time.Second * expTime)
 
-		token, err := s.generateToken(user)
+		token, err := s.generateToken(user, expiresAt.Unix())
 		if err != nil {
 			return nil, err
 		}
@@ -146,7 +139,7 @@ func (s *ServiceStruct) SignUp(up *SignUp) (*SignUpResponse, error) {
 			TokenInfo: TokenInfo{
 				Token:     token.Token,
 				ExpiresAt: utils.JsonTime(token.ExpiresAt),
-				ExpiresIn: s.tokenGenerator.GetExp(),
+				ExpiresIn: token.ExpiresAt.Unix(),
 			},
 		}
 		return res, nil
