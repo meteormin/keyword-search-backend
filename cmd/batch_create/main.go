@@ -63,16 +63,10 @@ func main() {
 		println(query)
 	}
 
-	//create, err := service.BatchCreate(hostId, searchSlice)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//println(create)
-	if err == nil {
-		_, err := service.BatchCreate(hostId, searchSlice)
-		if err != nil {
-			panic(err)
-		}
+	create, err := service.BatchCreate(hostId, searchSlice)
+	if err != nil {
+		panic(err)
 	}
+
+	println(create)
 }
