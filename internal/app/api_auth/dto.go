@@ -19,6 +19,7 @@ type SignIn struct {
 type TokenInfo struct {
 	Token     string         `json:"token"`
 	ExpiresAt utils.JsonTime `json:"expires_at"`
+	ExpiresIn int            `json:"expires_in"`
 }
 
 type SignUpResponse struct {
