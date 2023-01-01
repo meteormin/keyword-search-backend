@@ -63,7 +63,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 		return make([]entity.Host, 0), cnt, err
 	}
 
-	result = r.db.Debug().Scopes(utils.Paginate(page)).Where(entity.Host{UserId: userId}).Find(&hosts)
+	result = r.db.Scopes(utils.Paginate(page)).Where(entity.Host{UserId: userId}).Find(&hosts)
 	_, err = database.HandleResult(result)
 
 	return hosts, cnt, err

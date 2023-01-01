@@ -47,21 +47,32 @@ func main() {
 	hostId := uint(1)
 
 	var searchSlice []*search.CreateSearch
+
 	for i, s := range f {
+		query := strings.Trim(s, " ")
+		query = strings.Trim(query, "\n")
+		query = strings.Trim(query, "\t")
+
 		searchSlice = append(searchSlice, &search.CreateSearch{
 			HostId:      hostId,
 			QueryKey:    "keyword",
-			Query:       s,
+			Query:       query,
 			Description: strconv.Itoa(i),
 			Publish:     true,
 		})
-
+		println(query)
 	}
 
-	create, err := service.BatchCreate(hostId, searchSlice)
-	if err != nil {
-		panic(err)
+	//create, err := service.BatchCreate(hostId, searchSlice)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//println(create)
+	if err == nil {
+		_, err := service.BatchCreate(hostId, searchSlice)
+		if err != nil {
+			panic(err)
+		}
 	}
-
-	println(create)
 }
