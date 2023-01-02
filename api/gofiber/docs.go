@@ -232,7 +232,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_hosts.HostListResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostListResponse"
                         }
                     },
                     "403": {
@@ -267,7 +267,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_hosts.CreateHost"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.CreateHost"
                         }
                     }
                 ],
@@ -275,7 +275,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_hosts.HostResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -318,7 +318,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_hosts.HostResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -372,7 +372,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_hosts.UpdateHost"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.UpdateHost"
                         }
                     }
                 ],
@@ -380,7 +380,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_hosts.HostResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -487,7 +487,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_hosts.PatchHost"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.PatchHost"
                         }
                     }
                 ],
@@ -495,7 +495,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_hosts.HostResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -655,7 +655,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.RedirectResponse"
+                            "$ref": "#/definitions/internal_app_short_url.RedirectResponse"
                         }
                     },
                     "302": {
