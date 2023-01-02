@@ -6,8 +6,8 @@ import (
 )
 
 type Action struct {
-	action string
-	table  string
+	method   string
+	resource string
 }
 
 type Permission struct {

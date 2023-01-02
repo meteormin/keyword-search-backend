@@ -58,6 +58,8 @@ func boot(w container.Container) {
 	}))
 	w.Resolve(&logs)
 	w.Singleton(context.Logger, logs)
+
+	w.Singleton()
 }
 
 // middlewares register middleware

@@ -10,4 +10,5 @@ const (
 	Logger       = "logger"
 	AuthUser     = "authUser"
 	JwtGenerator = "jwtGenerator"
+	Permissions  = "permissions"
 )

@@ -33,7 +33,7 @@ type User struct {
 // Middlewares
 // 미들웨어 슬라이스 리턴
 // 인증 관련된 미들웨어 함수의 집합으로 이 함수에 등록된 순서대로 실행 가능
-func Middlewares() []fiber.Handler {
+func Middlewares(fn ...fiber.Handler) []fiber.Handler {
 	// 순서 중요함
 	mws := []fiber.Handler{
 		JwtMiddleware,  // check exists jwt
@@ -42,15 +42,40 @@ func Middlewares() []fiber.Handler {
 		CheckExpired, // check expired jwt
 	}
 
+	if len(fn) != 0 {
+		mws = append(mws, fn...)
+	}
+
 	return mws
 }
 
-// HasPerm
+// HasPermission
 // has permission?
-func HasPerm(action ...entity.Action) fiber.Handler {
+func HasPermission(permissions ...Permission) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		currentUser := c.Locals(context.AuthUser).(*User)
 		if currentUser.Role == entity.Admin.RoleToString() {
+			return c.Next()
+		}
+
+		pass := false
+		if len(permissions) == 0 {
+			permCollection := c.Locals(context.Permissions).(PermissionCollection)
+			userHasPerm := permCollection.Filter(func(p Permission, i int) bool {
+				if currentUser.GroupId != nil {
+					return p.GroupId == *currentUser.GroupId
+				}
+
+				return false
+			})
+
+			pass = CheckPermissionFromCtx(userHasPerm, c)
+
+		} else {
+			pass = CheckPermissionFromCtx(permissions, c)
+		}
+
+		if pass {
 			return c.Next()
 		}
 
