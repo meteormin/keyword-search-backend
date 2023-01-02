@@ -51,6 +51,14 @@ func TimeIn(t time.Time, tz string) time.Time {
 	return t.In(loc)
 }
 
+func AddContext(localsKey context.Key, value interface{}) fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+		ctx.Locals(localsKey, value)
+
+		return ctx.Next()
+	}
+}
+
 func FindContext(ctx *fiber.Ctx, dest interface{}) error {
 	wrapper, ok := ctx.Locals(context.Container).(container.Container)
 	if !ok {

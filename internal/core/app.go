@@ -9,7 +9,7 @@ import (
 )
 
 // New
-// IoC 컨테이너 추가 생성
+// IoC 컨테이너 생성
 func New() container.Container {
 	config := configure.GetConfigs()
 

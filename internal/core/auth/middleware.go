@@ -9,7 +9,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
-	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"go.uber.org/zap"
 	"log"
 	"strconv"
@@ -47,40 +46,6 @@ func Middlewares(fn ...fiber.Handler) []fiber.Handler {
 	}
 
 	return mws
-}
-
-// HasPermission
-// has permission?
-func HasPermission(permissions ...Permission) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		currentUser := c.Locals(context.AuthUser).(*User)
-		if currentUser.Role == entity.Admin.RoleToString() {
-			return c.Next()
-		}
-
-		pass := false
-		if len(permissions) == 0 {
-			permCollection := c.Locals(context.Permissions).(PermissionCollection)
-			userHasPerm := permCollection.Filter(func(p Permission, i int) bool {
-				if currentUser.GroupId != nil {
-					return p.GroupId == *currentUser.GroupId
-				}
-
-				return false
-			})
-
-			pass = CheckPermissionFromCtx(userHasPerm, c)
-
-		} else {
-			pass = CheckPermissionFromCtx(permissions, c)
-		}
-
-		if pass {
-			return c.Next()
-		}
-
-		return fiber.ErrForbidden
-	}
 }
 
 // AccessLogMiddleware

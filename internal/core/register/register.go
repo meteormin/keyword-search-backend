@@ -12,12 +12,11 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/core/permission"
 	router "github.com/miniyus/keyword-search-backend/internal/routes"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
-	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
 	"go.uber.org/zap"
-	"path"
 )
 
 // boot is High Priority
@@ -26,16 +25,7 @@ func boot(w container.Container) {
 	w.Singleton(context.Config, w.Config())
 	w.Singleton(context.DB, w.Database())
 
-	jwtGenerator := func() *jwt.GeneratorStruct {
-		dataPath := w.Config().Path.DataPath
-		privateKey := rsGen.PrivatePemDecode(path.Join(dataPath, "secret/private.pem"))
-
-		return &jwt.GeneratorStruct{
-			PrivateKey: privateKey,
-			PublicKey:  privateKey.Public(),
-			Exp:        w.Config().Auth.Exp,
-		}
-	}
+	jwtGenerator := makeJwtGenerator(w)
 
 	var tg jwt.Generator
 	w.Bind(&tg, jwtGenerator)
@@ -44,22 +34,14 @@ func boot(w container.Container) {
 
 	var logs *zap.SugaredLogger
 	loggerConfig := w.Config().CustomLogger
-	w.Bind(&logs, logger.New(logger.Config{
-		TimeFormat: loggerConfig.TimeFormat,
-		FilePath:   loggerConfig.FilePath,
-		Filename:   loggerConfig.Filename,
-		MaxAge:     loggerConfig.MaxAge,
-		MaxBackups: loggerConfig.MaxBackups,
-		MaxSize:    loggerConfig.MaxSize,
-		Compress:   loggerConfig.Compress,
-		TimeKey:    loggerConfig.TimeKey,
-		TimeZone:   loggerConfig.TimeZone,
-		LogLevel:   loggerConfig.LogLevel,
-	}))
+	w.Bind(&logs, logger.New(parseLoggerConfig(loggerConfig)))
 	w.Resolve(&logs)
 	w.Singleton(context.Logger, logs)
 
-	w.Singleton()
+	permissionConfig := w.Config().Permission
+	permissions := permission.NewPermissionsFromConfig(parsePermissionConfig(permissionConfig))
+	permissionCollection := permission.NewPermissionCollection(permissions...)
+	w.Singleton(context.Permissions, permissionCollection)
 }
 
 // middlewares register middleware
@@ -84,6 +66,13 @@ func middlewares(w container.Container) {
 		zLogger := w.Get(context.Logger).(*zap.SugaredLogger)
 
 		ctx.Locals(context.Logger, zLogger)
+		return ctx.Next()
+	})
+
+	// Add Context Permissions
+	w.App().Use(func(ctx *fiber.Ctx) error {
+		permissions := w.Get(context.Permissions).(permission.Collection)
+		ctx.Locals(context.Permissions, permissions)
 		return ctx.Next()
 	})
 

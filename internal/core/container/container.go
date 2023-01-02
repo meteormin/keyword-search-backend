@@ -3,6 +3,7 @@ package container
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"gorm.io/gorm"
 	"log"
 	"reflect"
@@ -15,10 +16,10 @@ type Container interface {
 	App() *fiber.App
 	Config() *config.Configs
 	Database() *gorm.DB
-	Instances() map[string]interface{}
+	Instances() map[context.Key]interface{}
 	Bindings() map[reflect.Type]interface{}
-	Singleton(key string, instance interface{})
-	Get(key string) interface{}
+	Singleton(key context.Key, instance interface{})
+	Get(key context.Key) interface{}
 	Bind(keyType interface{}, resolver interface{})
 	Resolve(keyType interface{}) interface{}
 	Run()
@@ -31,7 +32,7 @@ type Wrapper struct {
 	app       *fiber.App
 	database  *gorm.DB
 	config    *config.Configs
-	instances map[string]interface{}
+	instances map[context.Key]interface{}
 	bindings  map[reflect.Type]interface{}
 }
 
@@ -42,7 +43,7 @@ func New(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
 		app:       app,
 		database:  db,
 		config:    config,
-		instances: make(map[string]interface{}),
+		instances: make(map[context.Key]interface{}),
 		bindings:  make(map[reflect.Type]interface{}),
 	}
 }
@@ -67,13 +68,13 @@ func (w *Wrapper) Database() *gorm.DB {
 
 // Singleton
 // 특정 객체를 singleton 패턴으로 컨테이너에 저장하는 메서드
-func (w *Wrapper) Singleton(key string, instance interface{}) {
+func (w *Wrapper) Singleton(key context.Key, instance interface{}) {
 	w.instances[key] = instance
 }
 
 // Instances
 // 저장된 singleton 객체 슬라이스를 리턴한다.
-func (w *Wrapper) Instances() map[string]interface{} {
+func (w *Wrapper) Instances() map[context.Key]interface{} {
 	return w.instances
 }
 
@@ -128,7 +129,7 @@ func (w *Wrapper) call(callable interface{}) interface{} {
 
 // Get
 // Singleton 으로 주입한 객체를 주입했을 때 사용한 key 값으로 가져온다.
-func (w *Wrapper) Get(key string) interface{} {
+func (w *Wrapper) Get(key context.Key) interface{} {
 	return w.instances[key]
 }
 

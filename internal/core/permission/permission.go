@@ -1,16 +1,31 @@
-package auth
+package permission
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
-	"strings"
 )
 
+type Method string
+
+const (
+	GET    Method = "GET"
+	POST   Method = "POST"
+	PUT    Method = "PUT"
+	PATCH  Method = "PATCH"
+	DELETE Method = "DELETE"
+)
+
+func (m Method) ToString() string {
+	return string(m)
+}
+
 type Action struct {
-	Method   config.Methods
+	Methods  []Method
 	Resource string
+}
+
+func NewAction(method []Method, resource string) Action {
+	return Action{method, resource}
 }
 
 type Permission struct {
@@ -25,7 +40,19 @@ func NewPermission(groupId uint, name string, actions []Action) Permission {
 	}
 }
 
-type PermissionCollection interface {
+type user struct {
+	Id      *uint `json:"id"`
+	GroupId *uint `json:"group_id"`
+	Role    *uint `json:"role"`
+}
+
+type includeUser struct {
+	UserId  *uint `json:"user_id"`
+	GroupId *uint `json:"group_id"`
+	User    *user `json:"user"`
+}
+
+type Collection interface {
 	Add(perm Permission)
 	Remove(name string) bool
 	Get(name string) (*Permission, error)
@@ -33,24 +60,24 @@ type PermissionCollection interface {
 	Map(fn func(p Permission, i int) Permission) []Permission
 }
 
-type PermissionCollectionStruct struct {
+type CollectionStruct struct {
 	permissions []Permission
 }
 
-func NewPermissionCollection(perms ...Permission) PermissionCollection {
+func NewPermissionCollection(perms ...Permission) Collection {
 	defaultPerms := make([]Permission, 0)
 	if len(perms) == 0 {
 		perms = defaultPerms
 	}
 
-	return &PermissionCollectionStruct{perms}
+	return &CollectionStruct{perms}
 }
 
-func (p *PermissionCollectionStruct) Add(perm Permission) {
+func (p *CollectionStruct) Add(perm Permission) {
 	p.permissions = append(p.permissions, perm)
 }
 
-func (p *PermissionCollectionStruct) Remove(name string) bool {
+func (p *CollectionStruct) Remove(name string) bool {
 	filtered := utils.Filter(p.permissions, func(v Permission, i int) bool {
 		return v.Name == name
 	})
@@ -72,7 +99,7 @@ func (p *PermissionCollectionStruct) Remove(name string) bool {
 	return true
 }
 
-func (p *PermissionCollectionStruct) Get(name string) (*Permission, error) {
+func (p *CollectionStruct) Get(name string) (*Permission, error) {
 	filtered := utils.Filter(p.permissions, func(v Permission, i int) bool {
 		return v.Name == name
 	})
@@ -85,31 +112,10 @@ func (p *PermissionCollectionStruct) Get(name string) (*Permission, error) {
 	return &filtered[0], nil
 }
 
-func (p *PermissionCollectionStruct) Filter(fn func(p Permission, i int) bool) []Permission {
+func (p *CollectionStruct) Filter(fn func(p Permission, i int) bool) []Permission {
 	return utils.Filter(p.permissions, fn)
 }
 
-func (p *PermissionCollectionStruct) Map(fn func(p Permission, i int) Permission) []Permission {
+func (p *CollectionStruct) Map(fn func(p Permission, i int) Permission) []Permission {
 	return utils.Map(p.permissions, fn)
-}
-
-func CheckPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
-	pass := false
-	for _, perm := range hasPerm {
-		for _, action := range perm.Actions {
-			routePath := c.Path()
-			if strings.Contains(routePath, action.Resource) {
-				if action.Method.ToString() == c.Method() {
-					pass = true
-				}
-			}
-		}
-	}
-	return pass
-}
-
-func NewPermissionsFromConfig(permission config.Permission) {
-	for _, p := range permission {
-		permission.Resources
-	}
 }

@@ -1,33 +1,33 @@
 package config
 
-type Permission struct {
-	Name     string
-	GroupId  uint
-	Method   Methods
-	Resource string
+type PermissionConfig struct {
+	Name      string
+	GroupId   uint
+	Methods   []PermissionMethod
+	Resources []string
 }
 
-type Methods string
+type PermissionMethod string
 
 const (
-	GET    Methods = "GET"
-	POST   Methods = "POST"
-	PUT    Methods = "PUT"
-	PATCH  Methods = "PATCH"
-	DELETE Methods = "DELETE"
+	GET    PermissionMethod = "GET"
+	POST   PermissionMethod = "POST"
+	PUT    PermissionMethod = "PUT"
+	PATCH  PermissionMethod = "PATCH"
+	DELETE PermissionMethod = "DELETE"
 )
 
-func (m Methods) ToString() string {
-	return string(m)
-}
-
-func getPermissions() []Permission {
-	return []Permission{
+func getPermissions() []PermissionConfig {
+	return []PermissionConfig{
 		{
-			Name:     "name",
-			GroupId:  1,
-			Method:   GET,
-			Resource: "/users",
+			Name:    "ALL",
+			GroupId: 1,
+			Methods: []PermissionMethod{GET, POST, PUT, PATCH, DELETE},
+			Resources: []string{
+				"/users",
+				"/hosts",
+				"/search",
+			},
 		},
 	}
 }
