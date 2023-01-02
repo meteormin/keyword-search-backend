@@ -5,7 +5,7 @@ import (
 )
 
 // @title keyword-search-backend Swagger API Documentation
-// @version 0.0.1
+// @version 1.0.0
 // @description keyword-search-backend API
 // @contact.name miniyus
 // @contact.url https://miniyus.github.io

@@ -5,6 +5,8 @@ import (
 	"log"
 )
 
+// init
+// load dotenv
 func init() {
 	err := godotenv.Load()
 

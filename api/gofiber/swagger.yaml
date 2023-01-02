@@ -40,6 +40,8 @@ definitions:
     properties:
       expires_at:
         type: string
+      expires_in:
+        type: integer
       token:
         type: string
       user_id:
@@ -49,6 +51,8 @@ definitions:
     properties:
       expires_at:
         type: string
+      expires_in:
+        type: integer
       token:
         type: string
     type: object
@@ -437,6 +441,8 @@ definitions:
     properties:
       expires_at:
         type: string
+      expires_in:
+        type: integer
       token:
         type: string
       user_id:
@@ -446,6 +452,8 @@ definitions:
     properties:
       expires_at:
         type: string
+      expires_in:
+        type: integer
       token:
         type: string
     type: object
@@ -633,7 +641,7 @@ info:
   license:
     name: MIT
   title: keyword-search-backend Swagger API Documentation
-  version: 0.0.1
+  version: 1.0.0
 paths:
   /api/auth/me:
     get:
@@ -1034,7 +1042,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_short_url.RedirectResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.RedirectResponse'
         "302":
           description: Found
           schema:
@@ -1055,14 +1063,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_search.CreateSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_app_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1123,7 +1131,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1156,14 +1164,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_search.PatchSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1196,14 +1204,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_search.UpdateSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1243,7 +1251,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_search.ResponseAll'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll'
         "400":
           description: Bad Request
           schema:

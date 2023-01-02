@@ -16,8 +16,10 @@ import (
 	"time"
 )
 
-// 공통 미들웨어 작성
+// 인증 관련 공통 미들웨어 작성
 
+// User
+// context에 저장될 유저 정보 구조체
 type User struct {
 	Id        uint   `json:"id"`
 	GroupId   *uint  `json:"group_id"`
@@ -28,6 +30,9 @@ type User struct {
 	ExpiresIn *int64 `json:"expires_in"`
 }
 
+// Middlewares
+// 미들웨어 슬라이스 리턴
+// 인증 관련된 미들웨어 함수의 집합으로 이 함수에 등록된 순서대로 실행 가능
 func Middlewares() []fiber.Handler {
 	// 순서 중요함
 	mws := []fiber.Handler{
@@ -40,6 +45,8 @@ func Middlewares() []fiber.Handler {
 	return mws
 }
 
+// HasPerm
+// has permission?
 func HasPerm(action ...entity.Action) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		currentUser := c.Locals(context.AuthUser).(*User)
@@ -51,6 +58,8 @@ func HasPerm(action ...entity.Action) fiber.Handler {
 	}
 }
 
+// AccessLogMiddleware
+// log 찍힐 때 user 정보 추가
 func AccessLogMiddleware(c *fiber.Ctx) error {
 	logger, ok := c.Locals(context.Logger).(*zap.SugaredLogger)
 	if !ok {
@@ -82,6 +91,8 @@ func AccessLogMiddleware(c *fiber.Ctx) error {
 	return err
 }
 
+// GetUserFromJWT
+// get user information from jwt token
 func GetUserFromJWT(c *fiber.Ctx) error {
 
 	jwtData, ok := c.Locals("user").(*jwt.Token)
@@ -129,6 +140,8 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 	return c.Next()
 }
 
+// JwtMiddleware
+// jwt 유효성 체크 미들웨어
 func JwtMiddleware(c *fiber.Ctx) error {
 	config, ok := c.Locals(context.Config).(*configure.Configs)
 	if !ok {
@@ -146,6 +159,8 @@ func newJwtMiddleware(config jwtWare.Config) fiber.Handler {
 	return jwtWare.New(jwtConfig)
 }
 
+// jwtError
+// jwt 생성과 해독(? decode...) 관련 에러 핸들링
 func jwtError(c *fiber.Ctx, err error) error {
 	var errRes api_error.ErrorResponse
 
@@ -160,6 +175,8 @@ func jwtError(c *fiber.Ctx, err error) error {
 	return errRes.Response()
 }
 
+// CheckExpired
+// jwt 만료 기간 체크 미들웨어
 func CheckExpired(c *fiber.Ctx) error {
 	wrapper, ok := c.Locals(context.Container).(container.Container)
 	if !ok {

@@ -6,6 +6,8 @@ import (
 	"log"
 )
 
+// Migrate
+// db entity 스키마에 맞춰 자동으로 migration
 func Migrate(db *gorm.DB) {
 	log.Println("Auto Migrate...")
 	err := db.AutoMigrate(
@@ -15,6 +17,7 @@ func Migrate(db *gorm.DB) {
 		&entity.BookMark{},
 		&entity.Search{},
 		&entity.Tag{},
+		&entity.Permission{},
 	)
 
 	if err != nil {

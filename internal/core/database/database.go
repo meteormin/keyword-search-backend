@@ -11,6 +11,8 @@ import (
 	"os"
 )
 
+// DB
+// gorm.DB 객체 생성 함수
 func DB(config config.DB) *gorm.DB {
 	var sslMode string = "disable"
 	if config.SSLMode {
@@ -52,6 +54,8 @@ func DB(config config.DB) *gorm.DB {
 	return db
 }
 
+// HandleResult
+// db 실행 결과 handle
 func HandleResult(rs *gorm.DB) (*gorm.DB, error) {
 	if rs.Error != nil {
 		return nil, rs.Error

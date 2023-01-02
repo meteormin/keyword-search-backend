@@ -14,7 +14,7 @@
         "license": {
             "name": "MIT"
         },
-        "version": "0.0.1"
+        "version": "1.0.0"
     },
     "host": "localhost:9090",
     "basePath": "/",
@@ -651,7 +651,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_short_url.RedirectResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.RedirectResponse"
                         }
                     },
                     "302": {
@@ -688,7 +688,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.CreateSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch"
                         }
                     }
                 ],
@@ -696,7 +696,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -746,7 +746,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.ResponseAll"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll"
                         }
                     },
                     "400": {
@@ -801,7 +801,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -855,7 +855,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.UpdateSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch"
                         }
                     }
                 ],
@@ -863,7 +863,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -970,7 +970,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.PatchSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch"
                         }
                     }
                 ],
@@ -978,7 +978,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -1086,6 +1086,9 @@
                 "expires_at": {
                     "type": "string"
                 },
+                "expires_in": {
+                    "type": "integer"
+                },
                 "token": {
                     "type": "string"
                 },
@@ -1099,6 +1102,9 @@
             "properties": {
                 "expires_at": {
                     "type": "string"
+                },
+                "expires_in": {
+                    "type": "integer"
                 },
                 "token": {
                     "type": "string"
@@ -1683,6 +1689,9 @@
                 "expires_at": {
                     "type": "string"
                 },
+                "expires_in": {
+                    "type": "integer"
+                },
                 "token": {
                     "type": "string"
                 },
@@ -1696,6 +1705,9 @@
             "properties": {
                 "expires_at": {
                     "type": "string"
+                },
+                "expires_in": {
+                    "type": "integer"
                 },
                 "token": {
                     "type": "string"

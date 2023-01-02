@@ -20,7 +20,7 @@ import (
 	"path"
 )
 
-// Boot is High Priority
+// boot is High Priority
 func boot(w container.Container) {
 	w.Singleton(context.App, w.App())
 	w.Singleton(context.Config, w.Config())
@@ -60,7 +60,7 @@ func boot(w container.Container) {
 	w.Singleton(context.Logger, logs)
 }
 
-// Middlewares register middleware
+// middlewares register middleware
 func middlewares(w container.Container) {
 	w.App().Use(flogger.New(w.Config().Logger))
 	w.App().Use(recover.New())
@@ -116,6 +116,8 @@ func routes(w container.Container) {
 
 }
 
+// Resister
+// private 함수들 모아서 순서대로 실행 해주는 public 함수
 func Resister(w container.Container) {
 	boot(w)
 	middlewares(w)

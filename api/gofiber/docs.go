@@ -655,7 +655,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_short_url.RedirectResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.RedirectResponse"
                         }
                     },
                     "302": {
@@ -692,7 +692,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.CreateSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch"
                         }
                     }
                 ],
@@ -700,7 +700,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -750,7 +750,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.ResponseAll"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll"
                         }
                     },
                     "400": {
@@ -805,7 +805,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -859,7 +859,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.UpdateSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch"
                         }
                     }
                 ],
@@ -867,7 +867,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -974,7 +974,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.PatchSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch"
                         }
                     }
                 ],
@@ -982,7 +982,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -1090,6 +1090,9 @@ const docTemplate = `{
                 "expires_at": {
                     "type": "string"
                 },
+                "expires_in": {
+                    "type": "integer"
+                },
                 "token": {
                     "type": "string"
                 },
@@ -1103,6 +1106,9 @@ const docTemplate = `{
             "properties": {
                 "expires_at": {
                     "type": "string"
+                },
+                "expires_in": {
+                    "type": "integer"
                 },
                 "token": {
                     "type": "string"
@@ -1687,6 +1693,9 @@ const docTemplate = `{
                 "expires_at": {
                     "type": "string"
                 },
+                "expires_in": {
+                    "type": "integer"
+                },
                 "token": {
                     "type": "string"
                 },
@@ -1700,6 +1709,9 @@ const docTemplate = `{
             "properties": {
                 "expires_at": {
                     "type": "string"
+                },
+                "expires_in": {
+                    "type": "integer"
                 },
                 "token": {
                     "type": "string"
@@ -1977,7 +1989,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.0.1",
+	Version:          "1.0.0",
 	Host:             "localhost:9090",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
