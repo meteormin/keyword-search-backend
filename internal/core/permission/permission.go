@@ -58,6 +58,7 @@ type Collection interface {
 	Get(name string) (*Permission, error)
 	Filter(fn func(p Permission, i int) bool) []Permission
 	Map(fn func(p Permission, i int) Permission) []Permission
+	Concat(perms []Permission)
 }
 
 type CollectionStruct struct {
@@ -118,4 +119,15 @@ func (p *CollectionStruct) Filter(fn func(p Permission, i int) bool) []Permissio
 
 func (p *CollectionStruct) Map(fn func(p Permission, i int) Permission) []Permission {
 	return utils.Map(p.permissions, fn)
+}
+
+func (p *CollectionStruct) Concat(perms []Permission) {
+	if len(perms) == 0 {
+		return
+	}
+
+	for _, perm := range perms {
+		p.Add(perm)
+	}
+
 }

@@ -20,7 +20,7 @@ const (
 func getPermissions() []PermissionConfig {
 	return []PermissionConfig{
 		{
-			Name:    "ALL",
+			Name:    "ADMIN",
 			GroupId: 1,
 			Methods: []PermissionMethod{GET, POST, PUT, PATCH, DELETE},
 			Resources: []string{

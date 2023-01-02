@@ -19,22 +19,21 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 		if currentUser.Role == entity.Admin.RoleToString() {
 			return c.Next()
 		}
+		permCollection := c.Locals(context.Permissions).(Collection)
 
-		if len(permissions) == 0 {
-			permCollection := c.Locals(context.Permissions).(Collection)
-			userHasPerm := permCollection.Filter(func(p Permission, i int) bool {
-				if currentUser.GroupId != nil {
-					return currentUser.GroupId == &p.GroupId
-				}
-
-				return false
-			})
-
-			pass = checkPermissionFromCtx(userHasPerm, c)
-
-		} else {
-			pass = checkPermissionFromCtx(permissions, c)
+		if len(permissions) != 0 {
+			permCollection.Concat(permissions)
 		}
+
+		userHasPerm := permCollection.Filter(func(p Permission, i int) bool {
+			if currentUser.GroupId != nil {
+				return currentUser.GroupId == &p.GroupId
+			}
+
+			return false
+		})
+
+		pass = checkPermissionFromCtx(userHasPerm, c)
 
 		if pass {
 			return c.Next()
