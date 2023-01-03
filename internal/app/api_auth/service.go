@@ -9,7 +9,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
-	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -37,15 +36,14 @@ func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.G
 	}
 }
 
-func hashPassword(password string) string {
-	hashPass, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+func hashPassword(password string) (string, error) {
+	hashPass, err := utils.HashPassword(password)
 
-	return string(hashPass)
+	return hashPass, err
 }
 
 func hashCheck(hashPass string, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hashPass), []byte(password))
-	return err == nil
+	return utils.HashCheck(hashPass, password)
 }
 
 func (s *ServiceStruct) generateToken(user *entity.User, exp int64) (*string, error) {
@@ -110,13 +108,22 @@ func (s *ServiceStruct) SignUp(up *SignUp) (*SignUpResponse, error) {
 		Email:    up.Email,
 	})
 
+	if err != nil {
+		return nil, err
+	}
+
 	if user == nil {
+		hashed, err := hashPassword(up.Password)
+		if err != nil {
+			return nil, err
+		}
 
 		user, err = s.userRepo.Create(entity.User{
 			Username: up.Username,
 			Email:    up.Email,
-			Password: hashPassword(up.Password),
+			Password: hashed,
 		})
+
 		if err != nil {
 			return nil, err
 		}
@@ -153,8 +160,13 @@ func (s *ServiceStruct) ResetPassword(pk uint, passwordStruct *ResetPasswordStru
 		return nil, fiber.NewError(fiber.StatusBadRequest, "패스워드와 패스워드확인 필드가 일치하지않습니다.")
 	}
 
+	hashed, err := hashPassword(passwordStruct.Password)
+	if err != nil {
+		return nil, err
+	}
+
 	rsUser, err := s.userRepo.Update(pk, entity.User{
-		Password: hashPassword(passwordStruct.Password),
+		Password: hashed,
 	})
 
 	if err != nil {

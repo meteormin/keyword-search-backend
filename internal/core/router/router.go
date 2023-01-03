@@ -11,6 +11,7 @@ type Register = func(router fiber.Router)
 // Router
 // Routes wrapper
 type Router interface {
+	App() *fiber.App
 	Route(prefix string, callback Register, middleware ...fiber.Handler) fiber.Router
 	GetRoutes() []*fiber.Router
 }
@@ -18,34 +19,41 @@ type Router interface {
 // Wrapper
 // route wrapper struct
 type Wrapper struct {
-	Router     fiber.Router
+	app        *fiber.App
+	router     fiber.Router
 	name       string
-	GroupCount int
 	routes     []*fiber.Router
+	GroupCount int
 }
 
 // New
 // 라우터 생성
-func New(router fiber.Router, name ...string) Router {
+func New(app *fiber.App, prefix string, name ...string) Router {
 	routeName := ""
 	if len(name) > 0 {
 		routeName = name[0]
 	}
 
-	router.Name(routeName)
+	router := app.Group(prefix).Name(routeName)
 
 	return &Wrapper{
-		Router:     router,
+		app:        app,
+		router:     router,
 		name:       routeName,
-		GroupCount: 1,
 		routes:     make([]*fiber.Router, 0),
+		GroupCount: 1,
 	}
+}
+
+// App get fiber app
+func (r *Wrapper) App() *fiber.App {
+	return r.app
 }
 
 // Route
 // route 등록 메서드
 func (r *Wrapper) Route(prefix string, callback Register, middleware ...fiber.Handler) fiber.Router {
-	grp := r.Router.Group(prefix, middleware...)
+	grp := r.router.Group(prefix, middleware...)
 	callback(grp)
 
 	r.GroupCount += 1

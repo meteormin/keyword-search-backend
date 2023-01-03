@@ -12,12 +12,14 @@ func Migrate(db *gorm.DB) {
 	log.Println("Auto Migrate...")
 	err := db.AutoMigrate(
 		&entity.User{},
+		&entity.Group{},
+		&entity.Permission{},
+		&entity.Action{},
 		&entity.AccessToken{},
 		&entity.Host{},
 		&entity.BookMark{},
 		&entity.Search{},
 		&entity.Tag{},
-		&entity.Permission{},
 	)
 
 	if err != nil {

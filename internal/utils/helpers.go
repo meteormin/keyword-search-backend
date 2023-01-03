@@ -7,6 +7,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
 )
@@ -18,9 +19,9 @@ const (
 func HandleValidate(c *fiber.Ctx, data interface{}) *api_error.ErrorResponse {
 	failed := Validate(data)
 	if failed != nil {
-		errRes := api_error.NewValidationError(c)
+		errRes := api_error.NewBadRequestError(c).(*api_error.ErrorResponse)
 		errRes.FailedFields = failed
-		return &errRes
+		return errRes
 	}
 
 	return nil
@@ -73,4 +74,18 @@ func FindContext(ctx *fiber.Ctx, dest interface{}) error {
 	}
 
 	return nil
+}
+
+func HashPassword(password string) (string, error) {
+	fromPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		return "", err
+	}
+
+	return string(fromPassword), err
+}
+
+func HashCheck(hashPass string, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashPass), []byte(password))
+	return err == nil
 }

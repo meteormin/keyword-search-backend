@@ -210,6 +210,286 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/groups": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get all group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "get all groups",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page size",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ListResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "update group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "update group",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "group pk",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "creat group",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.UpdateGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "create group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "create group",
+                "parameters": [
+                    {
+                        "description": "creat group",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreateGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/groups/:id": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get group by pk",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "get group by pk",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "pk",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "delete group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "delete group",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "bool"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/groups/name/:name": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get group by name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "get group by name",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/hosts": {
             "get": {
                 "security": [
@@ -692,7 +972,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch"
+                            "$ref": "#/definitions/internal_app_search.CreateSearch"
                         }
                     }
                 ],
@@ -700,7 +980,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -750,7 +1030,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll"
+                            "$ref": "#/definitions/internal_app_search.ResponseAll"
                         }
                     },
                     "400": {
@@ -805,7 +1085,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -859,7 +1139,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch"
+                            "$ref": "#/definitions/internal_app_search.UpdateSearch"
                         }
                     }
                 ],
@@ -867,7 +1147,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -974,7 +1254,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch"
+                            "$ref": "#/definitions/internal_app_search.PatchSearch"
                         }
                     }
                 ],
@@ -982,7 +1262,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -1112,6 +1392,104 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_app_groups.CreateAction": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method"
+                },
+                "resource": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_app_groups.CreateGroup": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission"
+                    }
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreateAction"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_app_groups.ListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseAction": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method"
+                },
+                "resource": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseAction"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_app_groups.UpdateGroup": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission"
+                    }
                 }
             }
         },
@@ -1453,6 +1831,49 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_miniyus_keyword-search-backend_internal_core_permission.Method": {
+            "type": "string",
+            "enum": [
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE"
+            ],
+            "x-enum-varnames": [
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE"
+            ]
+        },
+        "github_com_miniyus_keyword-search-backend_internal_entity.Action": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "permission_id": {
+                    "type": "integer"
+                },
+                "resource": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_miniyus_keyword-search-backend_internal_entity.BookMark": {
             "type": "object",
             "properties": {
@@ -1485,6 +1906,38 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_entity.Group": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Permission"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.User"
+                    }
                 }
             }
         },
@@ -1529,6 +1982,38 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "github_com_miniyus_keyword-search-backend_internal_entity.Permission": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Action"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "group": {
+                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Group"
+                },
+                "group_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "permission": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
@@ -1590,6 +2075,9 @@ const docTemplate = `{
                 },
                 "email_verified_at": {
                     "type": "string"
+                },
+                "group": {
+                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Group"
                 },
                 "group_id": {
                     "type": "integer"
@@ -1715,6 +2203,104 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "internal_app_groups.CreateAction": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method"
+                },
+                "resource": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_app_groups.CreateGroup": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_app_groups.CreatePermission"
+                    }
+                }
+            }
+        },
+        "internal_app_groups.CreatePermission": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_app_groups.CreateAction"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_app_groups.ListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_app_groups.ResponseAction": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method"
+                },
+                "resource": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_app_groups.ResponseGroup": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_app_groups.ResponseAction"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_app_groups.UpdateGroup": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_app_groups.CreatePermission"
+                    }
                 }
             }
         },

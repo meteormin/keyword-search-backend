@@ -90,7 +90,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 	dto := &search.MultiCreateSearch{}
 	err = c.BodyParser(dto)
 	if err != nil {
-		res := api_error.NewValidationError(c)
+		res := api_error.NewBadRequestError(c)
 		return res.Response()
 	}
 

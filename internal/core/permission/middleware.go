@@ -9,8 +9,7 @@ import (
 	"strings"
 )
 
-// HasPermission
-// has permission?
+// HasPermission check has permissions middleware
 func HasPermission(permissions ...Permission) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		pass := false

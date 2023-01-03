@@ -35,7 +35,7 @@ func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
 	}
 }
 
-func (r *RepositoryStruct) Count(search *entity.Search) (int64, error) {
+func (r *RepositoryStruct) Count(search entity.Search) (int64, error) {
 	var count int64 = 0
 
 	rs := r.db.Model(search).Count(&count)
@@ -46,7 +46,7 @@ func (r *RepositoryStruct) Count(search *entity.Search) (int64, error) {
 
 func (r *RepositoryStruct) All(page utils.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
-	count, err := r.Count(&entity.Search{})
+	count, err := r.Count(entity.Search{})
 
 	if count != 0 {
 		rs := r.db.Scopes(utils.Paginate(page)).Find(&search)
@@ -58,7 +58,7 @@ func (r *RepositoryStruct) All(page utils.Page) ([]entity.Search, int64, error) 
 
 func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
-	count, err := r.Count(&entity.Search{})
+	count, err := r.Count(entity.Search{})
 	if count != 0 {
 		where := entity.Search{HostId: hostId}
 		scopes := utils.Paginate(page)

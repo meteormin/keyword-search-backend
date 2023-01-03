@@ -33,19 +33,19 @@ func NewHandler(service Service) Handler {
 
 func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ErrorResponse) {
 	if err := utils.Validate(signUp); err != nil {
-		errRes := api_error.NewValidationError(ctx)
+		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
 		errRes.FailedFields = err
 
-		return false, &errRes
+		return false, errRes
 	}
 
 	if signUp.Password != signUp.PasswordConfirm {
-		errRes := api_error.NewValidationError(ctx)
+		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
 		errRes.FailedFields = map[string]string{
 			"PasswordConfirm": "패스워드와 패스워드확인 필드가 일치하지않습니다.",
 		}
 
-		return false, &errRes
+		return false, errRes
 	}
 
 	return true, nil
@@ -65,7 +65,7 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	signUp := &SignUp{}
 	err := ctx.BodyParser(signUp)
 	if err != nil {
-		errRes := api_error.NewValidationError(ctx)
+		errRes := api_error.NewBadRequestError(ctx)
 		return errRes.Response()
 	}
 
@@ -83,10 +83,10 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 
 func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ErrorResponse) {
 	if err := utils.Validate(in); err != nil {
-		errRes := api_error.NewValidationError(ctx)
+		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
 		errRes.FailedFields = err
 
-		return false, &errRes
+		return false, errRes
 	}
 
 	return true, nil
@@ -106,7 +106,7 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 	signIn := &SignIn{}
 	err := ctx.BodyParser(signIn)
 	if err != nil {
-		errRes := api_error.NewValidationError(ctx)
+		errRes := api_error.NewBadRequestError(ctx)
 
 		return errRes.Response()
 	}
@@ -167,19 +167,19 @@ func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 
 	err = ctx.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewValidationError(ctx)
+		errRes := api_error.NewBadRequestError(ctx)
 		return errRes.Response()
 	}
 
 	failedFields := utils.Validate(dto)
 	if failedFields != nil {
-		errRes := api_error.NewValidationError(ctx)
+		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
 		errRes.FailedFields = failedFields
 		return errRes.Response()
 	}
 
 	if dto.Password != dto.PasswordConfirm {
-		errRes := api_error.NewValidationError(ctx)
+		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
 		errRes.FailedFields = map[string]string{
 			"PasswordConfirm": "패스워드와 패스워드확인 필드가 일치하지않습니다.",
 		}

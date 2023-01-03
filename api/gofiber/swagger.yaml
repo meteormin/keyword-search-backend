@@ -56,6 +56,69 @@ definitions:
       token:
         type: string
     type: object
+  github_com_miniyus_keyword-search-backend_internal_app_groups.CreateAction:
+    properties:
+      method:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method'
+      resource:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_groups.CreateGroup:
+    properties:
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission'
+        type: array
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreateAction'
+        type: array
+      name:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_groups.ListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseAction:
+    properties:
+      method:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method'
+      resource:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseAction'
+        type: array
+      name:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_groups.UpdateGroup:
+    properties:
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission'
+        type: array
+    type: object
   github_com_miniyus_keyword-search-backend_internal_app_hosts.CreateHost:
     properties:
       description:
@@ -282,6 +345,37 @@ definitions:
       username:
         type: string
     type: object
+  github_com_miniyus_keyword-search-backend_internal_core_permission.Method:
+    enum:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    type: string
+    x-enum-varnames:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+  github_com_miniyus_keyword-search-backend_internal_entity.Action:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      method:
+        type: string
+      permission_id:
+        type: integer
+      resource:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   github_com_miniyus_keyword-search-backend_internal_entity.BookMark:
     properties:
       createdAt:
@@ -304,6 +398,27 @@ definitions:
         $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.User'
       user_id:
         type: integer
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_entity.Group:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Permission'
+        type: array
+      updatedAt:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.User'
+        type: array
     type: object
   github_com_miniyus_keyword-search-backend_internal_entity.Host:
     properties:
@@ -333,6 +448,27 @@ definitions:
         $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.User'
       user_id:
         type: integer
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_entity.Permission:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Action'
+        type: array
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      group:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Group'
+      group_id:
+        type: integer
+      id:
+        type: integer
+      permission:
+        type: string
+      updatedAt:
+        type: string
     type: object
   github_com_miniyus_keyword-search-backend_internal_entity.Search:
     properties:
@@ -373,6 +509,8 @@ definitions:
         type: string
       email_verified_at:
         type: string
+      group:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Group'
       group_id:
         type: integer
       hosts:
@@ -456,6 +594,69 @@ definitions:
         type: integer
       token:
         type: string
+    type: object
+  internal_app_groups.CreateAction:
+    properties:
+      method:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method'
+      resource:
+        type: string
+    type: object
+  internal_app_groups.CreateGroup:
+    properties:
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/internal_app_groups.CreatePermission'
+        type: array
+    type: object
+  internal_app_groups.CreatePermission:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/internal_app_groups.CreateAction'
+        type: array
+      name:
+        type: string
+    type: object
+  internal_app_groups.ListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_app_groups.ResponseGroup'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  internal_app_groups.ResponseAction:
+    properties:
+      method:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method'
+      resource:
+        type: string
+    type: object
+  internal_app_groups.ResponseGroup:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/internal_app_groups.ResponseAction'
+        type: array
+      name:
+        type: string
+    type: object
+  internal_app_groups.UpdateGroup:
+    properties:
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/internal_app_groups.CreatePermission'
+        type: array
     type: object
   internal_app_hosts.CreateHost:
     properties:
@@ -761,6 +962,183 @@ paths:
       summary: login
       tags:
       - Auth
+  /api/groups:
+    get:
+      consumes:
+      - application/json
+      description: get all group
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ListResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get all groups
+      tags:
+      - Groups
+    post:
+      consumes:
+      - application/json
+      description: create group
+      parameters:
+      - description: creat group
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreateGroup'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create group
+      tags:
+      - Groups
+    put:
+      consumes:
+      - application/json
+      description: update group
+      parameters:
+      - description: group pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: creat group
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.UpdateGroup'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update group
+      tags:
+      - Groups
+  /api/groups/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete group
+      parameters:
+      - description: name
+        in: path
+        name: name
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: bool
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: delete group
+      tags:
+      - Groups
+    get:
+      consumes:
+      - application/json
+      description: get group by pk
+      parameters:
+      - description: pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get group by pk
+      tags:
+      - Groups
+  /api/groups/name/:name:
+    get:
+      consumes:
+      - application/json
+      description: get group by name
+      parameters:
+      - description: name
+        in: path
+        name: name
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get group by name
+      tags:
+      - Groups
   /api/hosts:
     get:
       consumes:
@@ -1063,14 +1441,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch'
+          $ref: '#/definitions/internal_app_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1131,7 +1509,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1164,14 +1542,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch'
+          $ref: '#/definitions/internal_app_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1204,14 +1582,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch'
+          $ref: '#/definitions/internal_app_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1251,7 +1629,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll'
+            $ref: '#/definitions/internal_app_search.ResponseAll'
         "400":
           description: Bad Request
           schema:

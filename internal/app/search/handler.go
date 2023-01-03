@@ -49,7 +49,7 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 
 	err := c.BodyParser(dto)
 	if err != nil {
-		res := api_error.NewValidationError(c)
+		res := api_error.NewBadRequestError(c)
 		return res.Response()
 	}
 
@@ -159,7 +159,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 	dto := &UpdateSearch{}
 	err = c.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewValidationError(c)
+		errRes := api_error.NewBadRequestError(c)
 		return errRes.Response()
 	}
 
@@ -209,7 +209,7 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 	dto := &PatchSearch{}
 	err = c.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewValidationError(c)
+		errRes := api_error.NewBadRequestError(c)
 		return errRes.Response()
 	}
 

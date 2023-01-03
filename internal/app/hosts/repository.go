@@ -31,7 +31,7 @@ func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
 	}
 }
 
-func (r *RepositoryStruct) Count(host *entity.Host) (int64, error) {
+func (r *RepositoryStruct) Count(host entity.Host) (int64, error) {
 	var count int64 = 0
 
 	rs := r.db.Model(host).Count(&count)
@@ -42,7 +42,7 @@ func (r *RepositoryStruct) Count(host *entity.Host) (int64, error) {
 
 func (r *RepositoryStruct) All(page utils.Page) ([]entity.Host, int64, error) {
 	var hosts []entity.Host
-	count, err := r.Count(&entity.Host{})
+	count, err := r.Count(entity.Host{})
 
 	if count != 0 {
 		result := r.db.Scopes(utils.Paginate(page)).Find(&hosts)

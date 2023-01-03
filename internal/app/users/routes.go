@@ -9,11 +9,11 @@ const Prefix = "/users"
 
 func Register(handler Handler) router.Register {
 	return func(router fiber.Router) {
-		router.Get("/", handler.All)
-		router.Get("/:id", handler.Get)
-		router.Post("/", handler.Create)
-		router.Put("/:id", handler.Update)
-		router.Patch("/:id", handler.Patch)
-		router.Delete("/:id", handler.Delete)
+		router.Get("/", handler.All).Name("api.users.all")
+		router.Get("/:id", handler.Get).Name("api.users.get")
+		router.Post("/", handler.Create).Name("api.users.create")
+		router.Put("/:id", handler.Update).Name("api.users.update")
+		router.Patch("/:id", handler.Patch).Name("api.users.patch")
+		router.Delete("/:id", handler.Delete).Name("api.users.delete")
 	}
 }

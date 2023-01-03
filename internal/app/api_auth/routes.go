@@ -9,8 +9,8 @@ const Prefix = "/auth"
 
 func Register(handler Handler) func(router fiber.Router) {
 	return func(router fiber.Router) {
-		router.Post("/register", handler.SignUp)
-		router.Post("/token", handler.SignIn)
+		router.Post("/register", handler.SignUp).Name("api.auth.register")
+		router.Post("/token", handler.SignIn).Name("api.auth.token")
 
 		authMiddlewares := auth.Middlewares()
 

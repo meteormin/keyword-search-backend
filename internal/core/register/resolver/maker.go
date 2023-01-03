@@ -1,16 +1,17 @@
-package register
+package resolver
 
 import (
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	cLogger "github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
 	"path"
 )
 
-func makeJwtGenerator(w container.Container) func() jwt.Generator {
+func MakeJwtGenerator(w container.Container) func() jwt.Generator {
 	return func() jwt.Generator {
 		dataPath := w.Config().Path.DataPath
 
@@ -24,8 +25,8 @@ func makeJwtGenerator(w container.Container) func() jwt.Generator {
 	}
 }
 
-func parseLoggerConfig(loggerConfig config.LoggerConfig) logger.Config {
-	return logger.Config{
+func ParseLoggerConfig(loggerConfig config.LoggerConfig) cLogger.Config {
+	return cLogger.Config{
 		TimeFormat: loggerConfig.TimeFormat,
 		FilePath:   loggerConfig.FilePath,
 		Filename:   loggerConfig.Filename,
@@ -39,7 +40,7 @@ func parseLoggerConfig(loggerConfig config.LoggerConfig) logger.Config {
 	}
 }
 
-func parsePermissionConfig(permissionConfig []config.PermissionConfig) []permission.Config {
+func ParsePermissionConfig(permissionConfig []config.PermissionConfig) []permission.Config {
 	var permCfg []permission.Config
 	for _, cfg := range permissionConfig {
 		permCfg = append(permCfg, permission.Config{
@@ -60,4 +61,20 @@ func parseMethodConstants(methods []config.PermissionMethod) []permission.Method
 	}
 
 	return authMethods
+}
+
+func ToPermissionEntity(perm permission.Permission) entity.Permission {
+	var ent entity.Permission
+	ent.Permission = perm.Name
+	ent.GroupId = perm.GroupId
+	for _, action := range perm.Actions {
+		for _, method := range action.Methods {
+			ent.Actions = append(ent.Actions, entity.Action{
+				Resource: action.Resource,
+				Method:   string(method),
+			})
+		}
+	}
+
+	return ent
 }

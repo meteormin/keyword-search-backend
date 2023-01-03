@@ -13,6 +13,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
+	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
 	router "github.com/miniyus/keyword-search-backend/internal/routes"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
@@ -25,7 +26,7 @@ func boot(w container.Container) {
 	w.Singleton(context.Config, w.Config())
 	w.Singleton(context.DB, w.Database())
 
-	jwtGenerator := makeJwtGenerator(w)
+	jwtGenerator := resolver.MakeJwtGenerator(w)
 
 	var tg jwt.Generator
 	w.Bind(&tg, jwtGenerator)
@@ -34,12 +35,12 @@ func boot(w container.Container) {
 
 	var logs *zap.SugaredLogger
 	loggerConfig := w.Config().CustomLogger
-	w.Bind(&logs, logger.New(parseLoggerConfig(loggerConfig)))
+	w.Bind(&logs, logger.New(resolver.ParseLoggerConfig(loggerConfig)))
 	w.Resolve(&logs)
 	w.Singleton(context.Logger, logs)
 
 	permissionConfig := w.Config().Permission
-	permissions := permission.NewPermissionsFromConfig(parsePermissionConfig(permissionConfig))
+	permissions := permission.NewPermissionsFromConfig(resolver.ParsePermissionConfig(permissionConfig))
 	permissionCollection := permission.NewPermissionCollection(permissions...)
 	w.Singleton(context.Permissions, permissionCollection)
 }

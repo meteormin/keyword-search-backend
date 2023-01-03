@@ -154,14 +154,14 @@ func (w *Wrapper) Stats() {
 		return
 	}
 	log.Println("[Container Info]")
-	log.Printf("[ENV] %s", w.Config().AppEnv)
-	log.Printf("[Locale] %s", w.Config().Locale)
-	log.Printf("[Time Zone] %s", w.Config().TimeZone)
-	log.Printf("[Injected Instances] %#v", w.Instances())
-	log.Printf("[Bindings] %#v", w.Bindings())
+	log.Printf("ENV: %s", w.Config().AppEnv)
+	log.Printf("Locale: %s", w.Config().Locale)
+	log.Printf("Time Zone: %s", w.Config().TimeZone)
+	log.Printf("Injected Instances: %#v", w.Instances())
+	log.Printf("Bindings: %#v", w.Bindings())
 	log.Println("...")
 	log.Println("[Fiber App Info]")
-	log.Printf("[Handlers Count] %d", w.App().HandlersCount())
+	log.Printf("Handlers Count: %d", w.App().HandlersCount())
 	log.Println("[Router]")
 	for _, r := range w.App().GetRoutes() {
 		log.Printf(

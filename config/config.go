@@ -32,6 +32,7 @@ type Configs struct {
 	Cors         fCors.Config
 	Csrf         fCsrf.Config
 	Permission   []PermissionConfig
+	CreateAdmin  CreateAdminConfig
 }
 
 func GetConfigs() *Configs {
@@ -56,5 +57,6 @@ func GetConfigs() *Configs {
 		Cors:         cors(),
 		Csrf:         csrf(),
 		Permission:   getPermissions(),
+		CreateAdmin:  createAdminConfig(),
 	}
 }

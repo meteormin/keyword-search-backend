@@ -53,6 +53,7 @@ type includeUser struct {
 }
 
 type Collection interface {
+	All() []Permission
 	Add(perm Permission)
 	Remove(name string) bool
 	Get(name string) (*Permission, error)
@@ -72,6 +73,10 @@ func NewPermissionCollection(perms ...Permission) Collection {
 	}
 
 	return &CollectionStruct{perms}
+}
+
+func (p *CollectionStruct) All() []Permission {
+	return p.permissions
 }
 
 func (p *CollectionStruct) Add(perm Permission) {

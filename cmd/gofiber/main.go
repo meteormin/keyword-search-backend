@@ -20,6 +20,8 @@ import (
 // @description				   Bearer token type
 func main() {
 	container := core.New()
+
 	container.Stats()
+
 	container.Run()
 }

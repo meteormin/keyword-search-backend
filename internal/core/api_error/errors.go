@@ -1,72 +1,29 @@
 package api_error
 
 import (
-	"errors"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
-	"gorm.io/gorm"
+	fUtils "github.com/gofiber/fiber/v2/utils"
 )
 
-type ErrorInterface interface {
-	Response()
-}
+type errorMaker func(ctx *fiber.Ctx) ErrorInterface
 
-type ErrorResponse struct {
-	ctx          *fiber.Ctx
-	Status       string            `json:"status"`
-	Code         int               `json:"code"`
-	Message      string            `json:"message"`
-	FailedFields map[string]string `json:"failed_fields,omitempty"`
-}
-
-func NewFromError(ctx *fiber.Ctx, err error) *ErrorResponse {
-	if err == nil {
-		return nil
-	}
-
-	var errRes *ErrorResponse
-
-	if vErr, ok := err.(*fiber.Error); ok {
-		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: vErr.Code, Message: vErr.Message}
-	} else if vErr, ok := err.(error); ok {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusNotFound, Message: vErr.Error()}
-		}
-
-		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusInternalServerError, Message: vErr.Error()}
-	} else {
-		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusInternalServerError, Message: "Unknown Error"}
-	}
-
-	return errRes
-}
-
-func NewErrorResponse(ctx *fiber.Ctx, code int, message string) ErrorResponse {
-	return ErrorResponse{
-		ctx:     ctx,
-		Status:  "error",
-		Code:    code,
-		Message: message,
+func newErrorMaker(code int) errorMaker {
+	return func(ctx *fiber.Ctx) ErrorInterface {
+		return NewErrorResponse(ctx, code, fUtils.StatusMessage(code))
 	}
 }
 
-func NewValidationError(ctx *fiber.Ctx) ErrorResponse {
-	return ErrorResponse{
-		ctx:     ctx,
-		Status:  "error",
-		Code:    fiber.StatusBadRequest,
-		Message: utils.StatusMessage(fiber.StatusBadRequest),
-	}
+func NewForbiddenError(ctx *fiber.Ctx) ErrorInterface {
+	code := fiber.StatusForbidden
+	return newErrorMaker(code)(ctx)
 }
 
-func (er *ErrorResponse) Response() error {
-	if er.Code == 0 {
-		er.Code = fiber.StatusInternalServerError
-	}
+func NewBadRequestError(ctx *fiber.Ctx) ErrorInterface {
+	code := fiber.StatusBadRequest
+	return newErrorMaker(code)(ctx)
+}
 
-	if er.Message == "" {
-		er.Message = utils.StatusMessage(er.Code)
-	}
-
-	return er.ctx.Status(er.Code).JSON(er)
+func NewServerError(ctx *fiber.Ctx) ErrorInterface {
+	code := fiber.StatusInternalServerError
+	return newErrorMaker(code)(ctx)
 }

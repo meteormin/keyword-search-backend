@@ -152,7 +152,7 @@ func newJwtMiddleware(config jwtWare.Config) fiber.Handler {
 // jwtError
 // jwt 생성과 해독(? decode...) 관련 에러 핸들링
 func jwtError(c *fiber.Ctx, err error) error {
-	var errRes api_error.ErrorResponse
+	var errRes api_error.ErrorInterface
 
 	if err.Error() == "Missing or malformed JWT" {
 		errRes = api_error.NewErrorResponse(c, fiber.StatusBadRequest, err.Error())
