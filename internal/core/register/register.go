@@ -11,7 +11,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
 	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
 	router "github.com/miniyus/keyword-search-backend/internal/routes"
@@ -26,23 +25,26 @@ func boot(w container.Container) {
 	w.Singleton(context.Config, w.Config())
 	w.Singleton(context.DB, w.Database())
 
+	var tg jwt.Generator
 	jwtGenerator := resolver.MakeJwtGenerator(w)
 
-	var tg jwt.Generator
 	w.Bind(&tg, jwtGenerator)
 	w.Resolve(&tg)
-	w.Singleton(context.JwtGenerator, tg)
+	w.Singleton(context.JwtGenerator, &tg)
 
 	var logs *zap.SugaredLogger
-	loggerConfig := w.Config().CustomLogger
-	w.Bind(&logs, logger.New(resolver.ParseLoggerConfig(loggerConfig)))
-	w.Resolve(&logs)
-	w.Singleton(context.Logger, logs)
+	loggerStruct := resolver.MakeLogger(w)
 
-	permissionConfig := w.Config().Permission
-	permissions := permission.NewPermissionsFromConfig(resolver.ParsePermissionConfig(permissionConfig))
-	permissionCollection := permission.NewPermissionCollection(permissions...)
-	w.Singleton(context.Permissions, permissionCollection)
+	w.Bind(&logs, loggerStruct)
+	w.Resolve(&logs)
+	w.Singleton(context.Logger, &logs)
+
+	var permCollect permission.Collection
+	permissionCollection := resolver.MakePermissionCollection(w)
+
+	w.Bind(&permCollect, permissionCollection)
+	w.Resolve(&permCollect)
+	w.Singleton(context.Permissions, &permCollect)
 }
 
 // middlewares register middleware
@@ -85,7 +87,7 @@ func middlewares(w container.Container) {
 // @Summary health check your server
 // @Description health check your server
 // @Success 200 {object} utils.StatusResponse
-// @Tags healthCheck
+// @Tags HealthCheck
 // @Accept */*
 // @Produce json
 // @Router /health-check [get]

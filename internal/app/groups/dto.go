@@ -32,6 +32,7 @@ type ResponseAction struct {
 }
 
 type ResponseGroup struct {
+	Id      uint             `json:"id"`
 	Name    string           `json:"name"`
 	Actions []ResponseAction `json:"actions"`
 }
@@ -48,6 +49,7 @@ func ToResponse(ent *entity.Group) *ResponseGroup {
 	}
 
 	res.Name = ent.Name
+	res.Id = ent.ID
 	for _, perm := range ent.Permissions {
 		for _, action := range perm.Actions {
 			res.Actions = append(res.Actions, ResponseAction{

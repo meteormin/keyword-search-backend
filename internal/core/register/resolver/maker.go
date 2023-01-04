@@ -8,15 +8,16 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
+	"go.uber.org/zap"
 	"path"
 )
 
 func MakeJwtGenerator(w container.Container) func() jwt.Generator {
+	dataPath := w.Config().Path.DataPath
+
+	privateKey := rsGen.PrivatePemDecode(path.Join(dataPath, "secret/private.pem"))
+
 	return func() jwt.Generator {
-		dataPath := w.Config().Path.DataPath
-
-		privateKey := rsGen.PrivatePemDecode(path.Join(dataPath, "secret/private.pem"))
-
 		return &jwt.GeneratorStruct{
 			PrivateKey: privateKey,
 			PublicKey:  privateKey.Public(),
@@ -25,7 +26,14 @@ func MakeJwtGenerator(w container.Container) func() jwt.Generator {
 	}
 }
 
-func ParseLoggerConfig(loggerConfig config.LoggerConfig) cLogger.Config {
+func MakeLogger(w container.Container) func() *zap.SugaredLogger {
+	loggerConfig := w.Config().CustomLogger
+	return func() *zap.SugaredLogger {
+		return cLogger.New(parseLoggerConfig(loggerConfig))
+	}
+}
+
+func parseLoggerConfig(loggerConfig config.LoggerConfig) cLogger.Config {
 	return cLogger.Config{
 		TimeFormat: loggerConfig.TimeFormat,
 		FilePath:   loggerConfig.FilePath,
@@ -40,7 +48,17 @@ func ParseLoggerConfig(loggerConfig config.LoggerConfig) cLogger.Config {
 	}
 }
 
-func ParsePermissionConfig(permissionConfig []config.PermissionConfig) []permission.Config {
+func MakePermissionCollection(w container.Container) func() permission.Collection {
+	cfg := w.Config().Permission
+
+	permCfg := permission.NewPermissionsFromConfig(parsePermissionConfig(cfg))
+
+	return func() permission.Collection {
+		return permission.NewPermissionCollection(permCfg...)
+	}
+}
+
+func parsePermissionConfig(permissionConfig []config.PermissionConfig) []permission.Config {
 	var permCfg []permission.Config
 	for _, cfg := range permissionConfig {
 		permCfg = append(permCfg, permission.Config{
