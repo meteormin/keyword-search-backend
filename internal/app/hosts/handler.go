@@ -3,6 +3,7 @@ package hosts
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
+	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"strconv"
@@ -39,7 +40,7 @@ func NewHandler(service Service) Handler {
 // @Router /api/hosts [post]
 // @Security BearerAuth
 func (h *HandlerStruct) Create(c *fiber.Ctx) error {
-	user, err := utils.GetAuthUser(c)
+	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
 	}
@@ -100,7 +101,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	user, err := utils.GetAuthUser(c)
+	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
 	}
@@ -155,7 +156,7 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	user, err := utils.GetAuthUser(c)
+	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
 	}
@@ -189,7 +190,7 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := utils.GetAuthUser(c)
+	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
 	}
@@ -219,7 +220,7 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := utils.GetAuthUser(c)
+	user, err := auth.GetAuthUser(c)
 
 	if err != nil {
 		return err
@@ -257,7 +258,7 @@ func (h *HandlerStruct) Delete(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := utils.GetAuthUser(c)
+	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
 	}

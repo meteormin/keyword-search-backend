@@ -2,8 +2,8 @@ package short_url
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
-	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -42,7 +42,7 @@ func (h *HandlerStruct) FindUrlByCode(c *fiber.Ctx) error {
 	if code == "" {
 		return fiber.ErrNotFound
 	}
-	user, err := utils.GetAuthUser(c)
+	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func (h *HandlerStruct) Redirect(c *fiber.Ctx) error {
 	if code == "" {
 		return fiber.ErrNotFound
 	}
-	user, err := utils.GetAuthUser(c)
+	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
 	}

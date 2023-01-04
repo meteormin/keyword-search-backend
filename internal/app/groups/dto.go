@@ -7,18 +7,18 @@ import (
 )
 
 type CreateAction struct {
-	Resource string            `json:"resource"`
-	Method   permission.Method `json:"method"`
+	Resource string            `json:"resource" validate:"required"`
+	Method   permission.Method `json:"method" validate:"required"`
 }
 
 type CreatePermission struct {
-	Name    string         `json:"name"`
-	Actions []CreateAction `json:"actions"`
+	Name    string         `json:"name" validate:"required"`
+	Actions []CreateAction `json:"actions" validate:"required"`
 }
 
 type CreateGroup struct {
-	Name        string `json:"name"`
-	Permissions []CreatePermission
+	Name        string             `json:"name" validate:"required"`
+	Permissions []CreatePermission `json:"permissions" validate:"required"`
 }
 
 type UpdateGroup struct {

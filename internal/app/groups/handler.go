@@ -47,6 +47,12 @@ func (h *HandlerStruct) Create(ctx *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
+	validate := utils.Validate(dto)
+	if validate != nil {
+		errRes := api_error.NewBadRequestError(ctx)
+		return errRes.Response()
+	}
+
 	errRes := utils.HandleValidate(ctx, dto)
 	if errRes != nil {
 		return errRes.Response()
@@ -76,13 +82,20 @@ func (h *HandlerStruct) Update(ctx *fiber.Ctx) error {
 	param := ctx.Params("id")
 	pk, err := strconv.Atoi(param)
 	if err != nil {
-		return err
+		errRes := api_error.NewBadRequestError(ctx)
+		return errRes.Response()
 	}
 
 	dto := &UpdateGroup{}
 	err = ctx.BodyParser(dto)
 	if err != nil {
-		return err
+		errRes := api_error.NewBadRequestError(ctx)
+		return errRes.Response()
+	}
+
+	errRes := utils.HandleValidate(ctx, dto)
+	if errRes != nil {
+		return errRes.Response()
 	}
 
 	result, err := h.service.Update(uint(pk), dto)
@@ -91,7 +104,27 @@ func (h *HandlerStruct) Update(ctx *fiber.Ctx) error {
 }
 
 func (h *HandlerStruct) Patch(ctx *fiber.Ctx) error {
-	return ctx.JSON("")
+	param := ctx.Params("id")
+	pk, err := strconv.Atoi(param)
+	if err != nil {
+		errRes := api_error.NewBadRequestError(ctx)
+		return errRes.Response()
+	}
+
+	dto := &UpdateGroup{}
+	err = ctx.BodyParser(dto)
+	if err != nil {
+		return err
+	}
+
+	errRes := utils.HandleValidate(ctx, dto)
+	if errRes != nil {
+		return errRes.Response()
+	}
+
+	result, err := h.service.Update(uint(pk), dto)
+
+	return ctx.JSON(result)
 }
 
 // All

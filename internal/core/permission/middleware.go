@@ -3,6 +3,7 @@ package permission
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/core/auth"
+	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
@@ -18,7 +19,17 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 		if currentUser.Role == entity.Admin.RoleToString() {
 			return c.Next()
 		}
-		permCollection := c.Locals(context.Permissions).(Collection)
+		var permCollection Collection
+
+		permCollection, ok := c.Locals(context.Permissions).(Collection)
+		if !ok {
+			permCollection = nil
+			containerContext := c.Locals(context.Container).(container.Container)
+			permCollection, ok = containerContext.Resolve(permCollection).(Collection)
+			if !ok {
+				return fiber.NewError(fiber.StatusInternalServerError, "can not found context permissions")
+			}
+		}
 
 		if len(permissions) != 0 {
 			permCollection.Concat(permissions)

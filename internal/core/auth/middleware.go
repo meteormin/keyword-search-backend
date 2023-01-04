@@ -3,6 +3,7 @@ package auth
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	fUtils "github.com/gofiber/fiber/v2/utils"
 	jwtWare "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
 	configure "github.com/miniyus/keyword-search-backend/config"
@@ -51,10 +52,10 @@ func Middlewares(fn ...fiber.Handler) []fiber.Handler {
 // AccessLogMiddleware
 // log 찍힐 때 user 정보 추가
 func AccessLogMiddleware(c *fiber.Ctx) error {
+	var logger *zap.SugaredLogger
 	logger, ok := c.Locals(context.Logger).(*zap.SugaredLogger)
 	if !ok {
-		log.Print("Failed Load logger context")
-		return fiber.NewError(fiber.StatusInternalServerError, "Failed Load logger context")
+		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.Logger")
 	}
 
 	start := time.Now()
@@ -84,7 +85,6 @@ func AccessLogMiddleware(c *fiber.Ctx) error {
 // GetUserFromJWT
 // get user information from jwt token
 func GetUserFromJWT(c *fiber.Ctx) error {
-
 	jwtData, ok := c.Locals("user").(*jwt.Token)
 	if !ok {
 		log.Print("access guest")
@@ -135,7 +135,7 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 func JwtMiddleware(c *fiber.Ctx) error {
 	config, ok := c.Locals(context.Config).(*configure.Configs)
 	if !ok {
-		return fiber.NewError(fiber.StatusInternalServerError, "Can not found Config Context...")
+		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.Config")
 	}
 
 	middleware := newJwtMiddleware(config.Auth.Jwt)
@@ -170,16 +170,14 @@ func jwtError(c *fiber.Ctx, err error) error {
 func CheckExpired(c *fiber.Ctx) error {
 	wrapper, ok := c.Locals(context.Container).(container.Container)
 	if !ok {
-		statusCode := fiber.StatusInternalServerError
-		return fiber.NewError(statusCode, "Failed Get Container in Ctx")
+		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.Container")
 	}
 
 	tokenRepository := NewRepository(wrapper.Database())
 
 	user, ok := c.Locals(context.AuthUser).(*User)
 	if !ok {
-		statusCode := fiber.StatusUnauthorized
-		return fiber.NewError(statusCode, "Can't Find User Context")
+		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.AuthUser")
 	}
 
 	token, err := tokenRepository.FindByUserId(user.Id)
@@ -194,4 +192,15 @@ func CheckExpired(c *fiber.Ctx) error {
 	}
 
 	return c.Next()
+}
+
+func GetAuthUser(c *fiber.Ctx) (*User, error) {
+	user, ok := c.Locals(context.AuthUser).(*User)
+	if !ok {
+		status := fiber.StatusUnauthorized
+		errRes := api_error.NewErrorResponse(c, status, fUtils.StatusMessage(status))
+		return nil, errRes.Response()
+	}
+
+	return user, nil
 }

@@ -13,10 +13,12 @@ func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 		return nil
 	}
 
+	var logger *zap.SugaredLogger
 	logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
+
 	if !ok {
-		debug.PrintStack()
-		return err
+		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Logger")
+		return errRes.Response()
 	}
 
 	logger.Errorln(err)
@@ -32,11 +34,12 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 	if err == nil {
 		return nil
 	}
-
+	var logger *zap.SugaredLogger
 	logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
+
 	if !ok {
-		debug.PrintStack()
-		return err
+		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Logger")
+		return errRes.Response()
 	}
 
 	logger.Errorln(err)

@@ -30,21 +30,21 @@ func boot(w container.Container) {
 
 	w.Bind(&tg, jwtGenerator)
 	w.Resolve(&tg)
-	w.Singleton(context.JwtGenerator, &tg)
+	w.Singleton(context.JwtGenerator, tg)
 
 	var logs *zap.SugaredLogger
 	loggerStruct := resolver.MakeLogger(w)
 
 	w.Bind(&logs, loggerStruct)
 	w.Resolve(&logs)
-	w.Singleton(context.Logger, &logs)
+	w.Singleton(context.Logger, logs)
 
 	var permCollect permission.Collection
 	permissionCollection := resolver.MakePermissionCollection(w)
 
 	w.Bind(&permCollect, permissionCollection)
 	w.Resolve(&permCollect)
-	w.Singleton(context.Permissions, &permCollect)
+	w.Singleton(context.Permissions, permCollect)
 }
 
 // middlewares register middleware
@@ -53,31 +53,13 @@ func middlewares(w container.Container) {
 	w.App().Use(recover.New())
 
 	// Add Context Container
-	w.App().Use(func(ctx *fiber.Ctx) error {
-		ctx.Locals(context.Container, w)
-		return ctx.Next()
-	})
-
+	w.App().Use(resolver.AddContext(context.Container, w))
 	// Add Context Config
-	w.App().Use(func(ctx *fiber.Ctx) error {
-		ctx.Locals(context.Config, w.Config())
-		return ctx.Next()
-	})
-
+	w.App().Use(resolver.AddContext(context.Config, w.Config()))
 	// Add Context Logger
-	w.App().Use(func(ctx *fiber.Ctx) error {
-		zLogger := w.Get(context.Logger).(*zap.SugaredLogger)
-
-		ctx.Locals(context.Logger, zLogger)
-		return ctx.Next()
-	})
-
+	w.App().Use(resolver.AddContext(context.Logger, w.Get(context.Logger)))
 	// Add Context Permissions
-	w.App().Use(func(ctx *fiber.Ctx) error {
-		permissions := w.Get(context.Permissions).(permission.Collection)
-		ctx.Locals(context.Permissions, permissions)
-		return ctx.Next()
-	})
+	w.App().Use(resolver.AddContext(context.Permissions, w.Get(context.Permissions)))
 
 	w.App().Use(api_error.ErrorHandler)
 	w.App().Use(cors.New(w.Config().Cors))

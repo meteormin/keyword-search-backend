@@ -157,7 +157,7 @@ func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
 // @Router /api/auth/password [patch]
 // @Security BearerAuth
 func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
-	user, err := utils.GetAuthUser(ctx)
+	user, err := auth.GetAuthUser(ctx)
 	if err != nil {
 		errRes := api_error.NewFromError(ctx, err)
 		return errRes.Response()
@@ -206,7 +206,7 @@ func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 // @Router /api/auth/revoke [delete]
 // @Security BearerAuth
 func (h *HandlerStruct) RevokeToken(ctx *fiber.Ctx) error {
-	user, err := utils.GetAuthUser(ctx)
+	user, err := auth.GetAuthUser(ctx)
 	if err != nil {
 		return err
 	}
