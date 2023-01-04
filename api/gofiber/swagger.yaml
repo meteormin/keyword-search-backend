@@ -310,7 +310,7 @@ definitions:
     - query
     - query_key
     type: object
-  github_com_miniyus_keyword-search-backend_internal_app_short_url.RedirectResponse:
+  github_com_miniyus_keyword-search-backend_internal_app_short_url.Response:
     properties:
       url:
         type: string
@@ -827,7 +827,7 @@ definitions:
     - query
     - query_key
     type: object
-  internal_app_short_url.RedirectResponse:
+  internal_app_short_url.Response:
     properties:
       url:
         type: string
@@ -872,7 +872,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_api_auth.ResetPasswordStruct'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.ResetPasswordStruct'
       produces:
       - application/json
       responses:
@@ -900,14 +900,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_api_auth.SignUp'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUp'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_app_api_auth.SignUpResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUpResponse'
         "400":
           description: Bad Request
           schema:
@@ -947,14 +947,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_api_auth.SignIn'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignIn'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_api_auth.TokenInfo'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.TokenInfo'
         "400":
           description: Bad Request
           schema:
@@ -1403,33 +1403,6 @@ paths:
       summary: batch create search by host id
       tags:
       - Hosts
-  /api/redirect/{code}:
-    get:
-      consumes:
-      - application/json
-      description: create search
-      parameters:
-      - description: short url code
-        in: path
-        name: code
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/internal_app_short_url.RedirectResponse'
-        "302":
-          description: Found
-          schema:
-            type: string
-      security:
-      - BearerAuth: []
-      summary: create search
-      tags:
-      - Redirect
   /api/search:
     post:
       consumes:
@@ -1647,6 +1620,58 @@ paths:
       summary: create search
       tags:
       - Search
+  /api/short-url/{code}:
+    get:
+      consumes:
+      - application/json
+      description: find url by code
+      parameters:
+      - description: short url code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response'
+        "404":
+          description: Not Found
+      security:
+      - BearerAuth: []
+      summary: find url by code
+      tags:
+      - ShortUrl
+  /api/short-url/{code}/redirect:
+    get:
+      consumes:
+      - application/json
+      description: redirect real url from short-url
+      parameters:
+      - description: short url code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response'
+        "302":
+          description: Found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: redirect real url from short-url
+      tags:
+      - ShortUrl
   /health-check:
     get:
       consumes:

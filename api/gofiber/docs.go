@@ -76,7 +76,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_api_auth.ResetPasswordStruct"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.ResetPasswordStruct"
                         }
                     }
                 ],
@@ -116,7 +116,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_api_auth.SignUp"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUp"
                         }
                     }
                 ],
@@ -124,7 +124,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_api_auth.SignUpResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUpResponse"
                         }
                     },
                     "400": {
@@ -190,7 +190,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_api_auth.SignIn"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignIn"
                         }
                     }
                 ],
@@ -198,7 +198,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_api_auth.TokenInfo"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.TokenInfo"
                         }
                     },
                     "400": {
@@ -904,49 +904,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/redirect/{code}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "create search",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Redirect"
-                ],
-                "summary": "create search",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "short url code",
-                        "name": "code",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/internal_app_short_url.RedirectResponse"
-                        }
-                    },
-                    "302": {
-                        "description": "Found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/api/search": {
             "post": {
                 "security": [
@@ -1281,6 +1238,89 @@ const docTemplate = `{
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/short-url/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "find url by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShortUrl"
+                ],
+                "summary": "find url by code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "short url code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/api/short-url/{code}/redirect": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "redirect real url from short-url",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShortUrl"
+                ],
+                "summary": "redirect real url from short-url",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "short url code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response"
+                        }
+                    },
+                    "302": {
+                        "description": "Found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -1777,7 +1817,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_short_url.RedirectResponse": {
+        "github_com_miniyus_keyword-search-backend_internal_app_short_url.Response": {
             "type": "object",
             "properties": {
                 "url": {
@@ -2554,7 +2594,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_app_short_url.RedirectResponse": {
+        "internal_app_short_url.Response": {
             "type": "object",
             "properties": {
                 "url": {

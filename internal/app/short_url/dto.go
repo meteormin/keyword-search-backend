@@ -1,5 +1,5 @@
 package short_url
 
-type RedirectResponse struct {
+type Response struct {
 	Url string `json:"url"`
 }
