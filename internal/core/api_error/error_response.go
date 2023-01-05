@@ -24,18 +24,18 @@ func NewFromError(ctx *fiber.Ctx, err error) ErrorInterface {
 		return nil
 	}
 
-	var errRes *ErrorResponse
+	var errRes ErrorInterface
 
 	if vErr, ok := err.(*fiber.Error); ok {
-		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: vErr.Code, Message: vErr.Message}
+		errRes = NewErrorResponse(ctx, vErr.Code, vErr.Message)
 	} else if vErr, ok := err.(error); ok {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusNotFound, Message: vErr.Error()}
+			errRes = NewErrorResponse(ctx, fiber.StatusNotFound, vErr.Error())
 		}
 
-		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusInternalServerError, Message: vErr.Error()}
+		errRes = NewErrorResponse(ctx, fiber.StatusInternalServerError, vErr.Error())
 	} else {
-		errRes = &ErrorResponse{ctx: ctx, Status: "error", Code: fiber.StatusInternalServerError, Message: "Unknown Error"}
+		errRes = NewErrorResponse(ctx, fiber.StatusInternalServerError, vErr.Error())
 	}
 
 	return errRes

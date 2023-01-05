@@ -147,7 +147,14 @@ func (h *HandlerStruct) All(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	res := ListResponse{Paginator: result, Data: result.Data.([]ResponseGroup)}
+	res := ListResponse{
+		Paginator: utils.Paginator{
+			TotalCount: result.TotalCount,
+			Page:       result.Page,
+		},
+		Data: result.Data.([]ResponseGroup),
+	}
+
 	return ctx.JSON(res)
 }
 
@@ -160,7 +167,7 @@ func (h *HandlerStruct) All(ctx *fiber.Ctx) error {
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
-// @Router /api/groups/:id [get]
+// @Router /api/groups/{id} [get]
 // @Security BearerAuth
 func (h *HandlerStruct) Find(ctx *fiber.Ctx) error {
 	param := ctx.Params("id")
@@ -181,12 +188,12 @@ func (h *HandlerStruct) Find(ctx *fiber.Ctx) error {
 // @Summary get group by name
 // @Description get group by name
 // @Tags Groups
-// @param name path int true "name"
+// @param name path string true "name"
 // @Success 200 {object} ResponseGroup
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
-// @Router /api/groups/name/:name [get]
+// @Router /api/groups/name/{name} [get]
 // @Security BearerAuth
 func (h *HandlerStruct) FindByName(ctx *fiber.Ctx) error {
 	name := ctx.Params("name")
@@ -208,7 +215,7 @@ func (h *HandlerStruct) FindByName(ctx *fiber.Ctx) error {
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
-// @Router /api/groups/:id [delete]
+// @Router /api/groups/{id} [delete]
 // @Security BearerAuth
 func (h *HandlerStruct) Delete(ctx *fiber.Ctx) error {
 	param := ctx.Params("id")

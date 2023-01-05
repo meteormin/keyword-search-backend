@@ -44,7 +44,7 @@ func (repo *RepositoryStruct) Create(user entity.User) (*entity.User, error) {
 func (repo *RepositoryStruct) Find(pk uint) (*entity.User, error) {
 	user := entity.User{}
 
-	result := repo.db.Find(&user, pk)
+	result := repo.db.First(&user, pk)
 	_, err := database.HandleResult(result)
 	if err != nil {
 		return nil, err

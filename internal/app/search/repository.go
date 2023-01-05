@@ -72,7 +72,7 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.S
 
 func (r *RepositoryStruct) Find(pk uint) (*entity.Search, error) {
 	var search *entity.Search
-	rs := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).Find(&search, pk)
+	rs := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).First(&search, pk)
 	_, err := database.HandleResult(rs)
 	if search.Host == nil {
 		return nil, fiber.ErrForbidden
@@ -104,7 +104,7 @@ func (r *RepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Sea
 	var search *entity.Search
 	rs := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).
 		Where(&entity.Search{ShortUrl: &code}).
-		Find(&search)
+		First(&search)
 
 	rs, err := database.HandleResult(rs)
 	if err != nil {

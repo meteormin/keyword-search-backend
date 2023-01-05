@@ -43,13 +43,16 @@ type ListResponse struct {
 }
 
 func ToResponse(ent *entity.Group) *ResponseGroup {
-	var res *ResponseGroup
 	if ent == nil {
-		return res
+		return nil
 	}
 
-	res.Name = ent.Name
-	res.Id = ent.ID
+	res := &ResponseGroup{
+		Name:    ent.Name,
+		Id:      ent.ID,
+		Actions: make([]ResponseAction, 0),
+	}
+
 	for _, perm := range ent.Permissions {
 		for _, action := range perm.Actions {
 			res.Actions = append(res.Actions, ResponseAction{

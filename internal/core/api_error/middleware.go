@@ -34,6 +34,7 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 	if err == nil {
 		return nil
 	}
+
 	var logger *zap.SugaredLogger
 	logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
 

@@ -34,7 +34,7 @@ func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
 func (r *RepositoryStruct) Count(host entity.Host) (int64, error) {
 	var count int64 = 0
 
-	rs := r.db.Model(host).Count(&count)
+	rs := r.db.Model(&host).Count(&count)
 	_, err := database.HandleResult(rs)
 
 	return count, err
@@ -71,7 +71,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 
 func (r *RepositoryStruct) Find(pk uint) (*entity.Host, error) {
 	host := entity.Host{}
-	result := r.db.Preload("Search").Find(&host, pk)
+	result := r.db.Preload("Search").First(&host, pk)
 	_, err := database.HandleResult(result)
 
 	if err != nil {

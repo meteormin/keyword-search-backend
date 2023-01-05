@@ -35,6 +35,7 @@ services:
       TIME_ZONE: '${TIME_ZONE:-Asia\Seoul}'
     volumes:
       - './data:/home/gofiber/data'
+      - '.env:/home/gofiber/.env'
     networks:
       - go-web
     depends_on:

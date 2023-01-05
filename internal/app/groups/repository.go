@@ -31,7 +31,7 @@ func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
 
 func (r *RepositoryStruct) Count(group entity.Group) (int64, error) {
 	var count int64 = 0
-	rs := r.db.Model(group).Count(&count)
+	rs := r.db.Model(&group).Count(&count)
 	_, err := database.HandleResult(rs)
 
 	return count, err
@@ -86,18 +86,25 @@ func (r *RepositoryStruct) Update(pk uint, group entity.Group) (*entity.Group, e
 }
 
 func (r *RepositoryStruct) Find(pk uint) (*entity.Group, error) {
-	var group *entity.Group
-	result := r.db.Find(group, pk)
+	group := entity.Group{}
+	result := r.db.Preload("Permissions.Actions").First(&group, pk)
 	_, err := database.HandleResult(result)
 
-	return group, err
+	if err != nil {
+		return nil, err
+	}
+
+	return &group, err
 }
 
 func (r *RepositoryStruct) FindByName(groupName string) (*entity.Group, error) {
-	var group *entity.Group
+	group := &entity.Group{}
 
-	result := r.db.Where(entity.Group{Name: groupName}).Find(group)
+	result := r.db.Preload("Permissions.Actions").Where(entity.Group{Name: groupName}).First(group)
 	_, err := database.HandleResult(result)
+	if err != nil {
+		return nil, err
+	}
 
 	return group, err
 }

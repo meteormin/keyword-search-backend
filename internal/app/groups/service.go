@@ -1,6 +1,7 @@
 package groups
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
@@ -88,6 +89,7 @@ func (s *ServiceStruct) All(page utils.Page) (utils.Paginator, error) {
 	res := make([]ResponseGroup, 0)
 
 	entities, count, err := s.repo.All(page)
+
 	paginator := utils.Paginator{
 		TotalCount: count,
 		Page:       page,
@@ -116,6 +118,10 @@ func (s *ServiceStruct) Find(pk uint) (*ResponseGroup, error) {
 		return nil, err
 	}
 
+	if ent == nil {
+		return nil, fiber.ErrNotFound
+	}
+
 	return ToResponse(ent), nil
 }
 
@@ -123,6 +129,10 @@ func (s *ServiceStruct) FindByName(groupName string) (*ResponseGroup, error) {
 	ent, err := s.repo.FindByName(groupName)
 	if err != nil {
 		return nil, err
+	}
+
+	if ent == nil {
+		return nil, fiber.ErrNotFound
 	}
 
 	return ToResponse(ent), nil
