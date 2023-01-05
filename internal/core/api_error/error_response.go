@@ -31,10 +31,12 @@ func NewFromError(ctx *fiber.Ctx, err error) ErrorInterface {
 	} else if vErr, ok := err.(error); ok {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			errRes = NewErrorResponse(ctx, fiber.StatusNotFound, vErr.Error())
+		} else {
+			errRes = NewErrorResponse(ctx, fiber.StatusInternalServerError, vErr.Error())
 		}
 
-		errRes = NewErrorResponse(ctx, fiber.StatusInternalServerError, vErr.Error())
 	} else {
+
 		errRes = NewErrorResponse(ctx, fiber.StatusInternalServerError, vErr.Error())
 	}
 

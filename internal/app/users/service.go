@@ -43,7 +43,6 @@ func (s *ServiceStruct) Get(pk uint) (*UserResponse, error) {
 	userRes := ToUserResponse(user)
 
 	return &userRes, nil
-
 }
 
 func (s *ServiceStruct) Update(pk uint, user *PatchUser) (*UserResponse, error) {
