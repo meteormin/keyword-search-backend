@@ -2,7 +2,7 @@ package hosts
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
+	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
@@ -34,7 +34,7 @@ func NewHandler(service Service) Handler {
 // @Tags Hosts
 // @Param request body CreateHost true "create host"
 // @Success 201 {object} HostResponse
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts [post]
@@ -48,8 +48,7 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 	dto := &CreateHost{}
 	err = c.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(c)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	errRes := utils.HandleValidate(c, dto)
@@ -74,7 +73,7 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 // @Param id path int true "host pk"
 // @Param request body UpdateHost true "update host"
 // @Success 200 {object} HostResponse
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Failure 404 {object} api_error.ErrorResponse
 // @Accept json
@@ -92,8 +91,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 
 	err = c.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(c)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	errRes := utils.HandleValidate(c, dto)
@@ -130,7 +128,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 // @Param id path int true "host pk"
 // @Param request body PatchHost true "patch host"
 // @Success 200 {object} HostResponse
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Failure 404 {object} api_error.ErrorResponse
 // @Accept json
@@ -147,8 +145,7 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 
 	err = c.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(c)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	errRes := utils.HandleValidate(c, dto)
@@ -175,7 +172,7 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 // @Tags Hosts
 // @Param id path int true "host pk"
 // @Success 200 {object} HostResponse
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Failure 404 {object} api_error.ErrorResponse
 // @Accept json
@@ -243,7 +240,7 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 // @Tags Hosts
 // @param id path int true "host pk"
 // @Success 204 {object} utils.StatusResponse
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Failure 404 {object} api_error.ErrorResponse
 // @Accept json

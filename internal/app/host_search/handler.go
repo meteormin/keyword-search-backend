@@ -3,7 +3,7 @@ package host_search
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/app/search"
-	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
+	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"strconv"
@@ -35,7 +35,7 @@ func NewHandler(s search.Service) Handler {
 // @Tags Hosts
 // @Param id path int true "host id"
 // @Success 200 {object} search.ResponseByHost
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
@@ -74,7 +74,7 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 // @Param id path int true "host id"
 // @Param request body search.MultiCreateSearch true "multi create search"
 // @Success 200 {object} search.Response
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
@@ -90,8 +90,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 	dto := &search.MultiCreateSearch{}
 	err = c.BodyParser(dto)
 	if err != nil {
-		res := api_error.NewBadRequestError(c)
-		return res.Response()
+		return fiber.ErrBadRequest
 	}
 
 	errRes := utils.HandleValidate(c, dto)

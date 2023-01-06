@@ -19,6 +19,7 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 		if currentUser.Role == entity.Admin.RoleToString() {
 			return c.Next()
 		}
+
 		var permCollection Collection
 
 		permCollection, ok := c.Locals(context.Permissions).(Collection)

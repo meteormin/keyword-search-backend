@@ -330,6 +330,15 @@ definitions:
     properties:
       code:
         type: integer
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse:
+    properties:
+      code:
+        type: integer
       failed_fields:
         additionalProperties:
           type: string
@@ -1006,7 +1015,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_groups.ListResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1025,18 +1034,18 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_app_groups.CreateGroup'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreateGroup'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_app_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1060,18 +1069,18 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_app_groups.UpdateGroup'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.UpdateGroup'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1124,7 +1133,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1151,7 +1160,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1172,7 +1181,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_hosts.HostListResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1192,18 +1201,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_hosts.CreateHost'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.CreateHost'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_app_hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
       security:
       - BearerAuth: []
       summary: create host
@@ -1230,7 +1239,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1260,11 +1269,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1293,18 +1302,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_hosts.PatchHost'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.PatchHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1333,18 +1342,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_hosts.UpdateHost'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.UpdateHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1379,7 +1388,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1415,7 +1424,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1436,18 +1445,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_search.CreateSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_app_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
@@ -1474,7 +1483,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1504,11 +1513,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1537,18 +1546,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_search.PatchSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1577,18 +1586,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_app_search.UpdateSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1624,11 +1633,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_search.ResponseAll'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
@@ -1659,7 +1668,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_short_url.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response'
         "404":
           description: Not Found
       security:
@@ -1684,7 +1693,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_app_short_url.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response'
         "302":
           description: Found
           schema:

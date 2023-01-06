@@ -11,11 +11,10 @@ const (
 	DefaultDateLayout = "2006-01-02 15:04:05"
 )
 
-func HandleValidate(c *fiber.Ctx, data interface{}) *api_error.ErrorResponse {
+func HandleValidate(c *fiber.Ctx, data interface{}) *api_error.ValidationErrorResponse {
 	failed := Validate(data)
 	if failed != nil {
-		errRes := api_error.NewBadRequestError(c).(*api_error.ErrorResponse)
-		errRes.FailedFields = failed
+		errRes := api_error.NewValidationErrorResponse(c, failed)
 		return errRes
 	}
 

@@ -2,7 +2,7 @@ package groups
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
+	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"strconv"
 )
@@ -33,7 +33,7 @@ func NewHandler(service Service) Handler {
 // @Tags Groups
 // @Param request body CreateGroup ture "creat group"
 // @Success 201 {object} ResponseGroup
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
@@ -43,14 +43,7 @@ func (h *HandlerStruct) Create(ctx *fiber.Ctx) error {
 	dto := &CreateGroup{}
 	err := ctx.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(ctx)
-		return errRes.Response()
-	}
-
-	validate := utils.Validate(dto)
-	if validate != nil {
-		errRes := api_error.NewBadRequestError(ctx)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	errRes := utils.HandleValidate(ctx, dto)
@@ -72,7 +65,7 @@ func (h *HandlerStruct) Create(ctx *fiber.Ctx) error {
 // @param id path int true "group pk"
 // @Param request body UpdateGroup ture "creat group"
 // @Success 200 {object} ResponseGroup
-// @Failure 400 {object} api_error.ErrorResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
@@ -82,15 +75,13 @@ func (h *HandlerStruct) Update(ctx *fiber.Ctx) error {
 	param := ctx.Params("id")
 	pk, err := strconv.Atoi(param)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(ctx)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	dto := &UpdateGroup{}
 	err = ctx.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(ctx)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	errRes := utils.HandleValidate(ctx, dto)
@@ -107,8 +98,7 @@ func (h *HandlerStruct) Patch(ctx *fiber.Ctx) error {
 	param := ctx.Params("id")
 	pk, err := strconv.Atoi(param)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(ctx)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	dto := &UpdateGroup{}
@@ -221,7 +211,7 @@ func (h *HandlerStruct) Delete(ctx *fiber.Ctx) error {
 	param := ctx.Params("id")
 	pk, err := strconv.Atoi(param)
 	if err != nil {
-		return err
+		return fiber.ErrBadRequest
 	}
 
 	result, err := h.service.Delete(uint(pk))

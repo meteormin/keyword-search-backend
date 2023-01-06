@@ -12,10 +12,14 @@ type ErrorInterface interface {
 }
 
 type ErrorResponse struct {
-	ctx          *fiber.Ctx
-	Status       string            `json:"status"`
-	Code         int               `json:"code"`
-	Message      string            `json:"message"`
+	ctx     *fiber.Ctx
+	Status  string `json:"status"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+type ValidationErrorResponse struct {
+	ErrorResponse
 	FailedFields map[string]string `json:"failed_fields,omitempty"`
 }
 
@@ -43,12 +47,20 @@ func NewFromError(ctx *fiber.Ctx, err error) ErrorInterface {
 	return errRes
 }
 
-func NewErrorResponse(ctx *fiber.Ctx, code int, message string) ErrorInterface {
+func NewErrorResponse(ctx *fiber.Ctx, code int, message string) *ErrorResponse {
 	return &ErrorResponse{
 		ctx:     ctx,
 		Status:  "error",
 		Code:    code,
 		Message: message,
+	}
+}
+
+func NewValidationErrorResponse(ctx *fiber.Ctx, failedFields map[string]string) *ValidationErrorResponse {
+	code := fiber.StatusBadRequest
+	return &ValidationErrorResponse{
+		ErrorResponse: ErrorResponse{ctx: ctx, Status: "error", Code: code, Message: fUtils.StatusMessage(code)},
+		FailedFields:  failedFields,
 	}
 }
 

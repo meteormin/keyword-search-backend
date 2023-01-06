@@ -3,11 +3,9 @@ package auth
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	fUtils "github.com/gofiber/fiber/v2/utils"
 	jwtWare "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
 	configure "github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"go.uber.org/zap"
@@ -152,17 +150,14 @@ func newJwtMiddleware(config jwtWare.Config) fiber.Handler {
 // jwtError
 // jwt 생성과 해독(? decode...) 관련 에러 핸들링
 func jwtError(c *fiber.Ctx, err error) error {
-	var errRes api_error.ErrorInterface
+	var status int
 
 	if err.Error() == "Missing or malformed JWT" {
-		errRes = api_error.NewErrorResponse(c, fiber.StatusBadRequest, err.Error())
-
-		return errRes.Response()
+		status = fiber.StatusBadRequest
+		return fiber.NewError(status, err.Error())
 	}
 
-	errRes = api_error.NewErrorResponse(c, fiber.StatusBadRequest, "Invalid or expired JWT!")
-
-	return errRes.Response()
+	return fiber.NewError(status, err.Error())
 }
 
 // CheckExpired
@@ -197,9 +192,7 @@ func CheckExpired(c *fiber.Ctx) error {
 func GetAuthUser(c *fiber.Ctx) (*User, error) {
 	user, ok := c.Locals(context.AuthUser).(*User)
 	if !ok {
-		status := fiber.StatusUnauthorized
-		errRes := api_error.NewErrorResponse(c, status, fUtils.StatusMessage(status))
-		return nil, errRes.Response()
+		return nil, fiber.ErrUnauthorized
 	}
 
 	return user, nil

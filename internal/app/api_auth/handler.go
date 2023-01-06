@@ -31,19 +31,18 @@ func NewHandler(service Service) Handler {
 	}
 }
 
-func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ErrorResponse) {
+func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ValidationErrorResponse) {
 	if err := utils.Validate(signUp); err != nil {
-		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
+		errRes := api_error.NewValidationErrorResponse(ctx, err)
 		errRes.FailedFields = err
 
 		return false, errRes
 	}
 
 	if signUp.Password != signUp.PasswordConfirm {
-		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
-		errRes.FailedFields = map[string]string{
+		errRes := api_error.NewValidationErrorResponse(ctx, map[string]string{
 			"PasswordConfirm": "패스워드와 패스워드확인 필드가 일치하지않습니다.",
-		}
+		})
 
 		return false, errRes
 	}
@@ -65,8 +64,7 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	signUp := &SignUp{}
 	err := ctx.BodyParser(signUp)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(ctx)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	if isValid, errRes := validateSignUp(ctx, signUp); !isValid {
@@ -81,10 +79,9 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(result)
 }
 
-func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ErrorResponse) {
+func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ValidationErrorResponse) {
 	if err := utils.Validate(in); err != nil {
-		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
-		errRes.FailedFields = err
+		errRes := api_error.NewValidationErrorResponse(ctx, err)
 
 		return false, errRes
 	}
@@ -106,9 +103,7 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 	signIn := &SignIn{}
 	err := ctx.BodyParser(signIn)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(ctx)
-
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	if isValid, errRes := validateSignIn(ctx, signIn); !isValid {
@@ -167,22 +162,20 @@ func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 
 	err = ctx.BodyParser(dto)
 	if err != nil {
-		errRes := api_error.NewBadRequestError(ctx)
-		return errRes.Response()
+		return fiber.ErrBadRequest
 	}
 
 	failedFields := utils.Validate(dto)
 	if failedFields != nil {
-		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
-		errRes.FailedFields = failedFields
+		errRes := api_error.NewValidationErrorResponse(ctx, failedFields)
 		return errRes.Response()
 	}
 
 	if dto.Password != dto.PasswordConfirm {
-		errRes := api_error.NewBadRequestError(ctx).(*api_error.ErrorResponse)
-		errRes.FailedFields = map[string]string{
+		errRes := api_error.NewValidationErrorResponse(ctx, map[string]string{
 			"PasswordConfirm": "패스워드와 패스워드확인 필드가 일치하지않습니다.",
-		}
+		})
+
 		return errRes.Response()
 	}
 
