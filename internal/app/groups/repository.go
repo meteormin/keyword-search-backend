@@ -43,7 +43,7 @@ func (r *RepositoryStruct) All(page utils.Page) ([]entity.Group, int64, error) {
 	count, err := r.Count(entity.Group{})
 
 	if count != 0 {
-		result := r.db.Scopes(utils.Paginate(page)).Find(&groups)
+		result := r.db.Scopes(utils.Paginate(page)).Order("id desc").Find(&groups)
 		_, err = database.HandleResult(result)
 	}
 

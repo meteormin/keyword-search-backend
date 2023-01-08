@@ -12,6 +12,7 @@ import (
 type Service interface {
 	All(page utils.Page) (utils.Paginator, error)
 	GetByHostId(hostId uint, page utils.Page) (utils.Paginator, error)
+	GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator, error)
 	Find(pk uint, userId uint) (*Response, error)
 	Create(search *CreateSearch) (*Response, error)
 	BatchCreate(hostId uint, search []*CreateSearch) ([]Response, error)
@@ -68,6 +69,35 @@ func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginat
 	for _, s := range data {
 		response := ToSearchResponse(&s)
 		searchRes = append(searchRes, *response)
+	}
+
+	return utils.Paginator{
+		Page:       page,
+		TotalCount: count,
+		Data:       searchRes,
+	}, err
+}
+
+func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator, error) {
+	data, count, err := s.repo.GetByHostId(hostId, page)
+
+	if err != nil {
+		return utils.Paginator{
+			Page:       page,
+			TotalCount: 0,
+			Data:       make([]Description, 0),
+		}, err
+	}
+
+	var searchRes []Description
+	for _, s := range data {
+		response := Description{
+			Id:          s.ID,
+			Description: s.Description,
+			ShortUrl:    *s.ShortUrl,
+		}
+
+		searchRes = append(searchRes, response)
 	}
 
 	return utils.Paginator{

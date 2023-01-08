@@ -43,10 +43,23 @@ type Response struct {
 	CreatedAt   string  `json:"created_at"`
 	UpdatedAt   string  `json:"updated_at"`
 }
+
+type Description struct {
+	Id          uint   `json:"id"`
+	Description string `json:"description"`
+	ShortUrl    string `json:"short_url"`
+}
+
 type ResponseByHost struct {
 	utils.Paginator
 	Data []Response `json:"data"`
 }
+
+type DescriptionWithPage struct {
+	utils.Paginator
+	Data []Description `json:"data"`
+}
+
 type ResponseAll struct {
 	utils.Paginator
 	Data []entity.Search `json:"data"`

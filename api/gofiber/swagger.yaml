@@ -181,6 +181,19 @@ definitions:
       user_id:
         type: integer
     type: object
+  github_com_miniyus_keyword-search-backend_internal_app_hosts.HostSubjectsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.Subjects'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
   github_com_miniyus_keyword-search-backend_internal_app_hosts.PatchHost:
     properties:
       description:
@@ -191,6 +204,13 @@ definitions:
         type: string
       publish:
         type: boolean
+      subject:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_hosts.Subjects:
+    properties:
+      id:
+        type: integer
       subject:
         type: string
     type: object
@@ -231,6 +251,28 @@ definitions:
     - publish
     - query
     - query_key
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_search.Description:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      short_url:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_app_search.DescriptionWithPage:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Description'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
     type: object
   github_com_miniyus_keyword-search-backend_internal_app_search.MultiCreateSearch:
     properties:
@@ -740,6 +782,19 @@ definitions:
       user_id:
         type: integer
     type: object
+  internal_app_hosts.HostSubjectsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_app_hosts.Subjects'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+    type: object
   internal_app_hosts.PatchHost:
     properties:
       description:
@@ -750,6 +805,13 @@ definitions:
         type: string
       publish:
         type: boolean
+      subject:
+        type: string
+    type: object
+  internal_app_hosts.Subjects:
+    properties:
+      id:
+        type: integer
       subject:
         type: string
     type: object
@@ -1015,7 +1077,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ListResponse'
+            $ref: '#/definitions/internal_app_groups.ListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1034,14 +1096,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreateGroup'
+          $ref: '#/definitions/internal_app_groups.CreateGroup'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+            $ref: '#/definitions/internal_app_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1069,14 +1131,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.UpdateGroup'
+          $ref: '#/definitions/internal_app_groups.UpdateGroup'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+            $ref: '#/definitions/internal_app_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1133,7 +1195,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+            $ref: '#/definitions/internal_app_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1160,7 +1222,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup'
+            $ref: '#/definitions/internal_app_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1175,13 +1237,24 @@ paths:
       consumes:
       - application/json
       description: get all hosts
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostListResponse'
+            $ref: '#/definitions/internal_app_hosts.HostListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1201,14 +1274,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.CreateHost'
+          $ref: '#/definitions/internal_app_hosts.CreateHost'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse'
+            $ref: '#/definitions/internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1269,7 +1342,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse'
+            $ref: '#/definitions/internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1302,14 +1375,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.PatchHost'
+          $ref: '#/definitions/internal_app_hosts.PatchHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse'
+            $ref: '#/definitions/internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1342,14 +1415,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.UpdateHost'
+          $ref: '#/definitions/internal_app_hosts.UpdateHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse'
+            $ref: '#/definitions/internal_app_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1376,6 +1449,16 @@ paths:
       - description: host id
         in: path
         name: id
+        required: true
+        type: integer
+      - description: page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
         required: true
         type: integer
       produces:
@@ -1434,6 +1517,87 @@ paths:
       summary: batch create search by host id
       tags:
       - Hosts
+  /api/hosts/{id}/search/descriptions:
+    get:
+      consumes:
+      - application/json
+      description: get by host id
+      parameters:
+      - description: host id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.DescriptionWithPage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get by host id
+      tags:
+      - Hosts
+  /api/hosts/subjects:
+    get:
+      consumes:
+      - application/json
+      description: get subjects by group id
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_app_hosts.HostSubjectsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get subjects by group id
+      tags:
+      - Hosts
   /api/search:
     post:
       consumes:
@@ -1445,14 +1609,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch'
+          $ref: '#/definitions/internal_app_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1513,7 +1677,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1546,14 +1710,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch'
+          $ref: '#/definitions/internal_app_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1586,14 +1750,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch'
+          $ref: '#/definitions/internal_app_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response'
+            $ref: '#/definitions/internal_app_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1633,7 +1797,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll'
+            $ref: '#/definitions/internal_app_search.ResponseAll'
         "400":
           description: Bad Request
           schema:
@@ -1668,7 +1832,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response'
+            $ref: '#/definitions/internal_app_short_url.Response'
         "404":
           description: Not Found
       security:
@@ -1693,7 +1857,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response'
+            $ref: '#/definitions/internal_app_short_url.Response'
         "302":
           description: Found
           schema:

@@ -14,6 +14,7 @@ type Handler interface {
 	Update(c *fiber.Ctx) error
 	Patch(c *fiber.Ctx) error
 	Get(c *fiber.Ctx) error
+	GetSubjects(c *fiber.Ctx) error
 	All(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 	logger.HasLogger
@@ -201,10 +202,53 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 
+// GetSubjects
+// @Summary get subjects by group id
+// @Description get subjects by group id
+// @Tags Hosts
+// @Param page query int true "page number"
+// @Param page_size query int true "page size"
+// @Success 200 {object} HostSubjectsResponse
+// @Failure 400 {object} api_error.ValidationErrorResponse
+// @Failure 403 {object} api_error.ErrorResponse
+// @Failure 404 {object} api_error.ErrorResponse
+// @Accept json
+// @Produce json
+// @Router /api/hosts/subjects [get]
+// @Security BearerAuth
+func (h *HandlerStruct) GetSubjects(c *fiber.Ctx) error {
+	user, err := auth.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
+	if user.GroupId == nil {
+		return fiber.ErrForbidden
+	}
+
+	page, err := utils.GetPageFromCtx(c)
+	if err != nil {
+		return err
+	}
+
+	result, err := h.service.GetSubjectsByGroupId(*user.GroupId, page)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(HostSubjectsResponse{
+		Paginator: result,
+		Data:      result.Data.([]Subjects),
+	})
+}
+
 // All
 // @Summary get all hosts
 // @description get all hosts
 // @Tags Hosts
+// @Param page query int true "page number"
+// @Param page_size query int true "page size"
 // @Success 200 {object} HostListResponse
 // @Failure 403 {object} api_error.ErrorResponse
 // @Accept json

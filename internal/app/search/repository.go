@@ -14,6 +14,7 @@ import (
 type Repository interface {
 	All(page utils.Page) ([]entity.Search, int64, error)
 	GetByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error)
+	GetDescriptionsByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error)
 	Find(pk uint) (*entity.Search, error)
 	Create(ent entity.Search) (*entity.Search, error)
 	BatchCreate(entities []entity.Search) ([]entity.Search, error)
@@ -63,7 +64,21 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.S
 		where := entity.Search{HostId: hostId}
 		scopes := utils.Paginate(page)
 
-		rs := r.db.Where(where).Scopes(scopes).Find(&search)
+		rs := r.db.Where(where).Scopes(scopes).Order("id desc").Find(&search)
+		_, err = database.HandleResult(rs)
+	}
+
+	return search, count, err
+}
+
+func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error) {
+	var search []entity.Search
+	count, err := r.Count(entity.Search{})
+	if count != 0 {
+		where := entity.Search{HostId: hostId}
+		scopes := utils.Paginate(page)
+
+		rs := r.db.Select("id", "description", "short_url").Where(where).Scopes(scopes).Order("id desc").Find(&search)
 		_, err = database.HandleResult(rs)
 	}
 

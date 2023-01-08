@@ -10,6 +10,7 @@ import (
 type Service interface {
 	All(page utils.Page) (utils.Paginator, error)
 	GetByUserId(userId uint, page utils.Page) (utils.Paginator, error)
+	GetSubjectsByGroupId(groupId uint, page utils.Page) (utils.Paginator, error)
 	Find(pk uint, userId uint) (*HostResponse, error)
 	Create(host *CreateHost) (*HostResponse, error)
 	Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error)
@@ -68,6 +69,42 @@ func (s *ServiceStruct) GetByUserId(userId uint, page utils.Page) (utils.Paginat
 
 	if dto == nil {
 		dto = make([]HostResponse, 0)
+		return utils.Paginator{
+			Page:       page,
+			TotalCount: 0,
+			Data:       dto,
+		}, err
+	}
+
+	return utils.Paginator{
+		Page:       page,
+		TotalCount: count,
+		Data:       dto,
+	}, err
+}
+
+func (s *ServiceStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) (utils.Paginator, error) {
+	ent, count, err := s.repo.GetSubjectsByGroupId(groupId, page)
+
+	var dto []Subjects
+	if err != nil {
+		dto = make([]Subjects, 0)
+		return utils.Paginator{
+			Page:       page,
+			TotalCount: 0,
+			Data:       dto,
+		}, err
+	}
+
+	for _, e := range ent {
+		dto = append(dto, Subjects{
+			Id:      e.ID,
+			Subject: e.Subject,
+		})
+	}
+
+	if dto == nil {
+		dto = make([]Subjects, 0)
 		return utils.Paginator{
 			Page:       page,
 			TotalCount: 0,

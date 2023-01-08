@@ -12,6 +12,9 @@ import (
 type Repository interface {
 	All(page utils.Page) ([]entity.Host, int64, error)
 	GetByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error)
+	GetByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error)
+	GetSubjectsByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error)
+	GetSubjectsByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error)
 	Find(pk uint) (*entity.Host, error)
 	Create(host entity.Host) (*entity.Host, error)
 	Update(pk uint, host entity.Host) (*entity.Host, error)
@@ -63,7 +66,10 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 		return make([]entity.Host, 0), cnt, err
 	}
 
-	result = r.db.Scopes(utils.Paginate(page)).Where(entity.Host{UserId: userId}).Find(&hosts)
+	result = r.db.Scopes(utils.Paginate(page)).
+		Where(entity.Host{UserId: userId}).
+		Order("id desc").
+		Find(&hosts)
 	_, err = database.HandleResult(result)
 
 	return hosts, cnt, err
@@ -130,4 +136,72 @@ func (r *RepositoryStruct) Delete(pk uint) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (r *RepositoryStruct) GetByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error) {
+	var group entity.Group
+	hosts := make([]entity.Host, 0)
+
+	rs := r.db.Preload("Users").Find(&group, groupId)
+	_, err := database.HandleResult(rs)
+	if err != nil {
+		return hosts, 0, err
+	}
+
+	userIds := make([]int, 0)
+	for _, user := range group.Users {
+		userIds = append(userIds, int(user.ID))
+	}
+
+	rs = r.db.Scopes(utils.Paginate(page)).Where("user_id IN ?", userIds).Find(&hosts)
+	rs, err = database.HandleResult(rs)
+	if err != nil {
+		return hosts, 0, err
+	}
+
+	return hosts, rs.RowsAffected, err
+}
+
+func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error) {
+	var hosts []entity.Host
+	var cnt int64 = 0
+
+	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts).Count(&cnt)
+	_, err := database.HandleResult(result)
+
+	if cnt == 0 {
+		return make([]entity.Host, 0), cnt, err
+	}
+
+	result = r.db.Select("id", "subject").Scopes(utils.Paginate(page)).
+		Where(entity.Host{UserId: userId}).
+		Order("id desc").
+		Find(&hosts)
+	_, err = database.HandleResult(result)
+
+	return hosts, cnt, err
+}
+
+func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error) {
+	var group entity.Group
+	hosts := make([]entity.Host, 0)
+
+	rs := r.db.Preload("Users").Find(&group, groupId)
+	_, err := database.HandleResult(rs)
+	if err != nil {
+		return hosts, 0, err
+	}
+
+	userIds := make([]int, 0)
+	for _, user := range group.Users {
+		userIds = append(userIds, int(user.ID))
+	}
+
+	rs = r.db.Select("id", "subject").Scopes(utils.Paginate(page)).Where("user_id IN ?", userIds).Find(&hosts)
+	rs, err = database.HandleResult(rs)
+	if err != nil {
+		return hosts, 0, err
+	}
+
+	return hosts, rs.RowsAffected, err
 }

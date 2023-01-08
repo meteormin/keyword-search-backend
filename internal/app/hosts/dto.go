@@ -40,6 +40,11 @@ type HostResponse struct {
 	Publish     bool   `json:"publish"`
 }
 
+type Subjects struct {
+	Id      uint   `json:"id"`
+	Subject string `json:"subject"`
+}
+
 type HostListResponse struct {
 	utils.Paginator
 	Data []HostResponse `json:"data"`
@@ -48,6 +53,11 @@ type HostListResponse struct {
 type HostResponseAll struct {
 	utils.Paginator
 	Data []entity.Host `json:"data"`
+}
+
+type HostSubjectsResponse struct {
+	utils.Paginator
+	Data []Subjects `json:"data"`
 }
 
 func ToHostResponse(host *entity.Host) *HostResponse {

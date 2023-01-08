@@ -11,6 +11,7 @@ import (
 
 type Handler interface {
 	GetByHostId(c *fiber.Ctx) error
+	GetDescriptionsByHostId(c *fiber.Ctx) error
 	BatchCreate(c *fiber.Ctx) error
 	logger.HasLogger
 }
@@ -34,6 +35,8 @@ func NewHandler(s search.Service) Handler {
 // @description get by host id
 // @Tags Hosts
 // @Param id path int true "host id"
+// @Param page query int true "page number"
+// @Param page_size query int true "page size"
 // @Success 200 {object} search.ResponseByHost
 // @Failure 400 {object} api_error.ValidationErrorResponse
 // @Failure 403 {object} api_error.ErrorResponse
@@ -64,6 +67,46 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 			TotalCount: data.TotalCount,
 		},
 		Data: data.Data.([]search.Response),
+	})
+}
+
+// GetDescriptionsByHostId
+// @Summary get by host id
+// @description get by host id
+// @Tags Hosts
+// @Param id path int true "host id"
+// @Param page query int true "page number"
+// @Param page_size query int true "page size"
+// @Success 200 {object} search.DescriptionWithPage
+// @Failure 400 {object} api_error.ValidationErrorResponse
+// @Failure 403 {object} api_error.ErrorResponse
+// @Accept json
+// @Produce json
+// @Router /api/hosts/{id}/search/descriptions [get]
+// @Security BearerAuth
+func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
+	page, err := utils.GetPageFromCtx(c)
+	if err != nil {
+		return err
+	}
+
+	params := c.AllParams()
+	hostId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	data, err := h.service.GetDescriptionsByHostId(uint(hostId), page)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(search.DescriptionWithPage{
+		Paginator: utils.Paginator{
+			Page:       data.Page,
+			TotalCount: data.TotalCount,
+		},
+		Data: data.Data.([]search.Description),
 	})
 }
 
