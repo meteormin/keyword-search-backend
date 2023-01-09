@@ -6,3 +6,7 @@ type Worker interface {
 	AddJob()
 	RemoveJob()
 }
+
+type JobWorker struct {
+	queue Queue
+}

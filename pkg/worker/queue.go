@@ -1,14 +1,14 @@
 package worker
 
 type Job struct {
-	Chan    chan error
 	JobId   string
+	Status  bool
 	Closure func()
 }
 
 type Queue interface {
 	Enqueue(job Job)
-	Dequeue()
+	Dequeue() Job
 	Clear()
 	Exist(jobId string)
 }
@@ -23,22 +23,18 @@ func NewQueue() Queue {
 	}
 }
 
-func (j JobQueue) Enqueue(job Job) {
-	//TODO implement me
-	panic("implement me")
+func (j *JobQueue) Enqueue(job Job) {
+	j.queue = append(j.queue, job)
 }
 
-func (j JobQueue) Dequeue() {
-	//TODO implement me
-	panic("implement me")
+func (j *JobQueue) Dequeue() Job {
+	return j.queue[len(j.queue)-1]
 }
 
-func (j JobQueue) Clear() {
-	//TODO implement me
-	panic("implement me")
+func (j *JobQueue) Clear() {
+	j.queue = make([]Job, 0)
 }
 
-func (j JobQueue) Exist(jobId string) {
-	//TODO implement me
-	panic("implement me")
+func (j *JobQueue) Exist(jobId string) {
+
 }
