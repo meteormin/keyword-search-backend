@@ -2,9 +2,9 @@ package jwt_test
 
 import (
 	jwtLib "github.com/golang-jwt/jwt/v4"
-	"github.com/miniyus/go-fiber/config"
-	"github.com/miniyus/go-fiber/pkg/jwt"
-	rsGen "github.com/miniyus/go-fiber/pkg/rs256"
+	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/pkg/jwt"
+	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
 	"path"
 	"testing"
 )

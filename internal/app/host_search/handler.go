@@ -5,7 +5,9 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/app/search"
 	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
+	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"strconv"
 )
 
@@ -141,10 +143,31 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	create, err := h.service.BatchCreate(uint(hostId), dto.Search)
+	var jobDispatcher worker.Dispatcher
+	err = resolver.ResolveContext(c, &jobDispatcher)
 	if err != nil {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(create)
+	jobDispatcher.SelectWorker("default").Dispatch(strconv.Itoa(int(hostId)), func(job worker.Job) error {
+		create, err := h.service.BatchCreate(uint(hostId), dto.Search)
+		if err != nil {
+			return err
+		}
+
+		if create != nil {
+			return nil
+		}
+
+		return nil
+	})
+
+	//create, err := h.service.BatchCreate(uint(hostId), dto.Search)
+	//if err != nil {
+	//	return err
+	//}
+
+	return c.Status(fiber.StatusCreated).JSON(utils.StatusResponse{
+		Status: true,
+	})
 }

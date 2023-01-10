@@ -13,11 +13,15 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
 	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
 	"github.com/miniyus/keyword-search-backend/internal/core/router"
+	"github.com/miniyus/keyword-search-backend/pkg/worker"
 )
 
 const ApiPrefix = "/api"
 
 func Api(c container.Container) {
+	var jobDispatcher worker.Dispatcher
+	c.Resolve(&jobDispatcher)
+
 	apiRouter := router.New(c.App(), ApiPrefix, "api")
 
 	apiRouter.Route(

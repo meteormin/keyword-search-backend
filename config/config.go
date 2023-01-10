@@ -1,10 +1,12 @@
 package config
 
 import (
+	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	fCors "github.com/gofiber/fiber/v2/middleware/cors"
 	fCsrf "github.com/gofiber/fiber/v2/middleware/csrf"
 	loggerMiddleware "github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"log"
 	"os"
 	"strconv"
@@ -33,6 +35,8 @@ type Configs struct {
 	Csrf         fCsrf.Config
 	Permission   []PermissionConfig
 	CreateAdmin  CreateAdminConfig
+	RedisConfig  *redis.Options
+	QueueConfig  worker.DispatcherOption
 }
 
 func GetConfigs() *Configs {
@@ -58,5 +62,7 @@ func GetConfigs() *Configs {
 		Csrf:         csrf(),
 		Permission:   getPermissions(),
 		CreateAdmin:  createAdminConfig(),
+		RedisConfig:  redisConfig(),
+		QueueConfig:  QueueConfig(),
 	}
 }

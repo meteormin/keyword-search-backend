@@ -11,6 +11,7 @@ func init() {
 	err := godotenv.Load()
 
 	if err != nil {
+		log.Println(err)
 		log.Fatalf("failed dotenv load")
 	}
 }

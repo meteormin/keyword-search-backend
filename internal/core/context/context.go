@@ -13,4 +13,5 @@ const (
 	AuthUser     Key = "authUser"
 	JwtGenerator Key = "jwtGenerator"
 	Permissions  Key = "permissions"
+	Redis        Key = "redis"
 )

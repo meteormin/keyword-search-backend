@@ -1,6 +1,7 @@
 package register
 
 import (
+	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
@@ -16,6 +17,7 @@ import (
 	router "github.com/miniyus/keyword-search-backend/internal/routes"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
+	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"go.uber.org/zap"
 )
 
@@ -24,6 +26,7 @@ func boot(w container.Container) {
 	w.Singleton(context.App, w.App())
 	w.Singleton(context.Config, w.Config())
 	w.Singleton(context.DB, w.Database())
+	w.Singleton(context.Redis, redis.NewClient(w.Config().RedisConfig))
 
 	var tg jwt.Generator
 	jwtGenerator := resolver.MakeJwtGenerator(w)
@@ -45,6 +48,13 @@ func boot(w container.Container) {
 	w.Bind(&permCollect, permissionCollection)
 	w.Resolve(&permCollect)
 	w.Singleton(context.Permissions, permCollect)
+
+	var jobDispatcher worker.Dispatcher
+	dispatcherOpt := w.Config().QueueConfig
+	dispatcherOpt.Redis = w.Get(context.Redis).(*redis.Client)
+	jobDispatcherStruct := resolver.MakeJobDispatcher(dispatcherOpt)
+	w.Bind(&jobDispatcher, jobDispatcherStruct)
+	w.Resolve(&jobDispatcher)
 }
 
 // middlewares register middleware

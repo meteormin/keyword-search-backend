@@ -17,7 +17,22 @@ func AddContext(localsKey context.Key, value interface{}) fiber.Handler {
 	}
 }
 
-func FindContext(ctx *fiber.Ctx, dest interface{}) error {
+func GetContext(ctx *fiber.Ctx, localsKey context.Key) interface{} {
+	instance := ctx.Locals(localsKey)
+	if instance != nil {
+		return instance
+	}
+
+	wrapper, ok := ctx.Locals(context.Container).(container.Container)
+	if !ok {
+		statusCode := fiber.StatusInternalServerError
+		return fiber.NewError(statusCode, "Failed Get Container in Ctx")
+	}
+
+	return wrapper.Get(localsKey)
+}
+
+func ResolveContext(ctx *fiber.Ctx, dest interface{}) error {
 	wrapper, ok := ctx.Locals(context.Container).(container.Container)
 	if !ok {
 		statusCode := fiber.StatusInternalServerError

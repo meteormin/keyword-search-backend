@@ -8,6 +8,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
+	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"go.uber.org/zap"
 	"path"
 )
@@ -95,4 +96,8 @@ func ToPermissionEntity(perm permission.Permission) entity.Permission {
 	}
 
 	return ent
+}
+
+func MakeJobDispatcher(opts worker.DispatcherOption) worker.Dispatcher {
+	return worker.NewDispatcher(opts)
 }
