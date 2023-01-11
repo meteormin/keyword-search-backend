@@ -24,7 +24,7 @@ type Action struct {
 	Resource string
 }
 
-func NewAction(method []Method, resource string) Action {
+func NewAction(resource string, method []Method) Action {
 	return Action{method, resource}
 }
 

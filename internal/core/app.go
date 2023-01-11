@@ -3,6 +3,7 @@ package core
 import (
 	"github.com/gofiber/fiber/v2"
 	configure "github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/database"
 	"github.com/miniyus/keyword-search-backend/internal/core/register"
@@ -12,6 +13,7 @@ import (
 // IoC 컨테이너 생성
 func New() container.Container {
 	config := configure.GetConfigs()
+	config.App.ErrorHandler = api_error.OverrideDefaultErrorHandler
 
 	wrapper := container.New(
 		fiber.New(config.App),

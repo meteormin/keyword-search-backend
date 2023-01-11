@@ -9,8 +9,10 @@ import (
 )
 
 func TestJobDispatcher_Dispatch(t *testing.T) {
+
 	opt := worker.Option{
-		Name: "test_workers",
+		Name:        "default",
+		MaxJobCount: 10,
 	}
 	dispatcherOpt := worker.DispatcherOption{
 		WorkerOptions: []worker.Option{
@@ -24,18 +26,47 @@ func TestJobDispatcher_Dispatch(t *testing.T) {
 	}
 
 	dispatcher := worker.NewDispatcher(dispatcherOpt)
-	dispatcher.Dispatch("test_workers", worker.NewJob("t1", func(job worker.Job) error {
+	err := dispatcher.Dispatch("t1", func(job worker.Job) error {
 		log.Printf("id %s status %s", job.JobId, job.Status)
 		job.Status = worker.SUCCESS
 		return nil
-	}))
+	})
+	if err != nil {
+		log.Print(err)
+		return
+	}
 
-	dispatcher.Dispatch("test_workers", worker.NewJob("t2", func(job worker.Job) error {
+	err = dispatcher.Dispatch("t2", func(job worker.Job) error {
 		log.Printf("id %s status %s", job.JobId, job.Status)
 		return nil
-	}))
+	})
+
+	if err != nil {
+		log.Print(err)
+		return
+	}
 
 	dispatcher.Run()
+	time.Sleep(time.Second * 3)
+	err = dispatcher.Dispatch("t3", func(job worker.Job) error {
+		log.Printf("id %s status %s", job.JobId, job.Status)
+		return nil
+	})
+
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	err = dispatcher.Dispatch("t3", func(job worker.Job) error {
+		log.Printf("id %s status %s", job.JobId, job.Status)
+		return nil
+	})
+
+	if err != nil {
+		log.Print(err)
+		return
+	}
 
 	time.Sleep(time.Second * 7)
 }

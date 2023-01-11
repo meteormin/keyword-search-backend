@@ -16,7 +16,7 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 		pass := false
 
 		currentUser := c.Locals(context.AuthUser).(*auth.User)
-		if currentUser.Role == entity.Admin.RoleToString() {
+		if currentUser.Role == string(entity.Admin) {
 			return c.Next()
 		}
 

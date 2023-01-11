@@ -76,7 +76,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.ResetPasswordStruct"
+                            "$ref": "#/definitions/internal_app_api_auth.ResetPasswordStruct"
                         }
                     }
                 ],
@@ -116,7 +116,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUp"
+                            "$ref": "#/definitions/internal_app_api_auth.SignUp"
                         }
                     }
                 ],
@@ -124,7 +124,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUpResponse"
+                            "$ref": "#/definitions/internal_app_api_auth.SignUpResponse"
                         }
                     },
                     "400": {
@@ -190,7 +190,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignIn"
+                            "$ref": "#/definitions/internal_app_api_auth.SignIn"
                         }
                     }
                 ],
@@ -198,7 +198,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.TokenInfo"
+                            "$ref": "#/definitions/internal_app_api_auth.TokenInfo"
                         }
                     },
                     "400": {
@@ -248,7 +248,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ListResponse"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ListResponse"
                         }
                     },
                     "403": {
@@ -289,7 +289,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.UpdateGroup"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.UpdateGroup"
                         }
                     }
                 ],
@@ -297,7 +297,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
                         }
                     },
                     "400": {
@@ -337,7 +337,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.CreateGroup"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreateGroup"
                         }
                     }
                 ],
@@ -345,7 +345,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
                         }
                     },
                     "400": {
@@ -394,7 +394,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
                         }
                     },
                     "403": {
@@ -437,7 +437,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
                         }
                     },
                     "403": {
@@ -1084,7 +1084,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch"
+                            "$ref": "#/definitions/internal_app_search.CreateSearch"
                         }
                     }
                 ],
@@ -1092,7 +1092,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -1142,7 +1142,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll"
+                            "$ref": "#/definitions/internal_app_search.ResponseAll"
                         }
                     },
                     "400": {
@@ -1197,7 +1197,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -1251,7 +1251,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch"
+                            "$ref": "#/definitions/internal_app_search.UpdateSearch"
                         }
                     }
                 ],
@@ -1259,7 +1259,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/internal_app_search.Response"
                         }
                     },
                     "400": {
@@ -1366,7 +1366,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch"
+                            "$ref": "#/definitions/internal_app_search.PatchSearch"
                         }
                     }
                 ],
@@ -1374,7 +1374,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/internal_app_search.Response"
                         }
                     },
                     "400": {

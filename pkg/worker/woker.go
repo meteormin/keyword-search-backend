@@ -3,6 +3,7 @@ package worker
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v9"
 	"log"
@@ -36,50 +37,49 @@ func newJob(jobId string, closure func(job Job) error) Job {
 }
 
 type Queue interface {
-	Enqueue(job Job)
-	Dequeue() Job
+	Enqueue(job Job) error
+	Dequeue() (*Job, error)
 	Clear()
-	Setup() int
-	GetChan() Job
 }
 
 type JobQueue struct {
-	queue   []Job
-	jobChan chan Job
+	queue       []Job
+	jobChan     chan Job
+	maxJobCount int
 }
 
-func NewQueue() Queue {
+func NewQueue(maxJobCount int) Queue {
 	return &JobQueue{
-		queue:   make([]Job, 0),
-		jobChan: make(chan Job),
+		queue:       make([]Job, 0),
+		jobChan:     make(chan Job, maxJobCount),
+		maxJobCount: maxJobCount,
 	}
 }
 
-func (q *JobQueue) GetChan() Job {
-	return <-q.jobChan
-}
-
-func (q *JobQueue) Setup() int {
-	count := len(q.queue)
-	q.jobChan = make(chan Job, count)
-
-	for _, j := range q.queue {
-		if &j != nil {
-			q.jobChan <- j
-		}
+func (q *JobQueue) Enqueue(job Job) error {
+	if q.maxJobCount > len(q.queue) {
+		q.queue = append(q.queue, job)
+		q.jobChan <- job
+		return nil
 	}
 
-	return count
+	return errors.New("can't enqueue job queue: over queue size")
 }
 
-func (q *JobQueue) Enqueue(job Job) {
-	q.queue = append(q.queue, job)
-}
+func (q *JobQueue) Dequeue() (*Job, error) {
+	if len(q.queue) == 0 {
+		job := <-q.jobChan
+		return &job, nil
+	}
 
-func (q *JobQueue) Dequeue() Job {
 	job := q.queue[0]
 	q.queue = q.queue[1:]
-	return job
+	jobChan := <-q.jobChan
+	if job.JobId == jobChan.JobId {
+		return &jobChan, nil
+	}
+
+	return nil, errors.New("can't match job id")
 }
 
 func (q *JobQueue) Clear() {
@@ -91,17 +91,18 @@ type Worker interface {
 	GetName() string
 	Start()
 	Stop()
-	AddJob(job Job)
+	AddJob(job Job) error
 	SaveJob(key string, job Job)
 	GetJob(key string) (*Job, error)
 }
 
 type JobWorker struct {
-	Name     string
-	queue    Queue
-	jobChan  chan Job
-	quitChan chan bool
-	redis    *redis.Client
+	Name        string
+	queue       Queue
+	jobChan     chan Job
+	quitChan    chan bool
+	redis       *redis.Client
+	maxJobCount int
 }
 
 func (w *JobWorker) SaveJob(key string, job Job) {
@@ -133,13 +134,14 @@ func (w *JobWorker) GetJob(key string) (*Job, error) {
 	}
 }
 
-func NewWorker(name string, redis *redis.Client) Worker {
+func NewWorker(name string, redis *redis.Client, maxJobCount int) Worker {
 	return &JobWorker{
-		Name:     name,
-		queue:    NewQueue(),
-		jobChan:  make(chan Job),
-		quitChan: make(chan bool),
-		redis:    redis,
+		Name:        name,
+		queue:       NewQueue(maxJobCount),
+		jobChan:     make(chan Job, maxJobCount),
+		quitChan:    make(chan bool),
+		redis:       redis,
+		maxJobCount: maxJobCount,
 	}
 }
 
@@ -148,22 +150,30 @@ func (w *JobWorker) GetName() string {
 }
 
 func (w *JobWorker) Start() {
-	count := w.queue.Setup()
-	w.jobChan = make(chan Job, count)
-
 	go func() {
 		for {
-			w.jobChan <- w.queue.GetChan()
+			jobChan, err := w.queue.Dequeue()
+			if err != nil {
+				log.Print(err)
+				continue
+			}
+
+			w.jobChan <- *jobChan
 			select {
 			case job := <-w.jobChan:
 				key := fmt.Sprintf("%s.%s", w.Name, job.JobId)
 				convJob, err := w.GetJob(key)
 				if err != nil {
-					panic(err)
+					log.Println(err)
 				}
 
 				if convJob != nil {
 					if convJob.Status != SUCCESS {
+						err := w.queue.Enqueue(job)
+						if err != nil {
+							log.Println(err)
+							continue
+						}
 						continue
 					}
 				}
@@ -197,27 +207,34 @@ func (w *JobWorker) Stop() {
 	}()
 }
 
-func (w *JobWorker) AddJob(job Job) {
-	w.queue.Enqueue(job)
+func (w *JobWorker) AddJob(job Job) error {
+	err := w.queue.Enqueue(job)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type Dispatcher interface {
-	Dispatch(jobId string, closure func(j Job) error)
+	Dispatch(jobId string, closure func(j Job) error) error
 	Run()
 	SelectWorker(name string) Dispatcher
 	GetWorkers() []Worker
 	GetRedis() *redis.Client
+	AddWorker(option Option)
+	RemoveWorker(nam string)
 }
 
 type JobDispatcher struct {
-	Workers    []Worker
+	workers    []Worker
 	workerPool chan chan Job
 	worker     Worker
 	Redis      *redis.Client
 }
 
 type Option struct {
-	Name string
+	Name        string
+	MaxJobCount int
 }
 
 type DispatcherOption struct {
@@ -229,14 +246,31 @@ func NewDispatcher(opt DispatcherOption) Dispatcher {
 	workers := make([]Worker, 0)
 
 	for _, o := range opt.WorkerOptions {
-		workers = append(workers, NewWorker(o.Name, opt.Redis))
+		workers = append(workers, NewWorker(o.Name, opt.Redis, o.MaxJobCount))
 	}
 
 	return &JobDispatcher{
-		Workers:    workers,
+		workers:    workers,
 		workerPool: make(chan chan Job, len(workers)),
 		worker:     nil,
 		Redis:      opt.Redis,
+	}
+}
+
+func (d *JobDispatcher) AddWorker(option Option) {
+	d.workers = append(d.workers, NewWorker(option.Name, d.Redis, option.MaxJobCount))
+}
+
+func (d *JobDispatcher) RemoveWorker(name string) {
+	var rmIndex *int = nil
+	for i, worker := range d.workers {
+		if worker.GetName() == name {
+			rmIndex = &i
+		}
+	}
+
+	if rmIndex != nil {
+		d.workers = append(d.workers[:*rmIndex], d.workers[*rmIndex+1:]...)
 	}
 }
 
@@ -245,12 +279,12 @@ func (d *JobDispatcher) GetRedis() *redis.Client {
 }
 
 func (d *JobDispatcher) GetWorkers() []Worker {
-	return d.Workers
+	return d.workers
 }
 
 func (d *JobDispatcher) SelectWorker(name string) Dispatcher {
 	if name == "" {
-		for _, w := range d.Workers {
+		for _, w := range d.workers {
 			if w.GetName() == "default" {
 				d.worker = w
 			}
@@ -258,7 +292,7 @@ func (d *JobDispatcher) SelectWorker(name string) Dispatcher {
 
 	}
 
-	for _, w := range d.Workers {
+	for _, w := range d.workers {
 		if w.GetName() == name {
 			d.worker = w
 		}
@@ -267,20 +301,25 @@ func (d *JobDispatcher) SelectWorker(name string) Dispatcher {
 	return d
 }
 
-func (d *JobDispatcher) Dispatch(jobId string, closure func(j Job) error) {
+func (d *JobDispatcher) Dispatch(jobId string, closure func(j Job) error) error {
 	if d.worker == nil {
-		for _, w := range d.Workers {
+		for _, w := range d.workers {
 			if w.GetName() == "default" {
 				d.worker = w
 			}
 		}
 	}
 
-	d.worker.AddJob(newJob(jobId, closure))
+	err := d.worker.AddJob(newJob(jobId, closure))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (d *JobDispatcher) Run() {
-	for _, w := range d.Workers {
+	for _, w := range d.workers {
 		w.Start()
 	}
 }

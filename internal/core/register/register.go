@@ -22,6 +22,7 @@ import (
 )
 
 // boot is High Priority
+// container settings
 func boot(w container.Container) {
 	w.Singleton(context.App, w.App())
 	w.Singleton(context.Config, w.Config())
@@ -50,17 +51,17 @@ func boot(w container.Container) {
 	w.Singleton(context.Permissions, permCollect)
 
 	var jobDispatcher worker.Dispatcher
-	dispatcherOpt := w.Config().QueueConfig
-	dispatcherOpt.Redis = w.Get(context.Redis).(*redis.Client)
-	jobDispatcherStruct := resolver.MakeJobDispatcher(dispatcherOpt)
+	jobDispatcherStruct := resolver.MakeJobDispatcher(w)
 	w.Bind(&jobDispatcher, jobDispatcherStruct)
-	w.Resolve(&jobDispatcher)
 }
 
 // middlewares register middleware
+// fiber app middleware settings
 func middlewares(w container.Container) {
 	w.App().Use(flogger.New(w.Config().Logger))
 	w.App().Use(recover.New())
+	w.App().Use(api_error.ErrorHandler)
+	w.App().Use(cors.New(w.Config().Cors))
 
 	// Add Context Container
 	w.App().Use(resolver.AddContext(context.Container, w))
@@ -70,9 +71,8 @@ func middlewares(w container.Container) {
 	w.App().Use(resolver.AddContext(context.Logger, w.Get(context.Logger)))
 	// Add Context Permissions
 	w.App().Use(resolver.AddContext(context.Permissions, w.Get(context.Permissions)))
-
-	w.App().Use(api_error.ErrorHandler)
-	w.App().Use(cors.New(w.Config().Cors))
+	// Add Context Redis
+	w.App().Use(resolver.AddContext(context.Redis, w.Get(context.Redis)))
 }
 
 // healthCheck

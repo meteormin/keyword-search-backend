@@ -1,8 +1,10 @@
 package resolver
 
 import (
+	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
+	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	cLogger "github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
@@ -98,6 +100,11 @@ func ToPermissionEntity(perm permission.Permission) entity.Permission {
 	return ent
 }
 
-func MakeJobDispatcher(opts worker.DispatcherOption) worker.Dispatcher {
-	return worker.NewDispatcher(opts)
+func MakeJobDispatcher(c container.Container) func() worker.Dispatcher {
+	opts := c.Config().QueueConfig
+	opts.Redis = c.Get(context.Redis).(*redis.Client)
+
+	return func() worker.Dispatcher {
+		return worker.NewDispatcher(opts)
+	}
 }

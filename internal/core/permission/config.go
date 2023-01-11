@@ -16,7 +16,7 @@ func NewPermissionsFromConfig(cfg []Config) []Permission {
 
 		var actions []Action
 		for _, resource := range p.Resources {
-			actions = append(actions, NewAction(p.Methods, resource))
+			actions = append(actions, NewAction(resource, p.Methods))
 		}
 
 		permissions = append(permissions, NewPermission(p.GroupId, p.Name, actions))

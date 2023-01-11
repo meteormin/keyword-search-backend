@@ -159,7 +159,7 @@ func (w *Wrapper) Stats() {
 	log.Printf("Time Zone: %s", w.Config().TimeZone)
 	log.Printf("Injected Instances: %#v", w.Instances())
 	log.Printf("Bindings: %#v", w.Bindings())
-	log.Println("...")
+
 	log.Println("[Fiber App Info]")
 	log.Printf("Handlers Count: %d", w.App().HandlersCount())
 	log.Println("[Router]")
