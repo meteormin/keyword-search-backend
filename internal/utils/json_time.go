@@ -22,6 +22,6 @@ func (jt *JsonTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (jt JsonTime) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + time.Time(jt).Format(DefaultDateLayout) + `"`), nil
+func (jt *JsonTime) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + time.Time(*jt).Format(DefaultDateLayout) + `"`), nil
 }

@@ -100,7 +100,7 @@ func (p *CollectionStruct) Remove(name string) bool {
 	}
 
 	slice := p.permissions
-	p.permissions = append(slice[:rmIndex], slice[rmIndex+1:]...)
+	p.permissions = utils.Remove(slice, rmIndex)
 
 	return true
 }
