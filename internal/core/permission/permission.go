@@ -53,17 +53,15 @@ type includeUser struct {
 }
 
 type Collection interface {
+	utils.Collection[Permission]
 	All() []Permission
-	Add(perm Permission)
-	Remove(name string) bool
+	RemoveByName(name string) bool
 	Get(name string) (*Permission, error)
-	Filter(fn func(p Permission, i int) bool) []Permission
-	Map(fn func(p Permission, i int) Permission) []Permission
-	Concat(perms []Permission)
 }
 
 type CollectionStruct struct {
-	permissions []Permission
+	*utils.BaseCollection[Permission]
+	items []Permission
 }
 
 func NewPermissionCollection(perms ...Permission) Collection {
@@ -72,19 +70,17 @@ func NewPermissionCollection(perms ...Permission) Collection {
 		perms = defaultPerms
 	}
 
-	return &CollectionStruct{perms}
+	base := utils.NewCollection(perms).(*utils.BaseCollection[Permission])
+
+	return &CollectionStruct{BaseCollection: base}
 }
 
 func (p *CollectionStruct) All() []Permission {
-	return p.permissions
+	return p.items
 }
 
-func (p *CollectionStruct) Add(perm Permission) {
-	p.permissions = append(p.permissions, perm)
-}
-
-func (p *CollectionStruct) Remove(name string) bool {
-	filtered := utils.Filter(p.permissions, func(v Permission, i int) bool {
+func (p *CollectionStruct) RemoveByName(name string) bool {
+	filtered := p.Filter(func(v Permission, i int) bool {
 		return v.Name == name
 	})
 
@@ -93,20 +89,19 @@ func (p *CollectionStruct) Remove(name string) bool {
 	}
 
 	var rmIndex int
-	for i, perm := range p.permissions {
+	for i, perm := range p.items {
 		if perm.Name == filtered[0].Name {
 			rmIndex = i
 		}
 	}
 
-	slice := p.permissions
-	p.permissions = utils.Remove(slice, rmIndex)
+	p.Remove(rmIndex)
 
 	return true
 }
 
 func (p *CollectionStruct) Get(name string) (*Permission, error) {
-	filtered := utils.Filter(p.permissions, func(v Permission, i int) bool {
+	filtered := p.Filter(func(v Permission, i int) bool {
 		return v.Name == name
 	})
 
@@ -116,23 +111,4 @@ func (p *CollectionStruct) Get(name string) (*Permission, error) {
 	}
 
 	return &filtered[0], nil
-}
-
-func (p *CollectionStruct) Filter(fn func(p Permission, i int) bool) []Permission {
-	return utils.Filter(p.permissions, fn)
-}
-
-func (p *CollectionStruct) Map(fn func(p Permission, i int) Permission) []Permission {
-	return utils.Map(p.permissions, fn)
-}
-
-func (p *CollectionStruct) Concat(perms []Permission) {
-	if len(perms) == 0 {
-		return
-	}
-
-	for _, perm := range perms {
-		p.Add(perm)
-	}
-
 }

@@ -1,64 +1,61 @@
 package utils
 
-func Map[T interface{}](s []T, fn func(v T, i int) T) []T {
-	var mapped []T
+import "github.com/miniyus/keyword-search-backend/pkg"
 
-	for i, v := range s {
-		mapped = append(mapped, fn(v, i))
-	}
-
-	return mapped
+type Collection[T interface{}] interface {
+	Items() []T
+	Add(item T)
+	Map(fn func(v T, i int) T) []T
+	Filter(fn func(v T, i int) bool) []T
+	Except(fn func(v T, i int) bool) []T
+	Chunk(chunkSize int, fn func(v []T, i int)) []T
+	For(fn func(v T, i int)) []T
+	Remove(index int)
+	Concat(items []T)
 }
 
-func Filter[T interface{}](s []T, fn func(v T, i int) bool) []T {
-	var filtered []T
-
-	for i, v := range s {
-		f := fn(v, i)
-		if f {
-			filtered = append(filtered, v)
-		}
-	}
-
-	return filtered
+type BaseCollection[T interface{}] struct {
+	items []T
 }
 
-func Except[T interface{}](s []T, fn func(v T, i int) bool) []T {
-	var excepted []T
-
-	for i, v := range s {
-		f := fn(v, i)
-		if !f {
-			excepted = append(excepted, v)
-		}
+func NewCollection[T interface{}](items []T) Collection[T] {
+	return &BaseCollection[T]{
+		items: items,
 	}
-
-	return excepted
 }
 
-func Chunk[T interface{}](s []T, chunkSize int, fn func(v []T, i int)) []T {
-	chunkSlice := make([]T, 0)
-
-	for i, v := range s {
-		chunkSlice = append(chunkSlice, v)
-
-		if chunkSize == len(chunkSlice) {
-			fn(chunkSlice, i)
-			chunkSlice = make([]T, 0)
-		}
-	}
-
-	return s
+func (b *BaseCollection[T]) Items() []T {
+	return b.items
 }
 
-func For[T interface{}](s []T, fn func(v T, i int)) []T {
-	for i, v := range s {
-		fn(v, i)
-	}
-
-	return s
+func (b *BaseCollection[T]) Add(item T) {
+	b.items = append(b.items, item)
 }
 
-func Remove[T interface{}](s []T, index int) []T {
-	return append(s[:index], s[index+1:]...)
+func (b *BaseCollection[T]) Map(fn func(v T, i int) T) []T {
+	return pkg.Map(b.items, fn)
+}
+
+func (b *BaseCollection[T]) Filter(fn func(v T, i int) bool) []T {
+	return pkg.Filter(b.items, fn)
+}
+
+func (b *BaseCollection[T]) Except(fn func(v T, i int) bool) []T {
+	return pkg.Except(b.items, fn)
+}
+
+func (b *BaseCollection[T]) Chunk(chunkSize int, fn func(v []T, i int)) []T {
+	return pkg.Chunk(b.items, chunkSize, fn)
+}
+
+func (b *BaseCollection[T]) For(fn func(v T, i int)) []T {
+	return pkg.For(b.items, fn)
+}
+
+func (b *BaseCollection[T]) Remove(index int) {
+	b.items = pkg.Remove(b.items, index)
+}
+
+func (b *BaseCollection[T]) Concat(items []T) {
+	b.items = pkg.Concat(b.items, items)
 }
