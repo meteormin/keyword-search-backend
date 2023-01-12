@@ -19,6 +19,7 @@ const (
 	FAIL    JobStatus = "fail"
 	WAIT    JobStatus = "wait"
 )
+const DefaultWorker = "default"
 
 type Job struct {
 	JobId     string              `json:"job_id"`
@@ -242,8 +243,19 @@ type DispatcherOption struct {
 	Redis         *redis.Client
 }
 
+var defaultWorkerOption = []Option{
+	{
+		Name:        DefaultWorker,
+		MaxJobCount: 10,
+	},
+}
+
 func NewDispatcher(opt DispatcherOption) Dispatcher {
 	workers := make([]Worker, 0)
+
+	if len(opt.WorkerOptions) == 0 {
+		opt.WorkerOptions = defaultWorkerOption
+	}
 
 	for _, o := range opt.WorkerOptions {
 		workers = append(workers, NewWorker(o.Name, opt.Redis, o.MaxJobCount))
@@ -304,7 +316,7 @@ func (d *JobDispatcher) SelectWorker(name string) Dispatcher {
 func (d *JobDispatcher) Dispatch(jobId string, closure func(j Job) error) error {
 	if d.worker == nil {
 		for _, w := range d.workers {
-			if w.GetName() == "default" {
+			if w.GetName() == DefaultWorker {
 				d.worker = w
 			}
 		}

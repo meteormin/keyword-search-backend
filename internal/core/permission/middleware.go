@@ -6,7 +6,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
-	"github.com/miniyus/keyword-search-backend/internal/utils"
+	"github.com/miniyus/keyword-search-backend/pkg/slice"
 	"strings"
 )
 
@@ -65,7 +65,7 @@ func checkPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
 					method = "GET"
 				}
 
-				filtered := utils.Filter(action.Methods, func(v Method, i int) bool {
+				filtered := slice.Filter(action.Methods, func(v Method, i int) bool {
 					return v.ToString() == method
 				})
 

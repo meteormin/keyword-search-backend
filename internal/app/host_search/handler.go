@@ -3,6 +3,7 @@ package host_search
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/app/search"
 	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
@@ -150,9 +151,12 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	utils.Chunk(dto.Search, 100, func(v []*search.CreateSearch, i int) {
+	jobDispatcher.SelectWorker(string(config.DefaultWorker))
+
+	searchCollection := utils.NewCollection(dto.Search)
+	searchCollection.Chunk(100, func(v []*search.CreateSearch, i int) {
 		jobId := fmt.Sprintf("hosts.%s", strconv.Itoa(int(hostId)))
-		err = jobDispatcher.SelectWorker("default").Dispatch(jobId, func(job worker.Job) error {
+		err = jobDispatcher.Dispatch(jobId, func(job worker.Job) error {
 			create, err := h.service.BatchCreate(uint(hostId), dto.Search)
 			if err != nil {
 				return err

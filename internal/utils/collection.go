@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/miniyus/keyword-search-backend/pkg"
+import "github.com/miniyus/keyword-search-backend/pkg/slice"
 
 type Collection[T interface{}] interface {
 	Items() []T
@@ -8,7 +8,7 @@ type Collection[T interface{}] interface {
 	Map(fn func(v T, i int) T) []T
 	Filter(fn func(v T, i int) bool) []T
 	Except(fn func(v T, i int) bool) []T
-	Chunk(chunkSize int, fn func(v []T, i int)) []T
+	Chunk(chunkSize int, fn func(v []T, i int)) [][]T
 	For(fn func(v T, i int)) []T
 	Remove(index int)
 	Concat(items []T)
@@ -33,29 +33,29 @@ func (b *BaseCollection[T]) Add(item T) {
 }
 
 func (b *BaseCollection[T]) Map(fn func(v T, i int) T) []T {
-	return pkg.Map(b.items, fn)
+	return slice.Map(b.items, fn)
 }
 
 func (b *BaseCollection[T]) Filter(fn func(v T, i int) bool) []T {
-	return pkg.Filter(b.items, fn)
+	return slice.Filter(b.items, fn)
 }
 
 func (b *BaseCollection[T]) Except(fn func(v T, i int) bool) []T {
-	return pkg.Except(b.items, fn)
+	return slice.Except(b.items, fn)
 }
 
-func (b *BaseCollection[T]) Chunk(chunkSize int, fn func(v []T, i int)) []T {
-	return pkg.Chunk(b.items, chunkSize, fn)
+func (b *BaseCollection[T]) Chunk(chunkSize int, fn func(v []T, i int)) [][]T {
+	return slice.Chunk(b.items, chunkSize, fn)
 }
 
 func (b *BaseCollection[T]) For(fn func(v T, i int)) []T {
-	return pkg.For(b.items, fn)
+	return slice.For(b.items, fn)
 }
 
 func (b *BaseCollection[T]) Remove(index int) {
-	b.items = pkg.Remove(b.items, index)
+	b.items = slice.Remove(b.items, index)
 }
 
 func (b *BaseCollection[T]) Concat(items []T) {
-	b.items = pkg.Concat(b.items, items)
+	b.items = slice.Concat(b.items, items)
 }

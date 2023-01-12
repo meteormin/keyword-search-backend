@@ -1,4 +1,4 @@
-package pkg
+package slice
 
 func Map[T interface{}](s []T, fn func(v T, i int) T) []T {
 	var mapped []T
@@ -36,19 +36,24 @@ func Except[T interface{}](s []T, fn func(v T, i int) bool) []T {
 	return excepted
 }
 
-func Chunk[T interface{}](s []T, chunkSize int, fn func(v []T, i int)) []T {
+func Chunk[T interface{}](s []T, chunkSize int, fn ...func(v []T, i int)) [][]T {
 	chunkSlice := make([]T, 0)
+	chunkedSlice := make([][]T, 0)
 
-	for i, v := range s {
+	for _, v := range s {
 		chunkSlice = append(chunkSlice, v)
 
 		if chunkSize == len(chunkSlice) {
-			fn(chunkSlice, i)
+			if len(fn) != 0 {
+				fn[0](chunkSlice, len(chunkSlice)/chunkSize)
+			}
+
+			chunkedSlice = append(chunkedSlice, chunkSlice)
 			chunkSlice = make([]T, 0)
 		}
 	}
 
-	return s
+	return chunkedSlice
 }
 
 func For[T interface{}](s []T, fn func(v T, i int)) []T {

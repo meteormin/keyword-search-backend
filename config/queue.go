@@ -2,11 +2,17 @@ package config
 
 import "github.com/miniyus/keyword-search-backend/pkg/worker"
 
+type WorkerName string
+
+const (
+	DefaultWorker WorkerName = "default"
+)
+
 func QueueConfig() worker.DispatcherOption {
 	return worker.DispatcherOption{
 		WorkerOptions: []worker.Option{
 			{
-				Name:        "default",
+				Name:        string(DefaultWorker),
 				MaxJobCount: 12,
 			},
 		},
