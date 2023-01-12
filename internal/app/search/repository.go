@@ -51,7 +51,9 @@ func (r *RepositoryStruct) All(page utils.Page) ([]entity.Search, int64, error) 
 
 	if count != 0 {
 		rs := r.db.Scopes(utils.Paginate(page)).Find(&search)
-		_, err = database.HandleResult(rs)
+		rs, err = database.HandleResult(rs)
+
+		count = rs.RowsAffected
 	}
 
 	return search, count, err
@@ -59,9 +61,16 @@ func (r *RepositoryStruct) All(page utils.Page) ([]entity.Search, int64, error) 
 
 func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
-	count, err := r.Count(entity.Search{})
+	var count int64
+
+	where := entity.Search{HostId: hostId}
+	rs := r.db.Model(entity.Search{}).Where(where).Count(&count)
+	_, err := database.HandleResult(rs)
+	if err != nil {
+		return search, count, err
+	}
+
 	if count != 0 {
-		where := entity.Search{HostId: hostId}
 		scopes := utils.Paginate(page)
 
 		rs := r.db.Where(where).Scopes(scopes).Order("id desc").Find(&search)
@@ -73,9 +82,16 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.S
 
 func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
-	count, err := r.Count(entity.Search{})
+	var count int64
+
+	where := entity.Search{HostId: hostId}
+	rs := r.db.Model(entity.Search{}).Where(where).Count(&count)
+	_, err := database.HandleResult(rs)
+	if err != nil {
+		return search, count, err
+	}
+
 	if count != 0 {
-		where := entity.Search{HostId: hostId}
 		scopes := utils.Paginate(page)
 
 		rs := r.db.Select("id", "description", "short_url").Where(where).Scopes(scopes).Order("id desc").Find(&search)

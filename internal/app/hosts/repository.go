@@ -59,7 +59,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 	var hosts []entity.Host
 	var cnt int64 = 0
 
-	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts).Count(&cnt)
+	result := r.db.Model(entity.Host{}).Where(entity.Host{UserId: userId}).Count(&cnt)
 	_, err := database.HandleResult(result)
 
 	if cnt == 0 {
@@ -140,6 +140,7 @@ func (r *RepositoryStruct) Delete(pk uint) (bool, error) {
 
 func (r *RepositoryStruct) GetByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error) {
 	var group entity.Group
+	var count int64
 	hosts := make([]entity.Host, 0)
 
 	rs := r.db.Preload("Users").Find(&group, groupId)
@@ -153,20 +154,26 @@ func (r *RepositoryStruct) GetByGroupId(groupId uint, page utils.Page) ([]entity
 		userIds = append(userIds, int(user.ID))
 	}
 
+	rs = r.db.Model(entity.Host{}).Where("user_id IN ?", userIds).Count(&count)
+	_, err = database.HandleResult(rs)
+	if err != nil {
+		return hosts, 0, err
+	}
+
 	rs = r.db.Scopes(utils.Paginate(page)).Where("user_id IN ?", userIds).Find(&hosts)
 	rs, err = database.HandleResult(rs)
 	if err != nil {
 		return hosts, 0, err
 	}
 
-	return hosts, rs.RowsAffected, err
+	return hosts, count, err
 }
 
 func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error) {
 	var hosts []entity.Host
 	var cnt int64 = 0
 
-	result := r.db.Where(entity.Host{UserId: userId}).Find(&hosts).Count(&cnt)
+	result := r.db.Model(entity.Host{}).Where(entity.Host{UserId: userId}).Count(&cnt)
 	_, err := database.HandleResult(result)
 
 	if cnt == 0 {
