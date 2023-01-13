@@ -38,7 +38,7 @@ type ResponseGroup struct {
 }
 
 type ListResponse struct {
-	utils.Paginator
+	utils.Paginator[ResponseGroup]
 	Data []ResponseGroup `json:"data"`
 }
 

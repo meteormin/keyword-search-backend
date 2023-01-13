@@ -51,17 +51,17 @@ type Description struct {
 }
 
 type ResponseByHost struct {
-	utils.Paginator
+	utils.Paginator[Response]
 	Data []Response `json:"data"`
 }
 
 type DescriptionWithPage struct {
-	utils.Paginator
+	utils.Paginator[Description]
 	Data []Description `json:"data"`
 }
 
 type ResponseAll struct {
-	utils.Paginator
+	utils.Paginator[entity.Search]
 	Data []entity.Search `json:"data"`
 }
 

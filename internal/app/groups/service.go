@@ -11,7 +11,7 @@ type Service interface {
 	Create(group *CreateGroup) (*ResponseGroup, error)
 	Update(groupId uint, group *UpdateGroup) (*ResponseGroup, error)
 	Delete(pk uint) (bool, error)
-	All(page utils.Page) (utils.Paginator, error)
+	All(page utils.Page) (utils.Paginator[ResponseGroup], error)
 	Find(pk uint) (*ResponseGroup, error)
 	FindByName(groupName string) (*ResponseGroup, error)
 }
@@ -85,12 +85,12 @@ func (s *ServiceStruct) Delete(pk uint) (bool, error) {
 	return s.repo.Delete(pk)
 }
 
-func (s *ServiceStruct) All(page utils.Page) (utils.Paginator, error) {
+func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[ResponseGroup], error) {
 	res := make([]ResponseGroup, 0)
 
 	entities, count, err := s.repo.All(page)
 
-	paginator := utils.Paginator{
+	paginator := utils.Paginator[ResponseGroup]{
 		TotalCount: count,
 		Page:       page,
 		Data:       res,

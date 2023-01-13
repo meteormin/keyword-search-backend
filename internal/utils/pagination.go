@@ -11,10 +11,10 @@ type Page struct {
 	PageSize int `json:"page_size"`
 }
 
-type Paginator struct {
+type Paginator[T interface{}] struct {
 	Page
-	TotalCount int64       `json:"total_count"`
-	Data       interface{} `json:"data"`
+	TotalCount int64 `json:"total_count"`
+	Data       []T   `json:"data"`
 }
 
 func GetPageFromCtx(c *fiber.Ctx) (Page, error) {

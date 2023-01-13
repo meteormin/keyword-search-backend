@@ -5,7 +5,6 @@ import (
 	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
-	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"strconv"
 )
@@ -94,7 +93,7 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 
 	return c.JSON(ResponseAll{
 		Paginator: all,
-		Data:      all.Data.([]entity.Search),
+		Data:      all.Data,
 	})
 }
 
