@@ -40,15 +40,18 @@ func Chunk[T interface{}](s []T, chunkSize int, fn ...func(v []T, i int)) [][]T 
 	chunkSlice := make([]T, 0)
 	chunkedSlice := make([][]T, 0)
 
+	chunkedIndex := 0
 	for _, v := range s {
 		chunkSlice = append(chunkSlice, v)
 
 		if chunkSize == len(chunkSlice) {
 			if len(fn) != 0 {
-				fn[0](chunkSlice, len(chunkSlice)/chunkSize)
+				fn[0](chunkSlice, chunkedIndex)
 			}
 
 			chunkedSlice = append(chunkedSlice, chunkSlice)
+			chunkedIndex++
+
 			chunkSlice = make([]T, 0)
 		}
 	}
@@ -62,6 +65,10 @@ func For[T interface{}](s []T, fn func(v T, i int)) []T {
 	}
 
 	return s
+}
+
+func Add[T interface{}](s []T, v T) []T {
+	return append(s, v)
 }
 
 func Remove[T interface{}](s []T, index int) []T {

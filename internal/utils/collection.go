@@ -29,7 +29,7 @@ func (b *BaseCollection[T]) Items() []T {
 }
 
 func (b *BaseCollection[T]) Add(item T) {
-	b.items = append(b.items, item)
+	b.items = slice.Add(b.items, item)
 }
 
 func (b *BaseCollection[T]) Map(fn func(v T, i int) T) []T {
