@@ -18,11 +18,13 @@ func TestJobDispatcher_Dispatch(t *testing.T) {
 		WorkerOptions: []worker.Option{
 			opt,
 		},
-		Redis: redis.NewClient(&redis.Options{
-			Addr:     "localhost:6379",
-			Password: "",
-			DB:       0,
-		}),
+		Redis: func() *redis.Client {
+			return redis.NewClient(&redis.Options{
+				Addr:     "localhost:6379",
+				Password: "",
+				DB:       0,
+			})
+		},
 	}
 
 	dispatcher := worker.NewDispatcher(dispatcherOpt)

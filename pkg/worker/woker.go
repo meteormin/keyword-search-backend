@@ -125,7 +125,7 @@ func getJob(r *redis.Client, key string) (*Job, error) {
 	} else {
 		var convJob *Job
 		bytes := []byte(val)
-		err = json.Unmarshal(bytes, convJob)
+		err = json.Unmarshal(bytes, &convJob)
 		if err != nil {
 			return nil, err
 		}

@@ -38,7 +38,6 @@ func NewService(repository search.Repository, redisClient func() *redis.Client, 
 }
 
 func (s *ServiceStruct) hGet(r *redis.Client, rKey string, rField string) string {
-
 	result, err := r.HGet(redisContext, rKey, rField).Result()
 	if err == redis.Nil {
 		return ""
