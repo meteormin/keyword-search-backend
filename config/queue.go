@@ -8,7 +8,7 @@ const (
 	DefaultWorker WorkerName = "default"
 )
 
-func QueueConfig() worker.DispatcherOption {
+func queueConfig() worker.DispatcherOption {
 	return worker.DispatcherOption{
 		WorkerOptions: []worker.Option{
 			{

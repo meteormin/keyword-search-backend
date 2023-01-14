@@ -63,6 +63,6 @@ func GetConfigs() *Configs {
 		Permission:   getPermissions(),
 		CreateAdmin:  createAdminConfig(),
 		RedisConfig:  redisConfig(),
-		QueueConfig:  QueueConfig(),
+		QueueConfig:  queueConfig(),
 	}
 }
