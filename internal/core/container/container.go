@@ -24,6 +24,7 @@ type Container interface {
 	Resolve(keyType interface{}) interface{}
 	Run()
 	Stats()
+	IsProduction() bool
 }
 
 // Wrapper
@@ -170,4 +171,12 @@ func (w *Wrapper) Stats() {
 		)
 	}
 
+}
+
+func (w *Wrapper) IsProduction() bool {
+	if w.Config().AppEnv == "production" {
+		return true
+	}
+
+	return false
 }

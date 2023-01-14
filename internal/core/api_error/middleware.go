@@ -5,8 +5,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"go.uber.org/zap"
+	"os"
 	"runtime/debug"
 )
+
+var appEnv = os.Getenv("APP_ENV")
 
 func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 	if err == nil {
@@ -22,7 +25,9 @@ func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 	}
 
 	logger.Errorln(err)
-	debug.PrintStack()
+	if appEnv != "production" {
+		debug.PrintStack()
+	}
 
 	errRes := NewFromError(ctx, err)
 	return errRes.Response()
@@ -44,7 +49,9 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 	}
 
 	logger.Errorln(err)
-	debug.PrintStack()
+	if appEnv != "production" {
+		debug.PrintStack()
+	}
 
 	errRes := NewFromError(ctx, err)
 

@@ -93,8 +93,6 @@ type Worker interface {
 	Start()
 	Stop()
 	AddJob(job Job) error
-	SaveJob(key string, job Job)
-	GetJob(key string) (*Job, error)
 }
 
 type JobWorker struct {
@@ -102,24 +100,24 @@ type JobWorker struct {
 	queue       Queue
 	jobChan     chan Job
 	quitChan    chan bool
-	redis       *redis.Client
+	redis       func() *redis.Client
 	maxJobCount int
 }
 
-func (w *JobWorker) SaveJob(key string, job Job) {
+func saveJob(r *redis.Client, key string, job Job) {
 	bytes, err := json.Marshal(job)
 	if err != nil {
 		panic(err)
 	}
 
-	err = w.redis.Set(ctx, key, string(bytes), time.Minute).Err()
+	err = r.Set(ctx, key, string(bytes), time.Minute).Err()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (w *JobWorker) GetJob(key string) (*Job, error) {
-	val, err := w.redis.Get(ctx, key).Result()
+func getJob(r *redis.Client, key string) (*Job, error) {
+	val, err := r.Get(ctx, key).Result()
 	if err == redis.Nil {
 		return nil, nil
 	} else if err != nil {
@@ -135,7 +133,7 @@ func (w *JobWorker) GetJob(key string) (*Job, error) {
 	}
 }
 
-func NewWorker(name string, redis *redis.Client, maxJobCount int) Worker {
+func NewWorker(name string, redis func() *redis.Client, maxJobCount int) Worker {
 	return &JobWorker{
 		Name:        name,
 		queue:       NewQueue(maxJobCount),
@@ -153,6 +151,7 @@ func (w *JobWorker) GetName() string {
 func (w *JobWorker) Start() {
 	go func() {
 		for {
+			r := w.redis()
 			jobChan, err := w.queue.Dequeue()
 			if err != nil {
 				log.Print(err)
@@ -163,7 +162,7 @@ func (w *JobWorker) Start() {
 			select {
 			case job := <-w.jobChan:
 				key := fmt.Sprintf("%s.%s", w.Name, job.JobId)
-				convJob, err := w.GetJob(key)
+				convJob, err := getJob(r, key)
 				if err != nil {
 					log.Println(err)
 				}
@@ -192,7 +191,7 @@ func (w *JobWorker) Start() {
 
 				job.UpdatedAt = time.Now()
 
-				w.SaveJob(key, job)
+				saveJob(r, key, job)
 			case <-w.quitChan:
 				log.Printf("worker %s stopping\n", w.Name)
 				return
@@ -221,7 +220,7 @@ type Dispatcher interface {
 	Run()
 	SelectWorker(name string) Dispatcher
 	GetWorkers() []Worker
-	GetRedis() *redis.Client
+	GetRedis() func() *redis.Client
 	AddWorker(option Option)
 	RemoveWorker(nam string)
 }
@@ -230,7 +229,7 @@ type JobDispatcher struct {
 	workers    []Worker
 	workerPool chan chan Job
 	worker     Worker
-	Redis      *redis.Client
+	Redis      func() *redis.Client
 }
 
 type Option struct {
@@ -240,7 +239,7 @@ type Option struct {
 
 type DispatcherOption struct {
 	WorkerOptions []Option
-	Redis         *redis.Client
+	Redis         func() *redis.Client
 }
 
 var defaultWorkerOption = []Option{
@@ -286,7 +285,7 @@ func (d *JobDispatcher) RemoveWorker(name string) {
 	}
 }
 
-func (d *JobDispatcher) GetRedis() *redis.Client {
+func (d *JobDispatcher) GetRedis() func() *redis.Client {
 	return d.Redis
 }
 

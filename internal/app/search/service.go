@@ -65,7 +65,7 @@ func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginat
 		}, err
 	}
 
-	var searchRes []Response
+	searchRes := make([]Response, 0)
 	for _, s := range data {
 		response := ToSearchResponse(&s)
 		searchRes = append(searchRes, *response)
@@ -89,7 +89,7 @@ func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) (u
 		}, err
 	}
 
-	var searchRes []Description
+	searchRes := make([]Description, 0)
 	for _, s := range data {
 		response := Description{
 			Id:          s.ID,

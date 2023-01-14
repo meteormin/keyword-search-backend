@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	goContext "context"
 	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
@@ -12,6 +13,7 @@ import (
 	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"go.uber.org/zap"
+	"log"
 	"path"
 )
 
@@ -102,9 +104,18 @@ func ToPermissionEntity(perm permission.Permission) entity.Permission {
 
 func MakeJobDispatcher(c container.Container) func() worker.Dispatcher {
 	opts := c.Config().QueueConfig
-	opts.Redis = c.Get(context.Redis).(*redis.Client)
+	opts.Redis = c.Get(context.Redis).(func() *redis.Client)
 
 	return func() worker.Dispatcher {
 		return worker.NewDispatcher(opts)
+	}
+}
+
+func MakeRedisClient(c container.Container) func() *redis.Client {
+	return func() *redis.Client {
+		client := redis.NewClient(c.Config().RedisConfig)
+		pong, err := client.Ping(goContext.Background()).Result()
+		log.Print(pong, err)
+		return client
 	}
 }

@@ -1,7 +1,6 @@
 package register
 
 import (
-	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -23,7 +22,9 @@ func boot(w container.Container) {
 	w.Singleton(context.App, w.App())
 	w.Singleton(context.Config, w.Config())
 	w.Singleton(context.DB, w.Database())
-	w.Singleton(context.Redis, redis.NewClient(w.Config().RedisConfig))
+
+	redisClient := resolver.MakeRedisClient(w)
+	w.Singleton(context.Redis, redisClient)
 
 	var tg jwt.Generator
 	jwtGenerator := resolver.MakeJwtGenerator(w)
@@ -55,7 +56,9 @@ func boot(w container.Container) {
 // fiber app middleware settings
 func middlewares(w container.Container) {
 	w.App().Use(flogger.New(w.Config().Logger))
-	w.App().Use(recover.New())
+	w.App().Use(recover.New(recover.Config{
+		EnableStackTrace: !w.IsProduction(),
+	}))
 	w.App().Use(api_error.ErrorHandler)
 	w.App().Use(cors.New(w.Config().Cors))
 

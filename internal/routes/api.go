@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/keyword-search-backend/internal/app/api_auth"
 	"github.com/miniyus/keyword-search-backend/internal/app/groups"
 	"github.com/miniyus/keyword-search-backend/internal/app/host_search"
@@ -10,6 +11,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/app/users"
 	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
+	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
 	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
 	"github.com/miniyus/keyword-search-backend/internal/core/router"
@@ -65,7 +67,11 @@ func Api(c container.Container) {
 
 	apiRouter.Route(
 		short_url.Prefix,
-		short_url.Register(short_url.New(c.Database(), resolver.Logger(c))),
+		short_url.Register(short_url.New(
+			c.Database(),
+			c.Get(context.Redis).(func() *redis.Client),
+			resolver.Logger(c),
+		)),
 		auth.Middlewares()...,
 	).Name("api.short_url")
 
