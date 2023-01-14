@@ -10,9 +10,9 @@ import (
 )
 
 type Service interface {
-	All(page utils.Page) (utils.Paginator, error)
-	GetByHostId(hostId uint, page utils.Page) (utils.Paginator, error)
-	GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator, error)
+	All(page utils.Page) (utils.Paginator[entity.Search], error)
+	GetByHostId(hostId uint, page utils.Page) (utils.Paginator[Response], error)
+	GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator[Description], error)
 	Find(pk uint, userId uint) (*Response, error)
 	Create(search *CreateSearch) (*Response, error)
 	BatchCreate(hostId uint, search []*CreateSearch) ([]Response, error)
@@ -36,29 +36,29 @@ func NewService(repo Repository) Service {
 	}
 }
 
-func (s *ServiceStruct) All(page utils.Page) (utils.Paginator, error) {
+func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[entity.Search], error) {
 	data, count, err := s.repo.All(page)
 	if err != nil {
 		data = make([]entity.Search, 0)
-		return utils.Paginator{
+		return utils.Paginator[entity.Search]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       data,
 		}, err
 	}
 
-	return utils.Paginator{
+	return utils.Paginator[entity.Search]{
 		Page:       page,
 		TotalCount: count,
 		Data:       data,
 	}, err
 }
 
-func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginator, error) {
+func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginator[Response], error) {
 	data, count, err := s.repo.GetByHostId(hostId, page)
 
 	if err != nil {
-		return utils.Paginator{
+		return utils.Paginator[Response]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       make([]Response, 0),
@@ -71,18 +71,18 @@ func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginat
 		searchRes = append(searchRes, *response)
 	}
 
-	return utils.Paginator{
+	return utils.Paginator[Response]{
 		Page:       page,
 		TotalCount: count,
 		Data:       searchRes,
 	}, err
 }
 
-func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator, error) {
+func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator[Description], error) {
 	data, count, err := s.repo.GetByHostId(hostId, page)
 
 	if err != nil {
-		return utils.Paginator{
+		return utils.Paginator[Description]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       make([]Description, 0),
@@ -100,7 +100,7 @@ func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) (u
 		searchRes = append(searchRes, response)
 	}
 
-	return utils.Paginator{
+	return utils.Paginator[Description]{
 		Page:       page,
 		TotalCount: count,
 		Data:       searchRes,

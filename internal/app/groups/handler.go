@@ -138,11 +138,11 @@ func (h *HandlerStruct) All(ctx *fiber.Ctx) error {
 	}
 
 	res := ListResponse{
-		Paginator: utils.Paginator{
+		Paginator: utils.Paginator[ResponseGroup]{
 			TotalCount: result.TotalCount,
 			Page:       result.Page,
 		},
-		Data: result.Data.([]ResponseGroup),
+		Data: result.Data,
 	}
 
 	return ctx.JSON(res)

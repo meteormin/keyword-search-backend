@@ -239,7 +239,7 @@ func (h *HandlerStruct) GetSubjects(c *fiber.Ctx) error {
 
 	return c.JSON(HostSubjectsResponse{
 		Paginator: result,
-		Data:      result.Data.([]Subjects),
+		Data:      result.Data,
 	})
 }
 
@@ -274,7 +274,7 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 
 	return c.JSON(HostListResponse{
 		Paginator: results,
-		Data:      results.Data.([]HostResponse),
+		Data:      results.Data,
 	})
 }
 

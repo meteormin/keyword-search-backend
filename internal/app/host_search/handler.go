@@ -66,11 +66,11 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(search.ResponseByHost{
-		Paginator: utils.Paginator{
+		Paginator: utils.Paginator[search.Response]{
 			Page:       data.Page,
 			TotalCount: data.TotalCount,
 		},
-		Data: data.Data.([]search.Response),
+		Data: data.Data,
 	})
 }
 
@@ -106,11 +106,11 @@ func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(search.DescriptionWithPage{
-		Paginator: utils.Paginator{
+		Paginator: utils.Paginator[search.Description]{
 			Page:       data.Page,
 			TotalCount: data.TotalCount,
 		},
-		Data: data.Data.([]search.Description),
+		Data: data.Data,
 	})
 }
 

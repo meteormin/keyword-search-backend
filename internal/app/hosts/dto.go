@@ -46,17 +46,17 @@ type Subjects struct {
 }
 
 type HostListResponse struct {
-	utils.Paginator
+	utils.Paginator[HostResponse]
 	Data []HostResponse `json:"data"`
 }
 
 type HostResponseAll struct {
-	utils.Paginator
+	utils.Paginator[entity.Host]
 	Data []entity.Host `json:"data"`
 }
 
 type HostSubjectsResponse struct {
-	utils.Paginator
+	utils.Paginator[Subjects]
 	Data []Subjects `json:"data"`
 }
 
