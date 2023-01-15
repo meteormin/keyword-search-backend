@@ -16,6 +16,7 @@ type Container interface {
 	App() *fiber.App
 	Config() *config.Configs
 	Database() *gorm.DB
+	IsProduction() bool
 	Instances() map[context.Key]interface{}
 	Bindings() map[reflect.Type]interface{}
 	Singleton(key context.Key, instance interface{})
@@ -24,7 +25,6 @@ type Container interface {
 	Resolve(keyType interface{}) interface{}
 	Run()
 	Stats()
-	IsProduction() bool
 }
 
 // Wrapper
@@ -38,7 +38,7 @@ type Wrapper struct {
 }
 
 // New
-// IoC 컨테이너 새성 함수
+// IoC 컨테이너 생성 함수
 func New(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
 	return &Wrapper{
 		app:       app,
@@ -65,6 +65,16 @@ func (w *Wrapper) Config() *config.Configs {
 // *gorm.DB getter
 func (w *Wrapper) Database() *gorm.DB {
 	return w.database
+}
+
+// IsProduction
+// check app env is production
+func (w *Wrapper) IsProduction() bool {
+	if w.Config().AppEnv == config.PRD {
+		return true
+	}
+
+	return false
 }
 
 // Singleton
@@ -150,10 +160,11 @@ func (w *Wrapper) Run() {
 // 현재 생성된 route list
 // 컨테이너가 가지고 있는 정보 콘솔 로그로 보여준다.
 func (w *Wrapper) Stats() {
-	if w.Config().AppEnv == config.PRD {
+	if w.IsProduction() {
 		log.Printf("'AppEnv' is %s", config.PRD)
 		return
 	}
+
 	log.Println("[Container Info]")
 	log.Printf("ENV: %s", w.Config().AppEnv)
 	log.Printf("Locale: %s", w.Config().Locale)
@@ -164,6 +175,7 @@ func (w *Wrapper) Stats() {
 	log.Println("[Fiber App Info]")
 	log.Printf("Handlers Count: %d", w.App().HandlersCount())
 	log.Println("[Router]")
+
 	for _, r := range w.App().GetRoutes() {
 		log.Printf(
 			"[%s] '%s' | '%s' , Params: %s",
@@ -171,12 +183,4 @@ func (w *Wrapper) Stats() {
 		)
 	}
 
-}
-
-func (w *Wrapper) IsProduction() bool {
-	if w.Config().AppEnv == "production" {
-		return true
-	}
-
-	return false
 }
