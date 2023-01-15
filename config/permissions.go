@@ -17,6 +17,8 @@ const (
 	DELETE PermissionMethod = "DELETE"
 )
 
+// getPermissions
+// 최초 기본 값 저장을 위한 설정입니다.
 func getPermissions() []PermissionConfig {
 	return []PermissionConfig{
 		{

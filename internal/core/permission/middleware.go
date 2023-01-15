@@ -7,6 +7,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
+	"gorm.io/gorm"
 	"strings"
 )
 
@@ -22,14 +23,33 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 
 		var permCollection Collection
 
-		permCollection, ok := c.Locals(context.Permissions).(Collection)
+		db, ok := c.Locals(context.DB).(*gorm.DB)
 		if !ok {
-			permCollection = nil
-			containerContext := c.Locals(context.Container).(container.Container)
-			permCollection, ok = containerContext.Resolve(permCollection).(Collection)
+			return fiber.NewError(fiber.StatusInternalServerError, "can't find context.DB")
+		}
+
+		repo := NewRepository(db)
+
+		get, err := repo.Get(*currentUser.GroupId)
+		if err == nil {
+			permCollection = NewPermissionCollection()
+			utils.NewCollection(get).For(func(v entity.Permission, i int) {
+				permCollection.Add(EntityToPermission(v))
+			})
+		}
+
+		if permCollection == nil {
+			permCollection, ok = c.Locals(context.Permissions).(Collection)
 			if !ok {
-				return fiber.NewError(fiber.StatusInternalServerError, "can not found context permissions")
+				permCollection = nil
+				containerContext := c.Locals(context.Container).(container.Container)
+				permCollection, ok = containerContext.Resolve(permCollection).(Collection)
+				if !ok {
+					return fiber.NewError(fiber.StatusInternalServerError, "can not found context permissions")
+				}
 			}
+
+			SavePermission(permCollection.Items()...)
 		}
 
 		if len(permissions) != 0 {
@@ -77,4 +97,36 @@ func checkPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
 	})
 
 	return pass
+}
+
+func SavePermission(permissions ...Permission) fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+		authUser, ok := ctx.Locals(context.AuthUser).(*auth.User)
+		if !ok {
+			return ctx.Next()
+		}
+
+		if authUser == nil {
+			return ctx.Next()
+		}
+
+		db, ok := ctx.Locals(context.DB).(*gorm.DB)
+		if !ok {
+			return fiber.NewError(fiber.StatusInternalServerError, "can't find context.DB")
+		}
+
+		repo := NewRepository(db)
+
+		entities := make([]entity.Permission, 0)
+		for _, perm := range permissions {
+			entities = append(entities, ToPermissionEntity(perm))
+		}
+
+		_, err := repo.Save(entities)
+		if err != nil {
+			return err
+		}
+
+		return ctx.Next()
+	}
 }

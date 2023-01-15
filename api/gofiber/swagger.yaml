@@ -1609,14 +1609,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.CreateSearch'
+          $ref: '#/definitions/internal_api_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response'
+            $ref: '#/definitions/internal_api_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1677,7 +1677,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response'
+            $ref: '#/definitions/internal_api_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1710,14 +1710,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.PatchSearch'
+          $ref: '#/definitions/internal_api_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response'
+            $ref: '#/definitions/internal_api_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1750,14 +1750,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.UpdateSearch'
+          $ref: '#/definitions/internal_api_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response'
+            $ref: '#/definitions/internal_api_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1797,7 +1797,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.ResponseAll'
+            $ref: '#/definitions/internal_api_search.ResponseAll'
         "400":
           description: Bad Request
           schema:
@@ -1832,7 +1832,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_short_url.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response'
         "404":
           description: Not Found
       security:
@@ -1857,7 +1857,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_short_url.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response'
         "302":
           description: Found
           schema:

@@ -8,7 +8,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	cLogger "github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
-	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
@@ -84,22 +83,6 @@ func parseMethodConstants(methods []config.PermissionMethod) []permission.Method
 	}
 
 	return authMethods
-}
-
-func ToPermissionEntity(perm permission.Permission) entity.Permission {
-	var ent entity.Permission
-	ent.Permission = perm.Name
-	ent.GroupId = perm.GroupId
-	for _, action := range perm.Actions {
-		for _, method := range action.Methods {
-			ent.Actions = append(ent.Actions, entity.Action{
-				Resource: action.Resource,
-				Method:   string(method),
-			})
-		}
-	}
-
-	return ent
 }
 
 func MakeJobDispatcher(c container.Container) func() worker.Dispatcher {

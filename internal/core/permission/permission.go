@@ -2,6 +2,7 @@ package permission
 
 import (
 	"fmt"
+	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 )
 
@@ -107,4 +108,45 @@ func (p *CollectionStruct) Get(name string) (*Permission, error) {
 	}
 
 	return &filtered[0], nil
+}
+
+func ToPermissionEntity(perm Permission) entity.Permission {
+	var ent entity.Permission
+	ent.Permission = perm.Name
+	ent.GroupId = perm.GroupId
+	for _, action := range perm.Actions {
+		for _, method := range action.Methods {
+			ent.Actions = append(ent.Actions, entity.Action{
+				Resource: action.Resource,
+				Method:   string(method),
+			})
+		}
+	}
+
+	return ent
+}
+
+func EntityToPermission(permission entity.Permission) Permission {
+	actions := make([]Action, 0)
+	utils.NewCollection(permission.Actions).For(func(v entity.Action, i int) {
+		filtered := utils.NewCollection(permission.Actions).Filter(func(a entity.Action, j int) bool {
+			return a.PermissionId == v.PermissionId && a.Resource == v.Resource
+		})
+
+		methods := make([]Method, 0)
+		utils.NewCollection(filtered).For(func(f entity.Action, k int) {
+			methods = append(methods, Method(f.Method))
+		})
+
+		actions = append(actions, Action{
+			Resource: v.Resource,
+			Methods:  methods,
+		})
+	})
+
+	return Permission{
+		GroupId: permission.GroupId,
+		Name:    permission.Permission,
+		Actions: actions,
+	}
 }

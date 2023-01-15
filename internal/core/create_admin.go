@@ -6,7 +6,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/core/database"
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
-	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"gorm.io/gorm"
@@ -67,7 +66,7 @@ func CreateAdmin(c container.Container) {
 	entPerms := make([]entity.Permission, 0)
 
 	permissions.For(func(perm permission.Permission, i int) {
-		entPerms = append(entPerms, resolver.ToPermissionEntity(perm))
+		entPerms = append(entPerms, permission.ToPermissionEntity(perm))
 	})
 
 	group := &entity.Group{
