@@ -1,7 +1,7 @@
 package host_search
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/app/search"
+	"github.com/miniyus/keyword-search-backend/internal/api/search"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
