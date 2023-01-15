@@ -49,7 +49,15 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 				}
 			}
 
-			SavePermission(permCollection.Items()...)
+			entities := make([]entity.Permission, 0)
+			for _, perm := range permCollection.Items() {
+				entities = append(entities, ToPermissionEntity(perm))
+			}
+
+			_, err := repo.Save(entities)
+			if err != nil {
+				return err
+			}
 		}
 
 		if len(permissions) != 0 {
@@ -97,36 +105,4 @@ func checkPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
 	})
 
 	return pass
-}
-
-func SavePermission(permissions ...Permission) fiber.Handler {
-	return func(ctx *fiber.Ctx) error {
-		authUser, ok := ctx.Locals(context.AuthUser).(*auth.User)
-		if !ok {
-			return ctx.Next()
-		}
-
-		if authUser == nil {
-			return ctx.Next()
-		}
-
-		db, ok := ctx.Locals(context.DB).(*gorm.DB)
-		if !ok {
-			return fiber.NewError(fiber.StatusInternalServerError, "can't find context.DB")
-		}
-
-		repo := NewRepository(db)
-
-		entities := make([]entity.Permission, 0)
-		for _, perm := range permissions {
-			entities = append(entities, ToPermissionEntity(perm))
-		}
-
-		_, err := repo.Save(entities)
-		if err != nil {
-			return err
-		}
-
-		return ctx.Next()
-	}
 }
