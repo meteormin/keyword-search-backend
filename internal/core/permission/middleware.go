@@ -50,9 +50,9 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 			}
 
 			entities := make([]entity.Permission, 0)
-			for _, perm := range permCollection.Items() {
+			permCollection.For(func(perm Permission, i int) {
 				entities = append(entities, ToPermissionEntity(perm))
-			}
+			})
 
 			_, err = repo.Save(entities)
 			if err != nil {
