@@ -69,6 +69,17 @@ func translations(translator ut.Translator) []registerTranslationStruct {
 				return t
 			},
 		},
+		{
+			tag:   "eqfield",
+			trans: translator,
+			registerFn: func(ut ut.Translator) error {
+				return ut.Add("eqfield", "{0} 필드는 {1} 필드와 일치해야 합니다.", true)
+			},
+			translationFn: func(ut ut.Translator, fe validator.FieldError) string {
+				t, _ := ut.T("eqfield", fe.Field(), fe.Param())
+				return t
+			},
+		},
 	}
 
 	return trans

@@ -32,18 +32,8 @@ func NewHandler(service Service) Handler {
 }
 
 func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ValidationErrorResponse) {
-	if err := utils.Validate(signUp); err != nil {
-		errRes := api_error.NewValidationErrorResponse(ctx, err)
-		errRes.FailedFields = err
-
-		return false, errRes
-	}
-
-	if signUp.Password != signUp.PasswordConfirm {
-		errRes := api_error.NewValidationErrorResponse(ctx, map[string]string{
-			"PasswordConfirm": "패스워드와 패스워드확인 필드가 일치하지않습니다.",
-		})
-
+	errRes := utils.HandleValidate(ctx, signUp)
+	if errRes != nil {
 		return false, errRes
 	}
 
@@ -80,9 +70,8 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 }
 
 func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ValidationErrorResponse) {
-	if err := utils.Validate(in); err != nil {
-		errRes := api_error.NewValidationErrorResponse(ctx, err)
-
+	errRes := utils.HandleValidate(ctx, in)
+	if errRes != nil {
 		return false, errRes
 	}
 

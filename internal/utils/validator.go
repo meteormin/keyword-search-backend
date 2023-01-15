@@ -8,32 +8,59 @@ import (
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 )
 
-func newValidator() *validator.Validate {
-	return validator.New()
+var validate *validator.Validate
+var transErr error
+var trans ut.Translator
+
+func init() {
+	validate = newValidator()
 }
 
-func newTranslator(locale locales.Translator) (trans ut.Translator) {
+func newValidator() *validator.Validate {
+	v := validator.New()
+	registerValidation(v)
+	trans = newTranslator(en.New())
+	if trans != nil {
+		transErr = enTranslations.RegisterDefaultTranslations(v, trans)
+		if transErr == nil {
+			registerTranslation(v, trans)
+		}
+	}
+
+	return v
+}
+
+func newTranslator(locale locales.Translator) (t ut.Translator) {
 	uni := ut.New(locale, locale)
-	trans, found := uni.GetTranslator("en")
+	t, found := uni.GetTranslator("en")
 	if found {
-		return trans
+		return t
 	}
 
 	return nil
 }
 
-func Validate(data interface{}) map[string]string {
-	validate := newValidator()
-
-	trans := newTranslator(en.New())
-	var transErr error
-	if trans != nil {
-		transErr = enTranslations.RegisterDefaultTranslations(validate, trans)
-		if transErr == nil {
-			registerTranslation(validate, trans)
-		}
+func registerValidation(validate *validator.Validate) {
+	for _, v := range validations() {
+		_ = validate.RegisterValidation(
+			v.tag,
+			v.fn,
+		)
 	}
+}
 
+func registerTranslation(validate *validator.Validate, trans ut.Translator) {
+	for _, t := range translations(trans) {
+		_ = validate.RegisterTranslation(
+			t.tag,
+			t.trans,
+			t.registerFn,
+			t.translationFn,
+		)
+	}
+}
+
+func Validate(data interface{}) map[string]string {
 	fields := map[string]string{}
 	errs := validate.Struct(data)
 
@@ -52,15 +79,4 @@ func Validate(data interface{}) map[string]string {
 	}
 
 	return nil
-}
-
-func registerTranslation(validate *validator.Validate, trans ut.Translator) {
-	for _, t := range translations(trans) {
-		_ = validate.RegisterTranslation(
-			t.tag,
-			t.trans,
-			t.registerFn,
-			t.translationFn,
-		)
-	}
 }
