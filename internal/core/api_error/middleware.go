@@ -3,21 +3,27 @@ package api_error
 import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
+	configure "github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"go.uber.org/zap"
-	"os"
 	"runtime/debug"
 )
-
-var appEnv = os.Getenv("APP_ENV")
 
 func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 	if err == nil {
 		return nil
 	}
 
+	var config *configure.Configs
+	config, ok := ctx.Locals(context.Config).(*configure.Configs)
+
+	if !ok {
+		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Config")
+		return errRes.Response()
+	}
+
 	var logger *zap.SugaredLogger
-	logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
+	logger, ok = ctx.Locals(context.Logger).(*zap.SugaredLogger)
 
 	if !ok {
 		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Logger")
@@ -25,7 +31,7 @@ func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 	}
 
 	logger.Errorln(err)
-	if appEnv != "production" {
+	if config.AppEnv != configure.PRD {
 		debug.PrintStack()
 	}
 
@@ -40,8 +46,16 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 		return nil
 	}
 
+	var config *configure.Configs
+	config, ok := ctx.Locals(context.Config).(*configure.Configs)
+
+	if !ok {
+		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Config")
+		return errRes.Response()
+	}
+
 	var logger *zap.SugaredLogger
-	logger, ok := ctx.Locals(context.Logger).(*zap.SugaredLogger)
+	logger, ok = ctx.Locals(context.Logger).(*zap.SugaredLogger)
 
 	if !ok {
 		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Logger")
@@ -49,7 +63,7 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 	}
 
 	logger.Errorln(err)
-	if appEnv != "production" {
+	if config.AppEnv != configure.PRD {
 		debug.PrintStack()
 	}
 

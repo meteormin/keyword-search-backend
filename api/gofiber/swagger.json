@@ -72,7 +72,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.ResetPasswordStruct"
+                            "$ref": "#/definitions/internal_api_api_auth.ResetPasswordStruct"
                         }
                     }
                 ],
@@ -112,7 +112,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUp"
+                            "$ref": "#/definitions/internal_api_api_auth.SignUp"
                         }
                     }
                 ],
@@ -120,7 +120,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUpResponse"
+                            "$ref": "#/definitions/internal_api_api_auth.SignUpResponse"
                         }
                     },
                     "400": {
@@ -186,7 +186,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignIn"
+                            "$ref": "#/definitions/internal_api_api_auth.SignIn"
                         }
                     }
                 ],
@@ -194,7 +194,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_api_auth.TokenInfo"
+                            "$ref": "#/definitions/internal_api_api_auth.TokenInfo"
                         }
                     },
                     "400": {
@@ -244,7 +244,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ListResponse"
+                            "$ref": "#/definitions/internal_api_groups.ListResponse"
                         }
                     },
                     "403": {
@@ -285,7 +285,7 @@
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.UpdateGroup"
+                            "$ref": "#/definitions/internal_api_groups.UpdateGroup"
                         }
                     }
                 ],
@@ -293,7 +293,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                            "$ref": "#/definitions/internal_api_groups.ResponseGroup"
                         }
                     },
                     "400": {
@@ -333,7 +333,7 @@
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.CreateGroup"
+                            "$ref": "#/definitions/internal_api_groups.CreateGroup"
                         }
                     }
                 ],
@@ -341,7 +341,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                            "$ref": "#/definitions/internal_api_groups.ResponseGroup"
                         }
                     },
                     "400": {
@@ -390,7 +390,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                            "$ref": "#/definitions/internal_api_groups.ResponseGroup"
                         }
                     },
                     "403": {
@@ -433,7 +433,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                            "$ref": "#/definitions/internal_api_groups.ResponseGroup"
                         }
                     },
                     "403": {
@@ -524,7 +524,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostListResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostListResponse"
                         }
                     },
                     "403": {
@@ -559,7 +559,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.CreateHost"
+                            "$ref": "#/definitions/internal_api_hosts.CreateHost"
                         }
                     }
                 ],
@@ -567,7 +567,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -617,7 +617,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostSubjectsResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostSubjectsResponse"
                         }
                     },
                     "400": {
@@ -672,7 +672,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -726,7 +726,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.UpdateHost"
+                            "$ref": "#/definitions/internal_api_hosts.UpdateHost"
                         }
                     }
                 ],
@@ -734,7 +734,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -841,7 +841,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.PatchHost"
+                            "$ref": "#/definitions/internal_api_hosts.PatchHost"
                         }
                     }
                 ],
@@ -849,7 +849,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -918,7 +918,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseByHost"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.ResponseByHost"
                         }
                     },
                     "400": {
@@ -966,7 +966,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.MultiCreateSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.MultiCreateSearch"
                         }
                     }
                 ],
@@ -974,7 +974,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response"
                         }
                     },
                     "400": {
@@ -1037,7 +1037,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.DescriptionWithPage"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.DescriptionWithPage"
                         }
                     },
                     "400": {
@@ -1080,7 +1080,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.CreateSearch"
                         }
                     }
                 ],
@@ -1088,7 +1088,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response"
                         }
                     },
                     "400": {
@@ -1138,7 +1138,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.ResponseAll"
                         }
                     },
                     "400": {
@@ -1193,7 +1193,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response"
                         }
                     },
                     "400": {
@@ -1247,7 +1247,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.UpdateSearch"
                         }
                     }
                 ],
@@ -1255,7 +1255,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response"
                         }
                     },
                     "400": {
@@ -1362,7 +1362,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.PatchSearch"
                         }
                     }
                 ],
@@ -1370,7 +1370,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response"
                         }
                     },
                     "400": {
@@ -1425,7 +1425,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response"
                         }
                     },
                     "404": {
@@ -1465,7 +1465,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_short_url.Response"
+                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response"
                         }
                     },
                     "302": {
@@ -1502,7 +1502,7 @@
         }
     },
     "definitions": {
-        "github_com_miniyus_keyword-search-backend_internal_app_api_auth.ResetPasswordStruct": {
+        "github_com_miniyus_keyword-search-backend_internal_api_api_auth.ResetPasswordStruct": {
             "type": "object",
             "required": [
                 "password",
@@ -1517,7 +1517,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignIn": {
+        "github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignIn": {
             "type": "object",
             "required": [
                 "password",
@@ -1532,7 +1532,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUp": {
+        "github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUp": {
             "type": "object",
             "required": [
                 "email",
@@ -1555,7 +1555,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_api_auth.SignUpResponse": {
+        "github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUpResponse": {
             "type": "object",
             "properties": {
                 "expires_at": {
@@ -1572,7 +1572,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_api_auth.TokenInfo": {
+        "github_com_miniyus_keyword-search-backend_internal_api_api_auth.TokenInfo": {
             "type": "object",
             "properties": {
                 "expires_at": {
@@ -1586,7 +1586,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_groups.CreateAction": {
+        "github_com_miniyus_keyword-search-backend_internal_api_groups.CreateAction": {
             "type": "object",
             "required": [
                 "method",
@@ -1601,7 +1601,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_groups.CreateGroup": {
+        "github_com_miniyus_keyword-search-backend_internal_api_groups.CreateGroup": {
             "type": "object",
             "required": [
                 "name",
@@ -1614,12 +1614,12 @@
                 "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.CreatePermission"
                     }
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission": {
+        "github_com_miniyus_keyword-search-backend_internal_api_groups.CreatePermission": {
             "type": "object",
             "required": [
                 "actions",
@@ -1629,7 +1629,7 @@
                 "actions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreateAction"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.CreateAction"
                     }
                 },
                 "name": {
@@ -1637,13 +1637,13 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_groups.ListResponse": {
+        "github_com_miniyus_keyword-search-backend_internal_api_groups.ListResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseGroup"
                     }
                 },
                 "page": {
@@ -1657,7 +1657,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseAction": {
+        "github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseAction": {
             "type": "object",
             "properties": {
                 "method": {
@@ -1668,13 +1668,13 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseGroup": {
+        "github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseGroup": {
             "type": "object",
             "properties": {
                 "actions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.ResponseAction"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseAction"
                     }
                 },
                 "id": {
@@ -1685,7 +1685,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_groups.UpdateGroup": {
+        "github_com_miniyus_keyword-search-backend_internal_api_groups.UpdateGroup": {
             "type": "object",
             "properties": {
                 "name": {
@@ -1694,12 +1694,12 @@
                 "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_groups.CreatePermission"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.CreatePermission"
                     }
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_hosts.CreateHost": {
+        "github_com_miniyus_keyword-search-backend_internal_api_hosts.CreateHost": {
             "type": "object",
             "required": [
                 "description",
@@ -1729,13 +1729,13 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_hosts.HostListResponse": {
+        "github_com_miniyus_keyword-search-backend_internal_api_hosts.HostListResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse"
                     }
                 },
                 "page": {
@@ -1749,7 +1749,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_hosts.HostResponse": {
+        "github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1775,13 +1775,13 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_hosts.HostSubjectsResponse": {
+        "github_com_miniyus_keyword-search-backend_internal_api_hosts.HostSubjectsResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_hosts.Subjects"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.Subjects"
                     }
                 },
                 "page": {
@@ -1795,7 +1795,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_hosts.PatchHost": {
+        "github_com_miniyus_keyword-search-backend_internal_api_hosts.PatchHost": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1815,7 +1815,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_hosts.Subjects": {
+        "github_com_miniyus_keyword-search-backend_internal_api_hosts.Subjects": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1826,7 +1826,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_hosts.UpdateHost": {
+        "github_com_miniyus_keyword-search-backend_internal_api_hosts.UpdateHost": {
             "type": "object",
             "required": [
                 "description",
@@ -1853,7 +1853,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.CreateSearch": {
             "type": "object",
             "required": [
                 "description",
@@ -1880,7 +1880,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.Description": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.Description": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1894,13 +1894,13 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.DescriptionWithPage": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.DescriptionWithPage": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Description"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Description"
                     }
                 },
                 "page": {
@@ -1914,7 +1914,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.MultiCreateSearch": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.MultiCreateSearch": {
             "type": "object",
             "required": [
                 "search"
@@ -1923,12 +1923,12 @@
                 "search": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.CreateSearch"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.CreateSearch"
                     }
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.PatchSearch": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.PatchSearch": {
             "type": "object",
             "required": [
                 "host_id",
@@ -1952,7 +1952,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.Response": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.Response": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -1981,7 +1981,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.ResponseAll": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.ResponseAll": {
             "type": "object",
             "properties": {
                 "data": {
@@ -2001,13 +2001,13 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.ResponseByHost": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.ResponseByHost": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_app_search.Response"
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response"
                     }
                 },
                 "page": {
@@ -2021,7 +2021,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_search.UpdateSearch": {
+        "github_com_miniyus_keyword-search-backend_internal_api_search.UpdateSearch": {
             "type": "object",
             "required": [
                 "description",
@@ -2048,7 +2048,7 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_app_short_url.Response": {
+        "github_com_miniyus_keyword-search-backend_internal_api_short_url.Response": {
             "type": "object",
             "properties": {
                 "url": {
@@ -2407,7 +2407,7 @@
                 }
             }
         },
-        "internal_app_api_auth.ResetPasswordStruct": {
+        "internal_api_api_auth.ResetPasswordStruct": {
             "type": "object",
             "required": [
                 "password",
@@ -2422,7 +2422,7 @@
                 }
             }
         },
-        "internal_app_api_auth.SignIn": {
+        "internal_api_api_auth.SignIn": {
             "type": "object",
             "required": [
                 "password",
@@ -2437,7 +2437,7 @@
                 }
             }
         },
-        "internal_app_api_auth.SignUp": {
+        "internal_api_api_auth.SignUp": {
             "type": "object",
             "required": [
                 "email",
@@ -2460,7 +2460,7 @@
                 }
             }
         },
-        "internal_app_api_auth.SignUpResponse": {
+        "internal_api_api_auth.SignUpResponse": {
             "type": "object",
             "properties": {
                 "expires_at": {
@@ -2477,7 +2477,7 @@
                 }
             }
         },
-        "internal_app_api_auth.TokenInfo": {
+        "internal_api_api_auth.TokenInfo": {
             "type": "object",
             "properties": {
                 "expires_at": {
@@ -2491,7 +2491,7 @@
                 }
             }
         },
-        "internal_app_groups.CreateAction": {
+        "internal_api_groups.CreateAction": {
             "type": "object",
             "required": [
                 "method",
@@ -2506,7 +2506,7 @@
                 }
             }
         },
-        "internal_app_groups.CreateGroup": {
+        "internal_api_groups.CreateGroup": {
             "type": "object",
             "required": [
                 "name",
@@ -2519,12 +2519,12 @@
                 "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_app_groups.CreatePermission"
+                        "$ref": "#/definitions/internal_api_groups.CreatePermission"
                     }
                 }
             }
         },
-        "internal_app_groups.CreatePermission": {
+        "internal_api_groups.CreatePermission": {
             "type": "object",
             "required": [
                 "actions",
@@ -2534,7 +2534,7 @@
                 "actions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_app_groups.CreateAction"
+                        "$ref": "#/definitions/internal_api_groups.CreateAction"
                     }
                 },
                 "name": {
@@ -2542,13 +2542,13 @@
                 }
             }
         },
-        "internal_app_groups.ListResponse": {
+        "internal_api_groups.ListResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_app_groups.ResponseGroup"
+                        "$ref": "#/definitions/internal_api_groups.ResponseGroup"
                     }
                 },
                 "page": {
@@ -2562,7 +2562,7 @@
                 }
             }
         },
-        "internal_app_groups.ResponseAction": {
+        "internal_api_groups.ResponseAction": {
             "type": "object",
             "properties": {
                 "method": {
@@ -2573,13 +2573,13 @@
                 }
             }
         },
-        "internal_app_groups.ResponseGroup": {
+        "internal_api_groups.ResponseGroup": {
             "type": "object",
             "properties": {
                 "actions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_app_groups.ResponseAction"
+                        "$ref": "#/definitions/internal_api_groups.ResponseAction"
                     }
                 },
                 "id": {
@@ -2590,7 +2590,7 @@
                 }
             }
         },
-        "internal_app_groups.UpdateGroup": {
+        "internal_api_groups.UpdateGroup": {
             "type": "object",
             "properties": {
                 "name": {
@@ -2599,12 +2599,12 @@
                 "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_app_groups.CreatePermission"
+                        "$ref": "#/definitions/internal_api_groups.CreatePermission"
                     }
                 }
             }
         },
-        "internal_app_hosts.CreateHost": {
+        "internal_api_hosts.CreateHost": {
             "type": "object",
             "required": [
                 "description",
@@ -2634,13 +2634,13 @@
                 }
             }
         },
-        "internal_app_hosts.HostListResponse": {
+        "internal_api_hosts.HostListResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_app_hosts.HostResponse"
+                        "$ref": "#/definitions/internal_api_hosts.HostResponse"
                     }
                 },
                 "page": {
@@ -2654,7 +2654,7 @@
                 }
             }
         },
-        "internal_app_hosts.HostResponse": {
+        "internal_api_hosts.HostResponse": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2680,13 +2680,13 @@
                 }
             }
         },
-        "internal_app_hosts.HostSubjectsResponse": {
+        "internal_api_hosts.HostSubjectsResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_app_hosts.Subjects"
+                        "$ref": "#/definitions/internal_api_hosts.Subjects"
                     }
                 },
                 "page": {
@@ -2700,7 +2700,7 @@
                 }
             }
         },
-        "internal_app_hosts.PatchHost": {
+        "internal_api_hosts.PatchHost": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2720,7 +2720,7 @@
                 }
             }
         },
-        "internal_app_hosts.Subjects": {
+        "internal_api_hosts.Subjects": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2731,7 +2731,7 @@
                 }
             }
         },
-        "internal_app_hosts.UpdateHost": {
+        "internal_api_hosts.UpdateHost": {
             "type": "object",
             "required": [
                 "description",
@@ -2758,7 +2758,7 @@
                 }
             }
         },
-        "internal_app_search.CreateSearch": {
+        "internal_api_search.CreateSearch": {
             "type": "object",
             "required": [
                 "description",
@@ -2785,7 +2785,7 @@
                 }
             }
         },
-        "internal_app_search.PatchSearch": {
+        "internal_api_search.PatchSearch": {
             "type": "object",
             "required": [
                 "host_id",
@@ -2809,7 +2809,7 @@
                 }
             }
         },
-        "internal_app_search.Response": {
+        "internal_api_search.Response": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -2838,7 +2838,7 @@
                 }
             }
         },
-        "internal_app_search.ResponseAll": {
+        "internal_api_search.ResponseAll": {
             "type": "object",
             "properties": {
                 "data": {
@@ -2858,7 +2858,7 @@
                 }
             }
         },
-        "internal_app_search.UpdateSearch": {
+        "internal_api_search.UpdateSearch": {
             "type": "object",
             "required": [
                 "description",
@@ -2885,7 +2885,7 @@
                 }
             }
         },
-        "internal_app_short_url.Response": {
+        "internal_api_short_url.Response": {
             "type": "object",
             "properties": {
                 "url": {
