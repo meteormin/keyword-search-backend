@@ -54,7 +54,7 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 				entities = append(entities, ToPermissionEntity(perm))
 			}
 
-			_, err := repo.Save(entities)
+			_, err = repo.Save(entities)
 			if err != nil {
 				return err
 			}
