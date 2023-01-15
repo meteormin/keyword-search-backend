@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/joho/godotenv"
 	configure "github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/app/search"
+	"github.com/miniyus/keyword-search-backend/internal/api/search"
 	"github.com/miniyus/keyword-search-backend/internal/core/database"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"log"
