@@ -15,10 +15,6 @@ const (
 	DELETE Method = "DELETE"
 )
 
-func (m Method) ToString() string {
-	return string(m)
-}
-
 type Action struct {
 	Methods  []Method
 	Resource string

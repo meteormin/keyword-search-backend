@@ -6,7 +6,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
-	"github.com/miniyus/keyword-search-backend/pkg/slice"
+	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"strings"
 )
 
@@ -56,8 +56,8 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 
 func checkPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
 	pass := false
-	for _, perm := range hasPerm {
-		for _, action := range perm.Actions {
+	utils.NewCollection(hasPerm).For(func(perm Permission, i int) {
+		utils.NewCollection(perm.Actions).For(func(action Action, j int) {
 			routePath := c.Path()
 			if strings.Contains(routePath, action.Resource) {
 				method := c.Method()
@@ -65,15 +65,16 @@ func checkPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
 					method = "GET"
 				}
 
-				filtered := slice.Filter(action.Methods, func(v Method, i int) bool {
-					return v.ToString() == method
+				filtered := utils.NewCollection(action.Methods).Filter(func(v Method, i int) bool {
+					return string(v) == method
 				})
 
 				if len(filtered) != 0 {
 					pass = true
 				}
 			}
-		}
-	}
+		})
+	})
+
 	return pass
 }

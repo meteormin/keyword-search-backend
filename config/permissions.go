@@ -27,7 +27,7 @@ func getPermissions() []PermissionConfig {
 				"/users",
 				"/hosts",
 				"/search",
-				"/redirect",
+				"/short-url",
 				"/groups",
 			},
 		},

@@ -66,9 +66,9 @@ func CreateAdmin(c container.Container) {
 	permissions := c.Get(context.Permissions).(permission.Collection)
 	entPerms := make([]entity.Permission, 0)
 
-	for _, perm := range permissions.All() {
+	permissions.For(func(perm permission.Permission, i int) {
 		entPerms = append(entPerms, resolver.ToPermissionEntity(perm))
-	}
+	})
 
 	group := &entity.Group{
 		Name:        "Admin",
