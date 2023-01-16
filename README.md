@@ -1,8 +1,6 @@
-# miniyus: Go-fiber Template
+# Keyword Search Backend
 
 ## go lang with fiber framework
-
-Go 언어의 Fiber 웹프레임워크를 활용하여 구조화한 저장소입니다.
 
 - gorm 사용
     - 현재 리포지토리에서는 postgreSQL만 사용중
@@ -53,26 +51,28 @@ DB_AUTO_MIGRATE=true
 |-- data: local data 저장소
 |-- docker: docker 컨테이너 관련
 |-- internal: api를 실질적으로 구현하는 곳 입니다.
-  |-- app: api 요청 시, 수행되는 코드들
-    |-- dto: DTO 정의 및 매핑 함수 정의
-    |-- factory: Handler 생성을 위한 팩토리 패턴 적용
-    |-- handler: 요청을 받고 응답을 해준다.
-    |-- service: handler 요청의 비즈니스 로직 처리
-    |-- repositroy: db, entity를 통해 데이터 CRUD 동작 수행
-    |-- routes: 그룹화된 API 적용을 위한 서브 라우터
+  |-- api: api 요청 시, 수행되는 코드들
+    |-- service_directory(example: users, groups...): 특정 end point 패키징
+      |-- dto: DTO 정의 및 매핑 함수 정의
+      |-- factory: Handler 생성을 위한 팩토리 패턴 적용
+      |-- handler: 요청을 받고 응답을 해준다.
+      |-- service: handler 요청의 비즈니스 로직 처리
+      |-- repositroy: db, entity를 통해 데이터 CRUD 동작 수행
+      |-- routes: 그룹화된 API 적용을 위한 서브 라우터
   |-- core: 공통 기능
-   |-- api_error: api error, error response 관련 기능
-   |-- auth: 인증 관련 기능
-   |-- container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
-   |-- context: fiber context Locals를 통해 가져올 항목들을 미리 정의
-   |-- database: database, gorm 연결
-   |-- logger: 로거
-   |-- register: 컨테이너에 필요한 미들웨어, 구조체, 함수등을 등록
+    |-- api_error: api error, error response 관련 기능
+    |-- auth: 인증 관련 기능
+    |-- container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
+    |-- context: fiber context Locals를 통해 가져올 항목들을 미리 정의
+    |-- database: database, gorm 연결
+    |-- logger: 로거
+    |-- register: 컨테이너에 필요한 미들웨어, 구조체, 함수등을 등록
+      |-- resolver: register 패키지에서 필요한 구조체 생성 함수 분리 목적
   |-- entity: db 스키마를 가진 구조체 집합
   |-- routes: 라우팅
   |-- utils: 유틸 함수들
 |-- pkg: 독립적인 기능을 수핼 할 수 있는 기능들의 집합입니다.
- 
+|-- tests: .env, 파일시스템 등의 활용을 위한 패키지의 경우 경로의 깊이가 영향을 끼치기 때문에 테스트용 폴더를 따로 구분 
 ```
 
 ### config
@@ -81,20 +81,31 @@ DB_AUTO_MIGRATE=true
 - go 언어의 구조체를 활용하여 관리
 
 ```go
-import (
-"github.com/miniyus/go-fiber/config"
-)
+package main
 
-config.GetConfigs()
+import "github.com/miniyus/keyword-search-backend/config"
+
+func main() {
+	config.GetConfigs()
+
+}
+
 ```
+
 ### internal
 
-### core.container
+### core
 
 ```go
-// fiber 앱과 Configs 구조체를 인수로 받는다.
-func NewContainer(app *fiber.App, config *config.Configs)
+package main
 
+import "github.com/miniyus/keyword-search-backend/internal/core"
+
+func main() {
+	// container.Container 객체 생성
+	container := core.New()
+	container.Run()
+}
 
 ```
 
@@ -108,3 +119,30 @@ func NewContainer(app *fiber.App, config *config.Configs)
 - routes(): 라우트 세팅
 - Register(): 위 private 함수들을 순서대로 실행 시켜주는 public 함수
 
+**Routes**
+
+```go
+package routes
+
+import (
+  "github.com/gofiber/fiber/v2"
+  "github.com/miniyus/keyword-search-backend/internal/core/container"
+  "github.com/miniyus/keyword-search-backend/internal/core/router"
+)
+
+const ApiPrefix = "/api"
+
+func Api(c container.Container) {
+      apiRouter := router.New(c.App(), ApiPrefix, "api")
+	  
+      apiRouter.Route(
+		"test", 
+		func(r fiber.Router) {
+			r.Get("/", func(ctx *fiber.Ctx) error {
+				return ctx.JSON("test")
+			})
+		}, 
+      ).Name("api.test")
+}
+
+```
