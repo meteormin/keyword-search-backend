@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"strings"
 )
 
 // Register
@@ -13,7 +14,7 @@ type Register = func(router fiber.Router)
 type Router interface {
 	App() *fiber.App
 	Route(prefix string, callback Register, middleware ...fiber.Handler) fiber.Router
-	GetRoutes() []*fiber.Router
+	GetRoutes() []fiber.Router
 }
 
 // Wrapper
@@ -22,7 +23,7 @@ type Wrapper struct {
 	app        *fiber.App
 	router     fiber.Router
 	name       string
-	routes     []*fiber.Router
+	routes     []fiber.Router
 	GroupCount int
 }
 
@@ -40,7 +41,7 @@ func New(app *fiber.App, prefix string, name ...string) Router {
 		app:        app,
 		router:     router,
 		name:       routeName,
-		routes:     make([]*fiber.Router, 0),
+		routes:     make([]fiber.Router, 0),
 		GroupCount: 1,
 	}
 }
@@ -57,13 +58,18 @@ func (r *Wrapper) Route(prefix string, callback Register, middleware ...fiber.Ha
 	callback(grp)
 
 	r.GroupCount += 1
-	r.routes = append(r.routes, &grp)
+	r.routes = append(r.routes, grp)
 
-	return grp.Name(r.name + "." + prefix)
+	name := strings.Replace(prefix, "/", ".", -1)
+	if !strings.HasPrefix(name, ".") {
+		name = "." + name
+	}
+
+	return grp.Name(name)
 }
 
 // GetRoutes
 // 등록한 route slice
-func (r *Wrapper) GetRoutes() []*fiber.Router {
+func (r *Wrapper) GetRoutes() []fiber.Router {
 	return r.routes
 }
