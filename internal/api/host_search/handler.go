@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/api"
 	"github.com/miniyus/keyword-search-backend/internal/api/search"
 	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
@@ -140,7 +141,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := utils.HandleValidate(c, dto)
+	errRes := api.HandleValidate(c, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -153,9 +154,11 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 
 	jobDispatcher.SelectWorker(string(config.DefaultWorker))
 
+	jobId := fmt.Sprintf("hosts.%s", strconv.Itoa(int(hostId)))
+
 	searchCollection := utils.NewCollection(dto.Search)
 	searchCollection.Chunk(100, func(v []*search.CreateSearch, i int) {
-		jobId := fmt.Sprintf("hosts.%s", strconv.Itoa(int(hostId)))
+
 		err = jobDispatcher.Dispatch(jobId, func(job worker.Job) error {
 			create, err := h.service.BatchCreate(uint(hostId), dto.Search)
 			if err != nil {
@@ -174,12 +177,12 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	//create, err := h.service.BatchCreate(uint(hostId), dto.Search)
-	//if err != nil {
-	//	return err
-	//}
+	foundJob, err := api.FindJobFromQueueWorker(c, jobId, string(config.DefaultWorker))
+	if err != nil {
+		return err
+	}
 
-	return c.Status(fiber.StatusCreated).JSON(utils.StatusResponse{
-		Status: true,
+	return c.Status(fiber.StatusCreated).JSON(utils.DataResponse[*worker.Job]{
+		Data: foundJob,
 	})
 }

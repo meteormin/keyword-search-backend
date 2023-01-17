@@ -3,6 +3,7 @@ package api_auth
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/miniyus/keyword-search-backend/internal/api"
 	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
@@ -32,7 +33,7 @@ func NewHandler(service Service) Handler {
 }
 
 func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ValidationErrorResponse) {
-	errRes := utils.HandleValidate(ctx, signUp)
+	errRes := api.HandleValidate(ctx, signUp)
 	if errRes != nil {
 		return false, errRes
 	}
@@ -70,7 +71,7 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 }
 
 func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ValidationErrorResponse) {
-	errRes := utils.HandleValidate(ctx, in)
+	errRes := api.HandleValidate(ctx, in)
 	if errRes != nil {
 		return false, errRes
 	}
@@ -154,17 +155,8 @@ func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	failedFields := utils.Validate(dto)
-	if failedFields != nil {
-		errRes := api_error.NewValidationErrorResponse(ctx, failedFields)
-		return errRes.Response()
-	}
-
-	if dto.Password != dto.PasswordConfirm {
-		errRes := api_error.NewValidationErrorResponse(ctx, map[string]string{
-			"PasswordConfirm": "패스워드와 패스워드확인 필드가 일치하지않습니다.",
-		})
-
+	errRes := api.HandleValidate(ctx, dto)
+	if errRes != nil {
 		return errRes.Response()
 	}
 

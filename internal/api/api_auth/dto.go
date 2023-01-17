@@ -29,5 +29,5 @@ type SignUpResponse struct {
 
 type ResetPasswordStruct struct {
 	Password        string `json:"password" validate:"required"`
-	PasswordConfirm string `json:"password_confirm" validate:"required"`
+	PasswordConfirm string `json:"password_confirm" validate:"required,eqfield=Password"`
 }

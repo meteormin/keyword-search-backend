@@ -2,6 +2,7 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/keyword-search-backend/internal/api"
 	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/auth"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
@@ -52,7 +53,7 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := utils.HandleValidate(c, dto)
+	errRes := api.HandleValidate(c, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -161,7 +162,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := utils.HandleValidate(c, dto)
+	errRes := api.HandleValidate(c, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -210,7 +211,7 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := utils.HandleValidate(c, dto)
+	errRes := api.HandleValidate(c, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
