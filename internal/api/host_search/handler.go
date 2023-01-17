@@ -147,7 +147,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 	}
 
 	var jobDispatcher worker.Dispatcher
-	err = resolver.ResolveContext(c, &jobDispatcher)
+	_, err = resolver.Resolve[*worker.Dispatcher](c, &jobDispatcher)
 	if err != nil {
 		return err
 	}

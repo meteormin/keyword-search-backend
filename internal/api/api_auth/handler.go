@@ -6,7 +6,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/api"
 	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/core/auth"
-	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/core/logger"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 )
@@ -121,8 +120,8 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 // @Router /api/auth/me [get]
 // @Security BearerAuth
 func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
-	user, ok := ctx.Locals(context.AuthUser).(*auth.User)
-	if !ok {
+	user, err := auth.GetAuthUser(ctx)
+	if err != nil {
 		h.GetLogger().Error(user)
 		return fiber.NewError(500, "Can't Load Context AuthUser")
 	}
@@ -144,8 +143,7 @@ func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
 func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 	user, err := auth.GetAuthUser(ctx)
 	if err != nil {
-		errRes := api_error.NewFromError(ctx, err)
-		return errRes.Response()
+		return err
 	}
 
 	dto := &ResetPasswordStruct{}
