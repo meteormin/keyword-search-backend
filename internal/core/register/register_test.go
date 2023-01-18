@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestResister(t *testing.T) {
+func TestRegister(t *testing.T) {
 	c := core.New()
 	register.Resister(c)
 

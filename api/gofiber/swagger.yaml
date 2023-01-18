@@ -1832,7 +1832,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_short_url.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response'
         "404":
           description: Not Found
       security:
@@ -1857,7 +1857,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_short_url.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response'
         "302":
           description: Found
           schema:

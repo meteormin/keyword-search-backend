@@ -21,16 +21,6 @@ func GetContext(ctx *fiber.Ctx, localsKey context.Key) interface{} {
 	return ctx.Locals(localsKey)
 }
 
-func Get(ctx *fiber.Ctx, key context.Key) (interface{}, error) {
-	wrapper, ok := ctx.Locals(context.Container).(container.Container)
-	if !ok {
-		statusCode := fiber.StatusInternalServerError
-		return key, fiber.NewError(statusCode, "Failed Get Container in Ctx")
-	}
-
-	return wrapper.Get(key), nil
-}
-
 func Resolve[T interface{}](ctx *fiber.Ctx, dest T) (T, error) {
 	wrapper, ok := ctx.Locals(context.Container).(container.Container)
 	if !ok {

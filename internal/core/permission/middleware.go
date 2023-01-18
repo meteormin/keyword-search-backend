@@ -43,7 +43,7 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 			if !ok {
 				permCollection = nil
 				containerContext := c.Locals(context.Container).(container.Container)
-				permCollection, ok = containerContext.Resolve(permCollection).(Collection)
+				permCollection, ok = containerContext.Resolve(&permCollection).(Collection)
 				if !ok {
 					return fiber.NewError(fiber.StatusInternalServerError, "can not found context permissions")
 				}

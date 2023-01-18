@@ -3,7 +3,6 @@ package core
 import (
 	"errors"
 	"github.com/miniyus/keyword-search-backend/internal/core/container"
-	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"github.com/miniyus/keyword-search-backend/internal/core/database"
 	"github.com/miniyus/keyword-search-backend/internal/core/permission"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
@@ -62,7 +61,10 @@ func CreateAdmin(c container.Container) {
 		EmailVerifiedAt: &now,
 	}
 
-	permissions := c.Get(context.Permissions).(permission.Collection)
+	var permissions permission.Collection
+
+	c.Resolve(&permissions)
+
 	entPerms := make([]entity.Permission, 0)
 
 	permissions.For(func(perm permission.Permission, i int) {

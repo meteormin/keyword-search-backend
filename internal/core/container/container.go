@@ -1,9 +1,9 @@
 package container
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/core/context"
 	"gorm.io/gorm"
 	"log"
 	"reflect"
@@ -17,10 +17,8 @@ type Container interface {
 	Config() *config.Configs
 	Database() *gorm.DB
 	IsProduction() bool
-	Instances() map[context.Key]interface{}
-	Bindings() map[reflect.Type]interface{}
-	Singleton(key context.Key, instance interface{})
-	Get(key context.Key) interface{}
+	Instances() map[reflect.Type]interface{}
+	Singleton(instance interface{})
 	Bind(keyType interface{}, resolver interface{})
 	Resolve(keyType interface{}) interface{}
 	Run()
@@ -33,7 +31,7 @@ type Wrapper struct {
 	app       *fiber.App
 	database  *gorm.DB
 	config    *config.Configs
-	instances map[context.Key]interface{}
+	instances map[reflect.Type]interface{}
 	bindings  map[reflect.Type]interface{}
 }
 
@@ -44,8 +42,7 @@ func New(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
 		app:       app,
 		database:  db,
 		config:    config,
-		instances: make(map[context.Key]interface{}),
-		bindings:  make(map[reflect.Type]interface{}),
+		instances: make(map[reflect.Type]interface{}),
 	}
 }
 
@@ -79,47 +76,56 @@ func (w *Wrapper) IsProduction() bool {
 
 // Singleton
 // 특정 객체를 singleton 패턴으로 컨테이너에 저장하는 메서드
-func (w *Wrapper) Singleton(key context.Key, instance interface{}) {
-	w.instances[key] = instance
+// 클로저를 받을 수도 있다.
+func (w *Wrapper) Singleton(instance interface{}) {
+	reflectInstanceType := reflect.TypeOf(instance)
+	if reflectInstanceType.Kind() == reflect.Func {
+		instance = w.call(instance)
+		reflectInstanceType = reflect.TypeOf(instance)
+	}
+
+	w.instances[reflectInstanceType] = instance
 }
 
 // Instances
 // 저장된 singleton 객체 슬라이스를 리턴한다.
-func (w *Wrapper) Instances() map[context.Key]interface{} {
+func (w *Wrapper) Instances() map[reflect.Type]interface{} {
 	return w.instances
 }
 
 // Bind
-// 구조체 혹은 인터페이스를 키 값으로 저장할 수 있음
-// resolver 파라미터는 콜백 함수 혹은 객체를 직접 바인딩하여, 특정 인터 페이스와 구현체를 매치할 수 있다.
+// 구조체 혹은 인터페이스의 타입을 키 값으로 저장한다.
+// keyType 파라미터는 주소 값을 전달 해야 한다.
+// resolver 파라미터는 콜백 함수(클로저)를 통해 특정 인터 페이스와 구현체를 매치할 수 있다.
 func (w *Wrapper) Bind(keyType interface{}, resolver interface{}) {
-	w.bindings[reflect.TypeOf(keyType)] = resolver
+	reflectResolver := reflect.TypeOf(resolver)
+	reflectKeyType := reflect.TypeOf(keyType)
+	if reflectResolver.Kind() == reflect.Func {
+		w.instances[reflectKeyType.Elem()] = resolver
+		return
+	}
+
+	panic("Can not Bind...")
 }
 
-// Bindings
-// 저장된 bind 객체 슬라이스를 리턴한다.
-func (w *Wrapper) Bindings() map[reflect.Type]interface{} {
-	return w.bindings
-}
-
-// Resolve
-// Bind 메서드에서 바인딩한 구조체 혹은 인터페이스를 가지고 객체를 생성하여 주거나 저장된 객체를 리턴 해준다.
-// Bind 메서드에서 resolver 파라미터가 함수일 경우, 해당 함수를 실행 시켜 새로운 객체를 생성하여 리턴 한다.
-// Bind 메서드에서 resolver 파라미터가 구조체의 포인터일 경우 reflect를 활용하여 객체를 생성하여 리턴한다.
+// Resolve get or create instance in container
 func (w *Wrapper) Resolve(keyType interface{}) interface{} {
 	receiverType := reflect.TypeOf(keyType)
 
-	bind := w.bindings[reflect.TypeOf(keyType)]
+	receiver, exists := w.instances[receiverType.Elem()]
+	if !exists {
+		panic(fmt.Sprintf("Can not find %v", receiverType.Elem()))
+	}
 
-	if reflect.TypeOf(bind).Kind() == reflect.Func {
-		bind = w.call(bind)
+	if reflect.TypeOf(receiver).Kind() == reflect.Func {
+		receiver = w.call(receiver)
 	}
 
 	if receiverType.Kind() == reflect.Ptr {
-		reflect.ValueOf(keyType).Elem().Set(reflect.ValueOf(bind))
+		reflect.ValueOf(keyType).Elem().Set(reflect.ValueOf(receiver))
 	}
 
-	return bind
+	return receiver
 }
 
 // call
@@ -136,12 +142,6 @@ func (w *Wrapper) call(callable interface{}) interface{} {
 	} else {
 		return callable
 	}
-}
-
-// Get
-// Singleton 으로 주입한 객체를 주입했을 때 사용한 key 값으로 가져온다.
-func (w *Wrapper) Get(key context.Key) interface{} {
-	return w.instances[key]
 }
 
 // Run fiber app
@@ -170,7 +170,6 @@ func (w *Wrapper) Stats() {
 	log.Printf("Locale: %s", w.Config().Locale)
 	log.Printf("Time Zone: %s", w.Config().TimeZone)
 	log.Printf("Injected Instances: %#v", w.Instances())
-	log.Printf("Bindings: %#v", w.Bindings())
 
 	log.Println("[Fiber App Info]")
 	log.Printf("Handlers Count: %d", w.App().HandlersCount())

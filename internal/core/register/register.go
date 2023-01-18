@@ -14,47 +14,45 @@ import (
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"go.uber.org/zap"
+	"log"
 )
 
 // boot is High Priority
 // container settings
 func boot(w container.Container) {
-	w.Singleton(context.App, w.App())
-	w.Singleton(context.Config, w.Config())
-	w.Singleton(context.DB, w.Database())
+	app := w.App()
+	w.Singleton(app)
+
+	config := w.Config()
+	w.Singleton(config)
+
+	db := w.Database()
+	w.Singleton(db)
 
 	redisClient := resolver.MakeRedisClient(w)
-	w.Singleton(context.Redis, redisClient)
+	w.Singleton(redisClient)
 
 	var tg jwt.Generator
 	jwtGenerator := resolver.MakeJwtGenerator(w)
-
 	w.Bind(&tg, jwtGenerator)
-	w.Resolve(&tg)
-	w.Singleton(context.JwtGenerator, tg)
 
 	var logs *zap.SugaredLogger
 	loggerStruct := resolver.MakeLogger(w)
-
 	w.Bind(&logs, loggerStruct)
-	w.Resolve(&logs)
-	w.Singleton(context.Logger, logs)
 
-	var permCollect permission.Collection
+	var perms permission.Collection
 	permissionCollection := resolver.MakePermissionCollection(w)
+	w.Bind(&perms, permissionCollection)
 
-	w.Bind(&permCollect, permissionCollection)
-	w.Resolve(&permCollect)
-	w.Singleton(context.Permissions, permCollect)
-
-	var jobDispatcher worker.Dispatcher
+	var dispatcher worker.Dispatcher
 	jobDispatcherStruct := resolver.MakeJobDispatcher(w)
-	w.Bind(&jobDispatcher, jobDispatcherStruct)
+	w.Bind(&dispatcher, jobDispatcherStruct)
 }
 
 // middlewares register middleware
 // fiber app middleware settings
 func middlewares(w container.Container) {
+	log.Print(w.Instances())
 	w.App().Use(flogger.New(w.Config().Logger))
 	w.App().Use(recover.New(recover.Config{
 		EnableStackTrace: !w.IsProduction(),
@@ -67,11 +65,15 @@ func middlewares(w container.Container) {
 	// Add Context Config
 	w.App().Use(resolver.AddContext(context.Config, w.Config()))
 	// Add Context Logger
-	w.App().Use(resolver.AddContext(context.Logger, w.Get(context.Logger)))
+	var logger *zap.SugaredLogger
+	//w.Resolve(&logger)
+	w.App().Use(resolver.AddContext(context.Logger, logger))
 	// Add Context Permissions
-	w.App().Use(resolver.AddContext(context.Permissions, w.Get(context.Permissions)))
+	var perms permission.Collection
+	w.Resolve(&perms)
+	w.App().Use(resolver.AddContext(context.Permissions, perms))
 	// Add Context Redis
-	w.App().Use(resolver.AddContext(context.Redis, w.Get(context.Redis)))
+	w.App().Use(resolver.AddContext(context.Redis, resolver.MakeRedisClient(w)))
 }
 
 // routes register Routes
