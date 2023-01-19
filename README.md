@@ -66,6 +66,7 @@ DB_AUTO_MIGRATE=true
     |-- context: fiber context Locals를 통해 가져올 항목들을 미리 정의
     |-- database: database, gorm 연결
     |-- logger: 로거
+    |-- permission: permission 관련 기능
     |-- register: 컨테이너에 필요한 미들웨어, 구조체, 함수등을 등록
       |-- resolver: register 패키지에서 필요한 구조체 생성 함수 분리 목적
   |-- entity: db 스키마를 가진 구조체 집합
