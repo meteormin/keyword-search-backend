@@ -15,18 +15,18 @@ func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 	}
 
 	var config *configure.Configs
-	config, ok := ctx.Locals(context.Config).(*configure.Configs)
+	config, err = context.GetContext[*configure.Configs](ctx, context.Config)
 
-	if !ok {
-		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Config")
+	if err != nil {
+		errRes := NewFromError(ctx, err)
 		return errRes.Response()
 	}
 
 	var logger *zap.SugaredLogger
-	logger, ok = ctx.Locals(context.Logger).(*zap.SugaredLogger)
+	logger, err = context.GetContext[*zap.SugaredLogger](ctx, context.Logger)
 
-	if !ok {
-		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Logger")
+	if err != nil {
+		errRes := NewFromError(ctx, err)
 		return errRes.Response()
 	}
 
@@ -47,18 +47,18 @@ func ErrorHandler(ctx *fiber.Ctx) error {
 	}
 
 	var config *configure.Configs
-	config, ok := ctx.Locals(context.Config).(*configure.Configs)
+	config, err = context.GetContext[*configure.Configs](ctx, context.Config)
 
-	if !ok {
-		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Config")
+	if err != nil {
+		errRes := NewFromError(ctx, err)
 		return errRes.Response()
 	}
 
 	var logger *zap.SugaredLogger
-	logger, ok = ctx.Locals(context.Logger).(*zap.SugaredLogger)
+	logger, err = context.GetContext[*zap.SugaredLogger](ctx, context.Logger)
 
-	if !ok {
-		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Logger")
+	if err != nil {
+		errRes := NewFromError(ctx, err)
 		return errRes.Response()
 	}
 

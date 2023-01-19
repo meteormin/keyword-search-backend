@@ -61,19 +61,19 @@ func middlewares(w container.Container) {
 	w.App().Use(cors.New(w.Config().Cors))
 
 	// Add Context Container
-	w.App().Use(resolver.AddContext(context.Container, w))
+	w.App().Use(context.AddContext(context.Container, w))
 	// Add Context Config
-	w.App().Use(resolver.AddContext(context.Config, w.Config()))
+	w.App().Use(context.AddContext(context.Config, w.Config()))
 	// Add Context Logger
 	var logger *zap.SugaredLogger
 	w.Resolve(&logger)
-	w.App().Use(resolver.AddContext(context.Logger, logger))
+	w.App().Use(context.AddContext(context.Logger, logger))
 	// Add Context Permissions
 	var perms permission.Collection
 	w.Resolve(&perms)
-	w.App().Use(resolver.AddContext(context.Permissions, perms))
+	w.App().Use(context.AddContext(context.Permissions, perms))
 	// Add Context Redis
-	w.App().Use(resolver.AddContext(context.Redis, resolver.MakeRedisClient(w)))
+	w.App().Use(context.AddContext(context.Redis, resolver.MakeRedisClient(w)))
 }
 
 // routes register Routes

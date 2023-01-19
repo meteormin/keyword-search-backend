@@ -51,14 +51,14 @@ func Middlewares(fn ...fiber.Handler) []fiber.Handler {
 // log 찍힐 때 user 정보 추가
 func AccessLogMiddleware(c *fiber.Ctx) error {
 	var logger *zap.SugaredLogger
-	logger, ok := c.Locals(context.Logger).(*zap.SugaredLogger)
+	logger, err := context.GetContext[*zap.SugaredLogger](c, context.Logger)
 
-	if !ok {
-		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.Logger")
+	if err != nil {
+		return err
 	}
 
 	start := time.Now()
-	err := c.Next()
+	err = c.Next()
 	elapsed := time.Since(start).Milliseconds()
 	cu, ok := c.Locals(context.AuthUser).(*User)
 	userID := ""
@@ -132,9 +132,9 @@ func GetUserFromJWT(c *fiber.Ctx) error {
 // JwtMiddleware
 // jwt 유효성 체크 미들웨어
 func JwtMiddleware(c *fiber.Ctx) error {
-	config, ok := c.Locals(context.Config).(*configure.Configs)
-	if !ok {
-		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.Config")
+	config, err := context.GetContext[*configure.Configs](c, context.Config)
+	if err != nil {
+		return err
 	}
 
 	middleware := newJwtMiddleware(config.Auth.Jwt)
@@ -164,16 +164,17 @@ func jwtError(c *fiber.Ctx, err error) error {
 // CheckExpired
 // jwt 만료 기간 체크 미들웨어
 func CheckExpired(c *fiber.Ctx) error {
-	wrapper, ok := c.Locals(context.Container).(container.Container)
-	if !ok {
-		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.Container")
+	wrapper, err := context.GetContext[container.Container](c, context.Container)
+
+	if err != nil {
+		return err
 	}
 
 	tokenRepository := NewRepository(wrapper.Database())
 
-	user, ok := c.Locals(context.AuthUser).(*User)
-	if !ok {
-		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.AuthUser")
+	user, err := context.GetContext[*User](c, context.AuthUser)
+	if err != nil {
+		return err
 	}
 
 	token, err := tokenRepository.FindByUserId(user.Id)
@@ -191,9 +192,9 @@ func CheckExpired(c *fiber.Ctx) error {
 }
 
 func GetAuthUser(c *fiber.Ctx) (*User, error) {
-	user, ok := c.Locals(context.AuthUser).(*User)
-	if !ok {
-		return nil, fiber.ErrUnauthorized
+	user, err := context.GetContext[*User](c, context.AuthUser)
+	if err != nil {
+		return nil, err
 	}
 
 	return user, nil

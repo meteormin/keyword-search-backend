@@ -16,16 +16,17 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		pass := false
 
-		currentUser := c.Locals(context.AuthUser).(*auth.User)
+		currentUser, err := context.GetContext[*auth.User](c, context.AuthUser)
+
 		if currentUser.Role == string(entity.Admin) {
 			return c.Next()
 		}
 
 		var permCollection Collection
 
-		db, ok := c.Locals(context.DB).(*gorm.DB)
-		if !ok {
-			return fiber.NewError(fiber.StatusInternalServerError, "can't find context.DB")
+		db, err := context.GetContext[*gorm.DB](c, context.DB)
+		if err != nil {
+			return err
 		}
 
 		repo := NewRepository(db)
@@ -39,14 +40,16 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 		}
 
 		if permCollection == nil {
-			permCollection, ok = c.Locals(context.Permissions).(Collection)
-			if !ok {
+			permCollection, err = context.GetContext[Collection](c, context.Permissions)
+
+			if err != nil {
 				permCollection = nil
-				containerContext := c.Locals(context.Container).(container.Container)
-				permCollection, ok = containerContext.Resolve(&permCollection).(Collection)
-				if !ok {
-					return fiber.NewError(fiber.StatusInternalServerError, "can not found context permissions")
+				containerContext, err := context.GetContext[container.Container](c, context.Container)
+				if err != nil {
+					return err
 				}
+
+				containerContext.Resolve(&permCollection)
 			}
 
 			entities := make([]entity.Permission, 0)
