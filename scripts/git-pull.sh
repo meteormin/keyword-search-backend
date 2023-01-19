@@ -20,5 +20,5 @@ fi
 
 if [ ! -f ".env.local" ]; then
   echo "generate .env.local file"
-  cp .env .env.local
+  cp .env.example .env.local
 fi
