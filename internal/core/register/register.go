@@ -66,7 +66,7 @@ func middlewares(w container.Container) {
 	w.App().Use(resolver.AddContext(context.Config, w.Config()))
 	// Add Context Logger
 	var logger *zap.SugaredLogger
-	//w.Resolve(&logger)
+	w.Resolve(&logger)
 	w.App().Use(resolver.AddContext(context.Logger, logger))
 	// Add Context Permissions
 	var perms permission.Collection

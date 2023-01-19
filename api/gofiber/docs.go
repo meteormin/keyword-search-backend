@@ -528,7 +528,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostListResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostListResponse"
                         }
                     },
                     "403": {
@@ -563,7 +563,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.CreateHost"
+                            "$ref": "#/definitions/internal_api_hosts.CreateHost"
                         }
                     }
                 ],
@@ -571,7 +571,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -621,7 +621,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostSubjectsResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostSubjectsResponse"
                         }
                     },
                     "400": {
@@ -676,7 +676,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -730,7 +730,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.UpdateHost"
+                            "$ref": "#/definitions/internal_api_hosts.UpdateHost"
                         }
                     }
                 ],
@@ -738,7 +738,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -845,7 +845,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.PatchHost"
+                            "$ref": "#/definitions/internal_api_hosts.PatchHost"
                         }
                     }
                 ],
@@ -853,7 +853,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse"
+                            "$ref": "#/definitions/internal_api_hosts.HostResponse"
                         }
                     },
                     "400": {
@@ -1429,7 +1429,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response"
+                            "$ref": "#/definitions/internal_api_short_url.Response"
                         }
                     },
                     "404": {
@@ -1469,7 +1469,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response"
+                            "$ref": "#/definitions/internal_api_short_url.Response"
                         }
                     },
                     "302": {

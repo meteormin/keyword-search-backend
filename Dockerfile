@@ -15,8 +15,8 @@ COPY . .
 RUN go mod download
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
-RUN swag init --parseDependency --parseInternal --parseDepth 1 -g ./cmd/gofiber/main.go --output ./api/gofiber
-RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} go build -o build/gofiber ./cmd/gofiber/main.go
+#RUN swag init --parseDependency --parseInternal --parseDepth 1 -g ./cmd/gofiber/main.go --output ./api/gofiber
+RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} make build
 
 FROM ubuntu:22.04
 
@@ -24,6 +24,7 @@ LABEL maintainer="miniyu97@gmail.com"
 
 RUN mkdir /home/gofiber
 
+ARG SELECT_ENV
 ARG GO_GROUP
 ARG GO_VERSION
 
@@ -46,10 +47,10 @@ WORKDIR /home/gofiber
 #RUN tar xvzf go${GO_VERSION}.${GOOS}-${GOARCH}.tar.gz -C /usr/local  &&  rm "go${GO_VERSION}.linux-${GOARCH}.tar.gz"
 
 COPY --from=build /fiber/build ./build
-COPY --from=build /fiber/.env .
 
+COPY .env${SELECT_ENV} ./.env
 COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY start-container.sh /usr/local/bin/start-container
+COPY scripts/start-container.sh /usr/local/bin/start-container
 
 RUN chown -R gofiber:$GO_GROUP /home/gofiber
 RUN chgrp -R $GO_GROUP /home/gofiber

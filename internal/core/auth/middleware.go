@@ -52,6 +52,7 @@ func Middlewares(fn ...fiber.Handler) []fiber.Handler {
 func AccessLogMiddleware(c *fiber.Ctx) error {
 	var logger *zap.SugaredLogger
 	logger, ok := c.Locals(context.Logger).(*zap.SugaredLogger)
+
 	if !ok {
 		return fiber.NewError(fiber.StatusInternalServerError, "Can not found context.Logger")
 	}

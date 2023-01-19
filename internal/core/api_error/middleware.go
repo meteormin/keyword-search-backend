@@ -5,7 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	configure "github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/core/context"
-	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
 	"go.uber.org/zap"
 	"runtime/debug"
 )
@@ -16,16 +15,17 @@ func OverrideDefaultErrorHandler(ctx *fiber.Ctx, err error) error {
 	}
 
 	var config *configure.Configs
-	config, err = resolver.Resolve[*configure.Configs](ctx, config)
-	if err != nil {
+	config, ok := ctx.Locals(context.Config).(*configure.Configs)
+
+	if !ok {
 		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Config")
 		return errRes.Response()
 	}
 
 	var logger *zap.SugaredLogger
-	logger, err = resolver.Resolve[*zap.SugaredLogger](ctx, logger)
+	logger, ok = ctx.Locals(context.Logger).(*zap.SugaredLogger)
 
-	if err != nil {
+	if !ok {
 		errRes := NewErrorResponse(ctx, fiber.StatusInternalServerError, "Can not found context.Logger")
 		return errRes.Response()
 	}

@@ -10,3 +10,7 @@ build:
 .PHONY: migrate
 migrate:
 	go run ./cmd/migrate/main.go
+
+.PHONY: deploy
+deploy:
+	/usr/bin/env bash ./scripts/deploy.sh

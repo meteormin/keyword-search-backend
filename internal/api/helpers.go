@@ -29,7 +29,7 @@ func FindJobFromQueueWorker(ctx *fiber.Ctx, jobId string, worker ...string) (*jo
 	}
 
 	var jobDispatcher jobWorker.Dispatcher
-	_, err := resolver.Resolve[*jobWorker.Dispatcher](ctx, &jobDispatcher)
+	_, err := resolver.Resolve[jobWorker.Dispatcher](ctx, &jobDispatcher)
 	if err != nil {
 		return nil, err
 	}
