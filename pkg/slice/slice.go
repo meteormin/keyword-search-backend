@@ -44,16 +44,14 @@ func Chunk[T interface{}](s []T, chunkSize int, fn ...func(v []T, i int)) [][]T 
 	for _, v := range s {
 		chunkSlice = append(chunkSlice, v)
 
-		if chunkSize == len(chunkSlice) {
-			if len(fn) != 0 {
-				fn[0](chunkSlice, chunkedIndex)
-			}
-
-			chunkedSlice = append(chunkedSlice, chunkSlice)
-			chunkedIndex++
-
-			chunkSlice = make([]T, 0)
+		if len(fn) != 0 {
+			fn[0](chunkSlice, chunkedIndex)
 		}
+
+		chunkedSlice = append(chunkedSlice, chunkSlice)
+		chunkedIndex++
+
+		chunkSlice = make([]T, 0)
 	}
 
 	return chunkedSlice

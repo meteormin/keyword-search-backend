@@ -59,6 +59,11 @@ func main() {
 
 	for _, file := range files {
 		if !file.IsDir() {
+			if path.Ext(file.Name()) != ".csv" {
+				continue
+			}
+			log.Println(file.Name())
+
 			f, err := os.Open(path.Join(batchPath, file.Name()))
 			if err != nil {
 				panic(err)
@@ -66,33 +71,38 @@ func main() {
 
 			csvReader := csv.NewReader(bufio.NewReader(f))
 			rows, err := csvReader.ReadAll()
-
-			var searchSlice []*search.CreateSearch
+			log.Println(rows)
 			hId, err := strconv.Atoi(rows[1][hostId])
 			if err != nil {
 				panic(err)
 			}
 
-			utils.NewCollection(rows).For(func(v []string, i int) {
-				if i == 0 {
-					return
-				}
-				createSearch := csvToCreateSearch(v)
+			utils.NewCollection(rows).Chunk(100, func(v [][]string, i int) {
+				var searchSlice []*search.CreateSearch
 
-				if createSearch.HostId == uint(hId) {
-					if createSearch.Description == "" {
-						createSearch.Description = strconv.Itoa(i)
+				utils.NewCollection(v).For(func(v []string, j int) {
+					if i*100+j == 0 {
+						return
 					}
 
-					searchSlice = append(searchSlice, createSearch)
+					createSearch := csvToCreateSearch(v)
+
+					if createSearch.HostId == uint(hId) {
+						if createSearch.Description == "" {
+							createSearch.Description = strconv.Itoa(i*100 + j)
+						}
+
+						searchSlice = append(searchSlice, createSearch)
+					}
+				})
+
+				create, err := service.BatchCreate(uint(hId), searchSlice)
+
+				log.Println(create)
+				if err != nil {
+					log.Println(err)
 				}
 			})
-
-			create, err := service.BatchCreate(uint(hId), searchSlice)
-			if err != nil {
-				println(err)
-			}
-			println(create)
 		}
 	}
 

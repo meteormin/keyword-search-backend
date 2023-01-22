@@ -151,13 +151,13 @@ func (s *ServiceStruct) Create(search *CreateSearch) (*Response, error) {
 
 func (s *ServiceStruct) BatchCreate(hostId uint, search []*CreateSearch) ([]Response, error) {
 	entities := make([]entity.Search, 0)
-	for _, s := range search {
+	for _, crateSearch := range search {
 		ent := entity.Search{
 			HostId:      hostId,
-			QueryKey:    s.QueryKey,
-			Query:       s.Query,
-			Description: s.Description,
-			Publish:     s.Publish,
+			QueryKey:    crateSearch.QueryKey,
+			Query:       crateSearch.Query,
+			Description: crateSearch.Description,
+			Publish:     crateSearch.Publish,
 		}
 		entities = append(entities, ent)
 	}

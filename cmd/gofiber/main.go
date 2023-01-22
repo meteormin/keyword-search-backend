@@ -36,13 +36,14 @@ func main() {
 		fiberApp.Use(recover.New(recover.Config{
 			EnableStackTrace: !application.IsProduction(),
 		}))
-		fiberApp.Use(api_error.ErrorHandler)
+		fiberApp.Use(api_error.ErrorHandler(configure))
 		fiberApp.Use(cors.New(configure.Cors))
 
 		// Add Context Config
 		fiberApp.Use(config.AddContext(config.ConfigsKey, configure))
 		// Add Context Logger
-		fiberApp.Use(config.AddContext(config.LoggerKey, resolver.MakeLogger(configure.CustomLogger)))
+		logger := resolver.MakeLogger(configure.CustomLogger)
+		fiberApp.Use(config.AddContext(config.LoggerKey, logger()))
 	})
 
 	a.Route(routes.ApiPrefix, routes.Api, "api")
