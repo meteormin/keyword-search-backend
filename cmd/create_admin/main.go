@@ -1,7 +1,10 @@
 package main
 
-import "github.com/miniyus/keyword-search-backend/internal/core"
+import (
+	"github.com/miniyus/keyword-search-backend/internal/app"
+	"github.com/miniyus/keyword-search-backend/internal/create_admin"
+)
 
 func main() {
-	core.CreateAdmin(core.New())
+	create_admin.CreateAdmin(app.New())
 }
