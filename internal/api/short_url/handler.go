@@ -2,8 +2,8 @@ package short_url
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/core/auth"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/auth"
+	"github.com/miniyus/keyword-search-backend/internal/logger"
 	"go.uber.org/zap"
 )
 

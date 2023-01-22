@@ -3,9 +3,9 @@ package hosts
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/api"
-	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
-	"github.com/miniyus/keyword-search-backend/internal/core/auth"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	_ "github.com/miniyus/keyword-search-backend/internal/api_error"
+	"github.com/miniyus/keyword-search-backend/internal/auth"
+	"github.com/miniyus/keyword-search-backend/internal/logger"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"strconv"
 )

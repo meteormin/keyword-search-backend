@@ -2,12 +2,12 @@ package short_url
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/core/router"
+	"github.com/miniyus/keyword-search-backend/internal/app"
 )
 
 const Prefix = "/short-url"
 
-func Register(handler Handler) router.Register {
+func Register(handler Handler) app.SubRouter {
 
 	return func(router fiber.Router) {
 		router.Get("/:code/redirect", handler.Redirect).Name("api.shor-url.code.redirect")

@@ -6,9 +6,8 @@ import (
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/api"
 	"github.com/miniyus/keyword-search-backend/internal/api/search"
-	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
-	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
+	_ "github.com/miniyus/keyword-search-backend/internal/api_error"
+	"github.com/miniyus/keyword-search-backend/internal/logger"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"strconv"
@@ -146,20 +145,20 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	var jobDispatcher worker.Dispatcher
-	_, err = resolver.Resolve[worker.Dispatcher](c, &jobDispatcher)
+	jDispatcher, err := config.GetContext[worker.Dispatcher](c, jobDispatcher)
+
 	if err != nil {
 		return err
 	}
 
-	jobDispatcher.SelectWorker(string(config.DefaultWorker))
+	jDispatcher.SelectWorker(string(config.DefaultWorker))
 
 	jobId := fmt.Sprintf("hosts.%s", strconv.Itoa(int(hostId)))
 
 	searchCollection := utils.NewCollection(dto.Search)
 	searchCollection.Chunk(100, func(v []*search.CreateSearch, i int) {
 
-		err = jobDispatcher.Dispatch(jobId, func(job worker.Job) error {
+		err = jDispatcher.Dispatch(jobId, func(job worker.Job) error {
 			create, err := h.service.BatchCreate(uint(hostId), dto.Search)
 			if err != nil {
 				return err

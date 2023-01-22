@@ -1,9 +1,9 @@
 package users
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/core/database"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/database"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/logger"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )

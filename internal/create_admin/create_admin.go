@@ -1,11 +1,12 @@
-package core
+package create_admin
 
 import (
 	"errors"
-	"github.com/miniyus/keyword-search-backend/internal/core/container"
-	"github.com/miniyus/keyword-search-backend/internal/core/database"
-	"github.com/miniyus/keyword-search-backend/internal/core/permission"
+	"github.com/miniyus/keyword-search-backend/internal/app"
+	"github.com/miniyus/keyword-search-backend/internal/database"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/permission"
+	"github.com/miniyus/keyword-search-backend/internal/resolver"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"gorm.io/gorm"
 	"log"
@@ -28,12 +29,14 @@ func existsAdmin(db *gorm.DB) bool {
 	return true
 }
 
-func CreateAdmin(c container.Container) {
-	db := c.Database()
+func CreateAdmin(app app.Application) {
+	db := app.DB()
 	if existsAdmin(db) {
 		return
 	}
-	configs := c.Config()
+	configs := app.Config()
+	permCollectionFn := resolver.MakePermissionCollection(configs.Permission)
+
 	caCfg := configs.CreateAdmin
 
 	username := caCfg.Username
@@ -61,9 +64,7 @@ func CreateAdmin(c container.Container) {
 		EmailVerifiedAt: &now,
 	}
 
-	var permissions permission.Collection
-
-	c.Resolve(&permissions)
+	permissions := permCollectionFn()
 
 	entPerms := make([]entity.Permission, 0)
 

@@ -1,9 +1,9 @@
 package hosts
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/core/database"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/database"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/logger"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -108,13 +108,15 @@ func (r *RepositoryStruct) Update(pk uint, host entity.Host) (*entity.Host, erro
 		return nil, gorm.ErrRecordNotFound
 	}
 
-	if host.ID == exists.ID { // patch
+	if host.ID == exists.ID {
+		// patch
 		result := r.db.Save(&host)
 		_, err = database.HandleResult(result)
 		if err != nil {
 			return nil, err
 		}
-	} else { // put
+	} else {
+		// put
 		host.ID = exists.ID
 		result := r.db.Save(&host)
 		_, err = database.HandleResult(result)

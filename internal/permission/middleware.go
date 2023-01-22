@@ -2,31 +2,40 @@ package permission
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/core/auth"
-	"github.com/miniyus/keyword-search-backend/internal/core/container"
-	"github.com/miniyus/keyword-search-backend/internal/core/context"
+	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/auth"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"gorm.io/gorm"
 	"strings"
 )
 
+type HasPermissionParameter struct {
+	DB           *gorm.DB
+	DefaultPerms Collection
+}
+
 // HasPermission check has permissions middleware
-func HasPermission(permissions ...Permission) fiber.Handler {
+func HasPermission(parameter HasPermissionParameter, permissions ...Permission) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		pass := false
 
-		currentUser, err := context.GetContext[*auth.User](c, context.AuthUser)
+		currentUser, err := config.GetContext[*auth.User](c, config.AuthUserKey)
 
 		if currentUser.Role == string(entity.Admin) {
 			return c.Next()
 		}
 
 		var permCollection Collection
+		var db *gorm.DB
 
-		db, err := context.GetContext[*gorm.DB](c, context.DB)
-		if err != nil {
-			return err
+		if parameter.DB == nil {
+			db, err = config.GetContext[*gorm.DB](c, config.DBKey)
+			if err != nil {
+				return err
+			}
+		} else {
+			db = parameter.DB
 		}
 
 		repo := NewRepository(db)
@@ -40,16 +49,14 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 		}
 
 		if permCollection == nil {
-			permCollection, err = context.GetContext[Collection](c, context.Permissions)
+			if parameter.DefaultPerms == nil {
+				permCollection, err = config.GetContext[Collection](c, config.PermissionsKey)
 
-			if err != nil {
-				permCollection = nil
-				containerContext, err := context.GetContext[container.Container](c, context.Container)
 				if err != nil {
 					return err
 				}
-
-				containerContext.Resolve(&permCollection)
+			} else {
+				permCollection = parameter.DefaultPerms
 			}
 
 			entities := make([]entity.Permission, 0)
@@ -86,6 +93,10 @@ func HasPermission(permissions ...Permission) fiber.Handler {
 }
 
 func checkPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
+	if len(hasPerm) == 0 {
+		return true
+	}
+
 	pass := false
 	utils.NewCollection(hasPerm).For(func(perm Permission, i int) {
 		utils.NewCollection(perm.Actions).For(func(action Action, j int) {

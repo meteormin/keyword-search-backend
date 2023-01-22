@@ -2,17 +2,17 @@ package api_auth
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/core/auth"
+	"github.com/miniyus/keyword-search-backend/internal/auth"
 )
 
 const Prefix = "/auth"
 
-func Register(handler Handler) func(router fiber.Router) {
+func Register(handler Handler, parameter auth.MiddlewaresParameter) func(router fiber.Router) {
 	return func(router fiber.Router) {
 		router.Post("/register", handler.SignUp).Name("api.auth.register")
 		router.Post("/token", handler.SignIn).Name("api.auth.token")
 
-		authMiddlewares := auth.Middlewares()
+		authMiddlewares := auth.Middlewares(parameter)
 
 		meHandlers := append(authMiddlewares, handler.Me)
 		router.Get("/me", meHandlers...).Name("api.auth.me")

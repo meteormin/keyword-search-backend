@@ -6,7 +6,7 @@ import (
 	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/api/search"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/logger"
 	"go.uber.org/zap"
 	"path"
 	"strconv"
@@ -91,14 +91,14 @@ func (s *ServiceStruct) FindRealUrl(code string, userId uint) (string, error) {
 	host := searchEnt.Host.Host
 	hostPath := searchEnt.Host.Path
 
-	sep := "://"
+	sep := ":/"
 	splitString := strings.Split(host, sep)
 	hostPath = path.Join(splitString[1], hostPath)
 
 	queryKey := searchEnt.QueryKey
 	queryString := searchEnt.Query
 
-	realUrl := fmt.Sprintf("%s://%s?%s=%s", splitString[0], hostPath, queryKey, queryString)
+	realUrl := fmt.Sprintf("%s:/%s?%s=%s", splitString[0], hostPath, queryKey, queryString)
 
 	err = s.hSet(r, rKey, rField, realUrl)
 	if err != nil {

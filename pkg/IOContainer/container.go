@@ -1,4 +1,4 @@
-package container
+package IOContainer
 
 import (
 	"fmt"
@@ -35,9 +35,9 @@ type Wrapper struct {
 	bindings  map[reflect.Type]interface{}
 }
 
-// New
+// NewContainer
 // IoC 컨테이너 생성 함수
-func New(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
+func NewContainer(app *fiber.App, db *gorm.DB, config *config.Configs) Container {
 	return &Wrapper{
 		app:       app,
 		database:  db,

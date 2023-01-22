@@ -4,8 +4,9 @@ import (
 	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/core"
-	"github.com/miniyus/keyword-search-backend/internal/core/permission"
+	"github.com/miniyus/keyword-search-backend/internal/database"
+	"github.com/miniyus/keyword-search-backend/internal/permission"
+	"github.com/miniyus/keyword-search-backend/pkg/IOContainer"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"go.uber.org/zap"
@@ -15,7 +16,8 @@ import (
 )
 
 func TestRegister(t *testing.T) {
-	c := core.New()
+	cfgs := config.GetConfigs()
+	c := IOContainer.NewContainer(fiber.New(), database.DB(cfgs.Database), cfgs)
 
 	log.Print(c.Instances())
 

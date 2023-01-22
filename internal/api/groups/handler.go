@@ -3,7 +3,7 @@ package groups
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/api"
-	_ "github.com/miniyus/keyword-search-backend/internal/core/api_error"
+	_ "github.com/miniyus/keyword-search-backend/internal/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"strconv"
 )

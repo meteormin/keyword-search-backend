@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/core/api_error"
-	"github.com/miniyus/keyword-search-backend/internal/core/register/resolver"
+	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/api_error"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	jobWorker "github.com/miniyus/keyword-search-backend/pkg/worker"
 )
@@ -28,8 +28,8 @@ func FindJobFromQueueWorker(ctx *fiber.Ctx, jobId string, worker ...string) (*jo
 		workerName = worker[0]
 	}
 
-	var jobDispatcher jobWorker.Dispatcher
-	_, err := resolver.Resolve[jobWorker.Dispatcher](ctx, &jobDispatcher)
+	jobDispatcher, err := config.GetContext[jobWorker.Dispatcher](ctx, config.JobDispatcher)
+
 	if err != nil {
 		return nil, err
 	}

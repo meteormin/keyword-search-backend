@@ -2,9 +2,9 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/core/database"
-	"github.com/miniyus/keyword-search-backend/internal/core/logger"
+	"github.com/miniyus/keyword-search-backend/internal/database"
 	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/internal/logger"
 	"github.com/miniyus/keyword-search-backend/internal/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"

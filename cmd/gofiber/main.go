@@ -1,7 +1,15 @@
 package main
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/core"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	flogger "github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/api_error"
+	"github.com/miniyus/keyword-search-backend/internal/app"
+	"github.com/miniyus/keyword-search-backend/internal/resolver"
+	"github.com/miniyus/keyword-search-backend/internal/routes"
 )
 
 // @title keyword-search-backend Swagger API Documentation
@@ -19,9 +27,27 @@ import (
 // @name						Authorization
 // @description				   Bearer token type
 func main() {
-	container := core.New()
+	a := app.New()
 
-	container.Stats()
+	a.Middleware(func(fiberApp *fiber.App, application app.Application) {
+		configure := application.Config()
 
-	container.Run()
+		fiberApp.Use(flogger.New(configure.Logger))
+		fiberApp.Use(recover.New(recover.Config{
+			EnableStackTrace: !application.IsProduction(),
+		}))
+		fiberApp.Use(api_error.ErrorHandler)
+		fiberApp.Use(cors.New(configure.Cors))
+
+		// Add Context Config
+		fiberApp.Use(config.AddContext(config.ConfigsKey, configure))
+		// Add Context Logger
+		fiberApp.Use(config.AddContext(config.LoggerKey, resolver.MakeLogger(configure.CustomLogger)))
+	})
+
+	a.Route(routes.ApiPrefix, routes.Api, "api")
+	a.Route("/", routes.External, "external")
+
+	a.Stats()
+	a.Run()
 }
