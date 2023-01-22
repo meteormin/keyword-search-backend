@@ -56,10 +56,32 @@ definitions:
       token:
         type: string
     type: object
+  github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse:
+    properties:
+      code:
+        type: integer
+      failed_fields:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   github_com_miniyus_keyword-search-backend_internal_api_groups.CreateAction:
     properties:
       method:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method'
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_permission.Method'
       resource:
         type: string
     required:
@@ -106,7 +128,7 @@ definitions:
   github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseAction:
     properties:
       method:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method'
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_permission.Method'
       resource:
         type: string
     type: object
@@ -368,29 +390,7 @@ definitions:
       url:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse:
-    properties:
-      code:
-        type: integer
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse:
-    properties:
-      code:
-        type: integer
-      failed_fields:
-        additionalProperties:
-          type: string
-        type: object
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_core_auth.User:
+  github_com_miniyus_keyword-search-backend_internal_auth.User:
     properties:
       created_at:
         type: string
@@ -407,20 +407,6 @@ definitions:
       username:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_core_permission.Method:
-    enum:
-    - GET
-    - POST
-    - PUT
-    - PATCH
-    - DELETE
-    type: string
-    x-enum-varnames:
-    - GET
-    - POST
-    - PUT
-    - PATCH
-    - DELETE
   github_com_miniyus_keyword-search-backend_internal_entity.Action:
     properties:
       createdAt:
@@ -588,6 +574,20 @@ definitions:
       username:
         type: string
     type: object
+  github_com_miniyus_keyword-search-backend_internal_permission.Method:
+    enum:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    type: string
+    x-enum-varnames:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
   github_com_miniyus_keyword-search-backend_internal_utils.StatusResponse:
     properties:
       status:
@@ -660,7 +660,7 @@ definitions:
   internal_api_groups.CreateAction:
     properties:
       method:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method'
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_permission.Method'
       resource:
         type: string
     required:
@@ -707,7 +707,7 @@ definitions:
   internal_api_groups.ResponseAction:
     properties:
       method:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_permission.Method'
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_permission.Method'
       resource:
         type: string
     type: object
@@ -948,7 +948,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_auth.User'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_auth.User'
       security:
       - BearerAuth: []
       summary: get my info
@@ -965,18 +965,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_api_auth.ResetPasswordStruct'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.ResetPasswordStruct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_auth.User'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_auth.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: reset password
@@ -993,18 +993,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_api_auth.SignUp'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUp'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_api_api_auth.SignUpResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUpResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       summary: Sign up
       tags:
       - Auth
@@ -1023,7 +1023,7 @@ paths:
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: revoke token
@@ -1040,18 +1040,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_api_auth.SignIn'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignIn'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_api_auth.TokenInfo'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.TokenInfo'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       summary: login
       tags:
       - Auth
@@ -1077,11 +1077,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ListResponse'
+            $ref: '#/definitions/internal_api_groups.ListResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get all groups
@@ -1096,22 +1096,22 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.CreateGroup'
+          $ref: '#/definitions/internal_api_groups.CreateGroup'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseGroup'
+            $ref: '#/definitions/internal_api_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: create group
@@ -1131,22 +1131,22 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.UpdateGroup'
+          $ref: '#/definitions/internal_api_groups.UpdateGroup'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseGroup'
+            $ref: '#/definitions/internal_api_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: update group
@@ -1173,7 +1173,7 @@ paths:
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: delete group
@@ -1195,11 +1195,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseGroup'
+            $ref: '#/definitions/internal_api_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get group by pk
@@ -1222,11 +1222,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseGroup'
+            $ref: '#/definitions/internal_api_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get group by name
@@ -1254,11 +1254,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostListResponse'
+            $ref: '#/definitions/internal_api_hosts.HostListResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get all hosts
@@ -1274,18 +1274,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.CreateHost'
+          $ref: '#/definitions/internal_api_hosts.CreateHost'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+            $ref: '#/definitions/internal_api_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
       security:
       - BearerAuth: []
       summary: create host
@@ -1312,15 +1312,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Delete host
@@ -1342,19 +1342,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+            $ref: '#/definitions/internal_api_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: patch host
@@ -1375,26 +1375,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.PatchHost'
+          $ref: '#/definitions/internal_api_hosts.PatchHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+            $ref: '#/definitions/internal_api_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: patch host
@@ -1415,26 +1415,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.UpdateHost'
+          $ref: '#/definitions/internal_api_hosts.UpdateHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+            $ref: '#/definitions/internal_api_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: update host
@@ -1471,11 +1471,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get by host id
@@ -1507,11 +1507,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: batch create search by host id
@@ -1548,11 +1548,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get by host id
@@ -1580,19 +1580,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostSubjectsResponse'
+            $ref: '#/definitions/internal_api_hosts.HostSubjectsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get subjects by group id
@@ -1620,7 +1620,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
@@ -1647,15 +1647,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1681,15 +1681,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1721,15 +1721,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1761,15 +1761,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1801,15 +1801,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_core_api_error.ErrorResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
