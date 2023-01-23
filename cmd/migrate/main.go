@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/core/database"
-	"github.com/miniyus/keyword-search-backend/internal/core/database/migrations"
+	"github.com/miniyus/keyword-search-backend/database"
+	"github.com/miniyus/keyword-search-backend/database/migrations"
 )
 
 func main() {

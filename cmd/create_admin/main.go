@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/app"
-	"github.com/miniyus/keyword-search-backend/internal/create_admin"
+	"github.com/miniyus/keyword-search-backend/app"
+	"github.com/miniyus/keyword-search-backend/create_admin"
 )
 
 func main() {
