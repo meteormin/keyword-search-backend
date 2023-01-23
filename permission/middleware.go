@@ -2,10 +2,10 @@ package permission
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/keyword-search-backend/auth"
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/auth"
-	"github.com/miniyus/keyword-search-backend/internal/entity"
-	"github.com/miniyus/keyword-search-backend/internal/utils"
+	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"gorm.io/gorm"
 	"strings"
 )

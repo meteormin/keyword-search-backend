@@ -6,7 +6,7 @@ import (
 	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/internal/api/search"
-	"github.com/miniyus/keyword-search-backend/internal/logger"
+	"github.com/miniyus/keyword-search-backend/logger"
 	"go.uber.org/zap"
 	"path"
 	"strconv"

@@ -1,8 +1,8 @@
 package permission_test
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/permission"
-	"github.com/miniyus/keyword-search-backend/internal/utils"
+	"github.com/miniyus/keyword-search-backend/permission"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"strings"
 	"testing"
 )

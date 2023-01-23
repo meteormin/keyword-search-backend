@@ -2,8 +2,8 @@ package permission_test
 
 import (
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/database"
-	"github.com/miniyus/keyword-search-backend/internal/permission"
+	"github.com/miniyus/keyword-search-backend/database"
+	"github.com/miniyus/keyword-search-backend/permission"
 	gormLogger "gorm.io/gorm/logger"
 	"testing"
 	"time"

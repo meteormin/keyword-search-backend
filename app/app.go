@@ -2,9 +2,9 @@ package app
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/keyword-search-backend/api_error"
 	configure "github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/api_error"
-	"github.com/miniyus/keyword-search-backend/internal/database"
+	"github.com/miniyus/keyword-search-backend/database"
 	"gorm.io/gorm"
 	"log"
 	"strconv"

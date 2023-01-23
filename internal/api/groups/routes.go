@@ -2,7 +2,7 @@ package groups
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal/app"
+	"github.com/miniyus/keyword-search-backend/app"
 )
 
 const Prefix = "/groups"

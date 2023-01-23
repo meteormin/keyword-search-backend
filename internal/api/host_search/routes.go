@@ -2,9 +2,9 @@ package host_search
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/keyword-search-backend/app"
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/app"
-	"github.com/miniyus/keyword-search-backend/internal/permission"
+	"github.com/miniyus/keyword-search-backend/permission"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 )
 

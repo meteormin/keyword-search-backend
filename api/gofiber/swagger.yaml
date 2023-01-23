@@ -1,5 +1,211 @@
 basePath: /
 definitions:
+  api_error.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  api_error.ValidationErrorResponse:
+    properties:
+      code:
+        type: integer
+      failed_fields:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  auth.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      expires_in:
+        type: integer
+      group_id:
+        type: integer
+      id:
+        type: integer
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  entity.Action:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      method:
+        type: string
+      permission_id:
+        type: integer
+      resource:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entity.BookMark:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      id:
+        type: integer
+      publish:
+        type: boolean
+      subject:
+        type: string
+      updatedAt:
+        type: string
+      url:
+        type: string
+      user:
+        $ref: '#/definitions/entity.User'
+      user_id:
+        type: integer
+    type: object
+  entity.Group:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/entity.Permission'
+        type: array
+      updatedAt:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/entity.User'
+        type: array
+    type: object
+  entity.Host:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      host:
+        type: string
+      id:
+        type: integer
+      path:
+        type: string
+      publish:
+        type: boolean
+      search:
+        items:
+          $ref: '#/definitions/entity.Search'
+        type: array
+      subject:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/entity.User'
+      user_id:
+        type: integer
+    type: object
+  entity.Permission:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/entity.Action'
+        type: array
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      group:
+        $ref: '#/definitions/entity.Group'
+      group_id:
+        type: integer
+      id:
+        type: integer
+      permission:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entity.Search:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      host:
+        $ref: '#/definitions/entity.Host'
+      host_id:
+        type: integer
+      id:
+        type: integer
+      publish:
+        type: boolean
+      query:
+        type: string
+      query_key:
+        type: string
+      short_url:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entity.User:
+    properties:
+      bookmarks:
+        items:
+          $ref: '#/definitions/entity.BookMark'
+        type: array
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      email_verified_at:
+        type: string
+      group:
+        $ref: '#/definitions/entity.Group'
+      group_id:
+        type: integer
+      hosts:
+        items:
+          $ref: '#/definitions/entity.Host'
+        type: array
+      id:
+        type: integer
+      role:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
   github_com_miniyus_keyword-search-backend_internal_api_api_auth.ResetPasswordStruct:
     properties:
       password:
@@ -56,32 +262,10 @@ definitions:
       token:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse:
-    properties:
-      code:
-        type: integer
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse:
-    properties:
-      code:
-        type: integer
-      failed_fields:
-        additionalProperties:
-          type: string
-        type: object
-      message:
-        type: string
-      status:
-        type: string
-    type: object
   github_com_miniyus_keyword-search-backend_internal_api_groups.CreateAction:
     properties:
       method:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_permission.Method'
+        $ref: '#/definitions/permission.Method'
       resource:
         type: string
     required:
@@ -128,7 +312,7 @@ definitions:
   github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseAction:
     properties:
       method:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_permission.Method'
+        $ref: '#/definitions/permission.Method'
       resource:
         type: string
     type: object
@@ -344,7 +528,7 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Search'
+          $ref: '#/definitions/entity.Search'
         type: array
       page:
         type: integer
@@ -389,209 +573,6 @@ definitions:
     properties:
       url:
         type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_auth.User:
-    properties:
-      created_at:
-        type: string
-      email:
-        type: string
-      expires_in:
-        type: integer
-      group_id:
-        type: integer
-      id:
-        type: integer
-      role:
-        type: string
-      username:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_entity.Action:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      id:
-        type: integer
-      method:
-        type: string
-      permission_id:
-        type: integer
-      resource:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_entity.BookMark:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
-      id:
-        type: integer
-      publish:
-        type: boolean
-      subject:
-        type: string
-      updatedAt:
-        type: string
-      url:
-        type: string
-      user:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.User'
-      user_id:
-        type: integer
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_entity.Group:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      id:
-        type: integer
-      name:
-        type: string
-      permissions:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Permission'
-        type: array
-      updatedAt:
-        type: string
-      users:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.User'
-        type: array
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_entity.Host:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
-      host:
-        type: string
-      id:
-        type: integer
-      path:
-        type: string
-      publish:
-        type: boolean
-      search:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Search'
-        type: array
-      subject:
-        type: string
-      updatedAt:
-        type: string
-      user:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.User'
-      user_id:
-        type: integer
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_entity.Permission:
-    properties:
-      actions:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Action'
-        type: array
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      group:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Group'
-      group_id:
-        type: integer
-      id:
-        type: integer
-      permission:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_entity.Search:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
-      host:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Host'
-      host_id:
-        type: integer
-      id:
-        type: integer
-      publish:
-        type: boolean
-      query:
-        type: string
-      query_key:
-        type: string
-      short_url:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_entity.User:
-    properties:
-      bookmarks:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.BookMark'
-        type: array
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      email:
-        type: string
-      email_verified_at:
-        type: string
-      group:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Group'
-      group_id:
-        type: integer
-      hosts:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Host'
-        type: array
-      id:
-        type: integer
-      role:
-        type: string
-      updatedAt:
-        type: string
-      username:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_permission.Method:
-    enum:
-    - GET
-    - POST
-    - PUT
-    - PATCH
-    - DELETE
-    type: string
-    x-enum-varnames:
-    - GET
-    - POST
-    - PUT
-    - PATCH
-    - DELETE
-  github_com_miniyus_keyword-search-backend_internal_utils.StatusResponse:
-    properties:
-      status:
-        type: boolean
     type: object
   gorm.DeletedAt:
     properties:
@@ -660,7 +641,7 @@ definitions:
   internal_api_groups.CreateAction:
     properties:
       method:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_permission.Method'
+        $ref: '#/definitions/permission.Method'
       resource:
         type: string
     required:
@@ -707,7 +688,7 @@ definitions:
   internal_api_groups.ResponseAction:
     properties:
       method:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_permission.Method'
+        $ref: '#/definitions/permission.Method'
       resource:
         type: string
     type: object
@@ -892,7 +873,7 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_entity.Search'
+          $ref: '#/definitions/entity.Search'
         type: array
       page:
         type: integer
@@ -925,6 +906,25 @@ definitions:
       url:
         type: string
     type: object
+  permission.Method:
+    enum:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    type: string
+    x-enum-varnames:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+  utils.StatusResponse:
+    properties:
+      status:
+        type: boolean
+    type: object
 host: localhost:9090
 info:
   contact:
@@ -948,7 +948,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_auth.User'
+            $ref: '#/definitions/auth.User'
       security:
       - BearerAuth: []
       summary: get my info
@@ -972,11 +972,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_auth.User'
+            $ref: '#/definitions/auth.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: reset password
@@ -1004,7 +1004,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       summary: Sign up
       tags:
       - Auth
@@ -1019,11 +1019,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_utils.StatusResponse'
+            $ref: '#/definitions/utils.StatusResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: revoke token
@@ -1051,7 +1051,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       summary: login
       tags:
       - Auth
@@ -1081,7 +1081,7 @@ paths:
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get all groups
@@ -1107,11 +1107,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: create group
@@ -1142,11 +1142,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: update group
@@ -1173,7 +1173,7 @@ paths:
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: delete group
@@ -1199,7 +1199,7 @@ paths:
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get group by pk
@@ -1226,7 +1226,7 @@ paths:
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get group by name
@@ -1258,7 +1258,7 @@ paths:
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get all hosts
@@ -1285,7 +1285,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
       security:
       - BearerAuth: []
       summary: create host
@@ -1308,19 +1308,19 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_utils.StatusResponse'
+            $ref: '#/definitions/utils.StatusResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Delete host
@@ -1346,15 +1346,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: patch host
@@ -1386,15 +1386,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: patch host
@@ -1426,15 +1426,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: update host
@@ -1471,11 +1471,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get by host id
@@ -1507,11 +1507,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: batch create search by host id
@@ -1548,11 +1548,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get by host id
@@ -1584,15 +1584,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get subjects by group id
@@ -1620,7 +1620,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
@@ -1643,19 +1643,19 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_utils.StatusResponse'
+            $ref: '#/definitions/utils.StatusResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1681,15 +1681,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1721,15 +1721,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1761,15 +1761,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1801,15 +1801,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ValidationErrorResponse'
+            $ref: '#/definitions/api_error.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_error.ErrorResponse'
+            $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
@@ -1878,7 +1878,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_utils.StatusResponse'
+            $ref: '#/definitions/utils.StatusResponse'
       summary: health check your server
       tags:
       - HealthCheck

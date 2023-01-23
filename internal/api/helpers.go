@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/keyword-search-backend/api_error"
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/api_error"
-	"github.com/miniyus/keyword-search-backend/internal/utils"
 	jobWorker "github.com/miniyus/keyword-search-backend/pkg/worker"
+	"github.com/miniyus/keyword-search-backend/utils"
 )
 
 func HandleValidate(c *fiber.Ctx, data interface{}) *api_error.ValidationErrorResponse {

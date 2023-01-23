@@ -6,11 +6,11 @@ import (
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	_ "github.com/miniyus/keyword-search-backend/api/gofiber"
+	"github.com/miniyus/keyword-search-backend/api_error"
+	"github.com/miniyus/keyword-search-backend/app"
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/api_error"
-	"github.com/miniyus/keyword-search-backend/internal/app"
-	"github.com/miniyus/keyword-search-backend/internal/resolver"
-	"github.com/miniyus/keyword-search-backend/internal/routes"
+	"github.com/miniyus/keyword-search-backend/resolver"
+	"github.com/miniyus/keyword-search-backend/routes"
 )
 
 // @title keyword-search-backend Swagger API Documentation

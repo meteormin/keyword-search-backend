@@ -1,8 +1,8 @@
 package bookmarks
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/database"
-	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/database"
+	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
 )
 

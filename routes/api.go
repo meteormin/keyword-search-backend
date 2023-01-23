@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"github.com/miniyus/keyword-search-backend/app"
+	"github.com/miniyus/keyword-search-backend/auth"
 	"github.com/miniyus/keyword-search-backend/internal/api/api_auth"
 	"github.com/miniyus/keyword-search-backend/internal/api/groups"
 	"github.com/miniyus/keyword-search-backend/internal/api/host_search"
@@ -8,10 +10,8 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/api/search"
 	"github.com/miniyus/keyword-search-backend/internal/api/short_url"
 	"github.com/miniyus/keyword-search-backend/internal/api/users"
-	"github.com/miniyus/keyword-search-backend/internal/app"
-	"github.com/miniyus/keyword-search-backend/internal/auth"
-	"github.com/miniyus/keyword-search-backend/internal/permission"
-	"github.com/miniyus/keyword-search-backend/internal/resolver"
+	"github.com/miniyus/keyword-search-backend/permission"
+	"github.com/miniyus/keyword-search-backend/resolver"
 )
 
 const ApiPrefix = "/api"

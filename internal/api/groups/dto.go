@@ -1,9 +1,9 @@
 package groups
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/entity"
-	"github.com/miniyus/keyword-search-backend/internal/permission"
-	"github.com/miniyus/keyword-search-backend/internal/utils"
+	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/permission"
+	"github.com/miniyus/keyword-search-backend/utils"
 )
 
 type CreateAction struct {

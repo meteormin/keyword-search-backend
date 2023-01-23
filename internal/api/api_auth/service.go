@@ -3,12 +3,12 @@ package api_auth
 import (
 	"github.com/gofiber/fiber/v2"
 	jwtLib "github.com/golang-jwt/jwt/v4"
+	"github.com/miniyus/keyword-search-backend/auth"
+	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/internal/api/users"
-	"github.com/miniyus/keyword-search-backend/internal/auth"
-	"github.com/miniyus/keyword-search-backend/internal/entity"
-	"github.com/miniyus/keyword-search-backend/internal/logger"
-	"github.com/miniyus/keyword-search-backend/internal/utils"
+	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"time"
 )
 

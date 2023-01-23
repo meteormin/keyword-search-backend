@@ -1,7 +1,7 @@
 package users
 
 import (
-	"github.com/miniyus/keyword-search-backend/internal/entity"
+	"github.com/miniyus/keyword-search-backend/entity"
 )
 
 type Service interface {

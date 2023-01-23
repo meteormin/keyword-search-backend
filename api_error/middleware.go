@@ -9,7 +9,6 @@ import (
 )
 
 func OverrideDefaultErrorHandler(cfg *configure.Configs) fiber.ErrorHandler {
-
 	return func(ctx *fiber.Ctx, err error) error {
 
 		if err == nil {
