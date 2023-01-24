@@ -6,7 +6,7 @@ import (
 )
 
 // SubRouter
-// sub router 등록을 위해 일관성을 위해 생성한 타입
+// sub router 등록할 때 일관성 유지를 위해 생성한 타입
 type SubRouter func(router fiber.Router)
 
 // Router
