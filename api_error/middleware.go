@@ -16,10 +16,11 @@ func OverrideDefaultErrorHandler(cfg *configure.Configs) fiber.ErrorHandler {
 		}
 
 		var config *configure.Configs
+		var insideErr error
 		if cfg == nil {
-			config, err = configure.GetContext[*configure.Configs](ctx, configure.ConfigsKey)
+			config, insideErr = configure.GetContext[*configure.Configs](ctx, configure.ConfigsKey)
 			if err != nil {
-				errRes := NewFromError(ctx, err)
+				errRes := NewFromError(ctx, insideErr)
 				return errRes.Response()
 			}
 
@@ -28,10 +29,10 @@ func OverrideDefaultErrorHandler(cfg *configure.Configs) fiber.ErrorHandler {
 		}
 
 		var logger *zap.SugaredLogger
-		logger, err = configure.GetContext[*zap.SugaredLogger](ctx, configure.LoggerKey)
+		logger, insideErr = configure.GetContext[*zap.SugaredLogger](ctx, configure.LoggerKey)
 
-		if err != nil {
-			errRes := NewFromError(ctx, err)
+		if insideErr != nil {
+			errRes := NewFromError(ctx, insideErr)
 			return errRes.Response()
 		}
 
@@ -54,10 +55,11 @@ func ErrorHandler(cfg *configure.Configs) fiber.Handler {
 		}
 
 		var config *configure.Configs
+		var insideErr error
 		if cfg == nil {
-			config, err = configure.GetContext[*configure.Configs](ctx, configure.ConfigsKey)
+			config, insideErr = configure.GetContext[*configure.Configs](ctx, configure.ConfigsKey)
 			if err != nil {
-				errRes := NewFromError(ctx, err)
+				errRes := NewFromError(ctx, insideErr)
 				return errRes.Response()
 			}
 		} else {
@@ -65,10 +67,10 @@ func ErrorHandler(cfg *configure.Configs) fiber.Handler {
 		}
 
 		var logger *zap.SugaredLogger
-		logger, err = configure.GetContext[*zap.SugaredLogger](ctx, configure.LoggerKey)
+		logger, insideErr = configure.GetContext[*zap.SugaredLogger](ctx, configure.LoggerKey)
 
-		if err != nil {
-			errRes := NewFromError(ctx, err)
+		if insideErr != nil {
+			errRes := NewFromError(ctx, insideErr)
 			return errRes.Response()
 		}
 

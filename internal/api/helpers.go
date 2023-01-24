@@ -12,6 +12,14 @@ import (
 )
 
 func HandleValidate(c *fiber.Ctx, data interface{}) *api_error.ValidationErrorResponse {
+	err := c.BodyParser(data)
+	if err != nil {
+		errRes := api_error.NewValidationErrorResponse(c, map[string]string{
+			"parse_error": err.Error(),
+		})
+		return errRes
+	}
+
 	failed := utils.Validate(data)
 	if failed != nil {
 		errRes := api_error.NewValidationErrorResponse(c, failed)

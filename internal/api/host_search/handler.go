@@ -116,7 +116,7 @@ func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
 
 // BatchCreate
 // @Summary batch create search by host id
-// @description batch create search by host id
+// @Description batch create search by host id
 // @Tags Hosts
 // @Param id path int true "host id"
 // @Param request body search.MultiCreateSearch true "multi create search"
