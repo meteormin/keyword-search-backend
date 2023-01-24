@@ -20,7 +20,7 @@ import (
 // @contact.url https://miniyus.github.io
 // @contact.email miniyu97@gmail.com
 // @license.name MIT
-// @host localhost:8080
+// @host localhost:9090
 // @BasePath /
 // @schemes http
 // @securityDefinitions.apikey	BearerAuth

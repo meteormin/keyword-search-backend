@@ -965,7 +965,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_api_auth.ResetPasswordStruct'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.ResetPasswordStruct'
       produces:
       - application/json
       responses:
@@ -993,14 +993,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_api_auth.SignUp'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUp'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_api_api_auth.SignUpResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUpResponse'
         "400":
           description: Bad Request
           schema:
@@ -1040,14 +1040,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_api_auth.SignIn'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignIn'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_api_auth.TokenInfo'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.TokenInfo'
         "400":
           description: Bad Request
           schema:
@@ -1832,7 +1832,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_short_url.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response'
         "404":
           description: Not Found
       security:
@@ -1857,7 +1857,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_short_url.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response'
         "302":
           description: Found
           schema:
