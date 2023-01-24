@@ -29,6 +29,23 @@ type Job struct {
 	UpdatedAt time.Time           `json:"updated_at"`
 }
 
+func (j *Job) Marshal() (string, error) {
+	marshal, err := json.Marshal(j)
+	if err != nil {
+		return "", err
+	}
+
+	return string(marshal), nil
+}
+
+func (j *Job) UnMarshal(jsonStr string) error {
+	err := json.Unmarshal([]byte(jsonStr), &j)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func newJob(jobId string, closure func(job Job) error) Job {
 	return Job{
 		JobId:   jobId,
@@ -105,12 +122,12 @@ type JobWorker struct {
 }
 
 func saveJob(r *redis.Client, key string, job Job) {
-	bytes, err := json.Marshal(job)
+	jsonJob, err := job.Marshal()
 	if err != nil {
 		panic(err)
 	}
 
-	err = r.Set(ctx, key, string(bytes), time.Minute).Err()
+	err = r.Set(ctx, key, jsonJob, time.Minute).Err()
 	if err != nil {
 		panic(err)
 	}
@@ -124,8 +141,7 @@ func getJob(r *redis.Client, key string) (*Job, error) {
 		return nil, err
 	} else {
 		var convJob *Job
-		bytes := []byte(val)
-		err = json.Unmarshal(bytes, &convJob)
+		err = convJob.UnMarshal(val)
 		if err != nil {
 			return nil, err
 		}
@@ -150,6 +166,7 @@ func (w *JobWorker) GetName() string {
 
 func (w *JobWorker) Start() {
 	go func() {
+		log.Printf("Start Worker(%s):", w.Name)
 		for {
 			r := w.redis()
 			jobChan, err := w.queue.Dequeue()
@@ -186,18 +203,20 @@ func (w *JobWorker) Start() {
 				} else {
 					job.Status = SUCCESS
 				}
-				log.Printf("end job id %s status %s", job.JobId, job.Status)
-				time.Sleep(time.Second * 3)
 
 				job.UpdatedAt = time.Now()
+				jsonJob, err := job.Marshal()
+				if err != nil {
+					log.Print(err)
+				}
 
+				log.Printf("end job: %s", jsonJob)
 				saveJob(r, key, job)
 			case <-w.quitChan:
 				log.Printf("worker %s stopping\n", w.Name)
 				return
 			}
 		}
-
 	}()
 }
 
@@ -218,6 +237,7 @@ func (w *JobWorker) AddJob(job Job) error {
 type Dispatcher interface {
 	Dispatch(jobId string, closure func(j Job) error) error
 	Run()
+	Stop()
 	SelectWorker(name string) Dispatcher
 	GetWorkers() []Worker
 	GetRedis() func() *redis.Client
@@ -332,5 +352,11 @@ func (d *JobDispatcher) Dispatch(jobId string, closure func(j Job) error) error 
 func (d *JobDispatcher) Run() {
 	for _, w := range d.workers {
 		w.Start()
+	}
+}
+
+func (d *JobDispatcher) Stop() {
+	for _, w := range d.workers {
+		w.Stop()
 	}
 }

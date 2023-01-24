@@ -9,6 +9,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/api/hosts"
 	"github.com/miniyus/keyword-search-backend/internal/api/search"
 	"github.com/miniyus/keyword-search-backend/internal/api/short_url"
+	"github.com/miniyus/keyword-search-backend/internal/api/test_api"
 	"github.com/miniyus/keyword-search-backend/internal/api/users"
 	"github.com/miniyus/keyword-search-backend/permission"
 	"github.com/miniyus/keyword-search-backend/resolver"
@@ -95,4 +96,8 @@ func Api(apiRouter app.Router, a app.Application) {
 		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.short_url")
 
+	apiRouter.Route(
+		test_api.Prefix,
+		test_api.Register(jDispatcher(), zapLogger()),
+	).Name("api.test_api")
 }
