@@ -206,7 +206,7 @@ definitions:
       username:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_api_auth.ResetPasswordStruct:
+  github_com_miniyus_keyword-search-backend_internal_api_auth.ResetPasswordStruct:
     properties:
       password:
         type: string
@@ -216,7 +216,7 @@ definitions:
     - password
     - password_confirm
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignIn:
+  github_com_miniyus_keyword-search-backend_internal_api_auth.SignIn:
     properties:
       password:
         type: string
@@ -226,7 +226,7 @@ definitions:
     - password
     - username
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUp:
+  github_com_miniyus_keyword-search-backend_internal_api_auth.SignUp:
     properties:
       email:
         type: string
@@ -242,7 +242,7 @@ definitions:
     - password_confirm
     - username
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUpResponse:
+  github_com_miniyus_keyword-search-backend_internal_api_auth.SignUpResponse:
     properties:
       expires_at:
         type: string
@@ -253,7 +253,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_api_auth.TokenInfo:
+  github_com_miniyus_keyword-search-backend_internal_api_auth.TokenInfo:
     properties:
       expires_at:
         type: string
@@ -262,7 +262,7 @@ definitions:
       token:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_groups.CreateAction:
+  github_com_miniyus_keyword-search-backend_internal_groups.CreateAction:
     properties:
       method:
         $ref: '#/definitions/permission.Method'
@@ -272,23 +272,23 @@ definitions:
     - method
     - resource
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_groups.CreateGroup:
+  github_com_miniyus_keyword-search-backend_internal_groups.CreateGroup:
     properties:
       name:
         type: string
       permissions:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.CreatePermission'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission'
         type: array
     required:
     - name
     - permissions
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_groups.CreatePermission:
+  github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission:
     properties:
       actions:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.CreateAction'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreateAction'
         type: array
       name:
         type: string
@@ -296,11 +296,11 @@ definitions:
     - actions
     - name
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_groups.ListResponse:
+  github_com_miniyus_keyword-search-backend_internal_groups.ListResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseGroup'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         type: array
       page:
         type: integer
@@ -309,34 +309,34 @@ definitions:
       total_count:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseAction:
+  github_com_miniyus_keyword-search-backend_internal_groups.ResponseAction:
     properties:
       method:
         $ref: '#/definitions/permission.Method'
       resource:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseGroup:
+  github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup:
     properties:
       actions:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.ResponseAction'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseAction'
         type: array
       id:
         type: integer
       name:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_groups.UpdateGroup:
+  github_com_miniyus_keyword-search-backend_internal_groups.UpdateGroup:
     properties:
       name:
         type: string
       permissions:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_groups.CreatePermission'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission'
         type: array
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_hosts.CreateHost:
+  github_com_miniyus_keyword-search-backend_internal_hosts.CreateHost:
     properties:
       description:
         type: string
@@ -357,11 +357,11 @@ definitions:
     - publish
     - subject
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_hosts.HostListResponse:
+  github_com_miniyus_keyword-search-backend_internal_hosts.HostListResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
         type: array
       page:
         type: integer
@@ -370,7 +370,7 @@ definitions:
       total_count:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse:
+  github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse:
     properties:
       description:
         type: string
@@ -387,11 +387,11 @@ definitions:
       user_id:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_hosts.HostSubjectsResponse:
+  github_com_miniyus_keyword-search-backend_internal_hosts.HostSubjectsResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.Subjects'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.Subjects'
         type: array
       page:
         type: integer
@@ -400,7 +400,7 @@ definitions:
       total_count:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_hosts.PatchHost:
+  github_com_miniyus_keyword-search-backend_internal_hosts.PatchHost:
     properties:
       description:
         type: string
@@ -413,14 +413,14 @@ definitions:
       subject:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_hosts.Subjects:
+  github_com_miniyus_keyword-search-backend_internal_hosts.Subjects:
     properties:
       id:
         type: integer
       subject:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_hosts.UpdateHost:
+  github_com_miniyus_keyword-search-backend_internal_hosts.UpdateHost:
     properties:
       description:
         type: string
@@ -439,7 +439,7 @@ definitions:
     - publish
     - subject
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.CreateSearch:
+  github_com_miniyus_keyword-search-backend_internal_search.CreateSearch:
     properties:
       description:
         type: string
@@ -458,7 +458,7 @@ definitions:
     - query
     - query_key
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.Description:
+  github_com_miniyus_keyword-search-backend_internal_search.Description:
     properties:
       description:
         type: string
@@ -467,11 +467,11 @@ definitions:
       short_url:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.DescriptionWithPage:
+  github_com_miniyus_keyword-search-backend_internal_search.DescriptionWithPage:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Description'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Description'
         type: array
       page:
         type: integer
@@ -480,16 +480,16 @@ definitions:
       total_count:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.MultiCreateSearch:
+  github_com_miniyus_keyword-search-backend_internal_search.MultiCreateSearch:
     properties:
       search:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.CreateSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.CreateSearch'
         type: array
     required:
     - search
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.PatchSearch:
+  github_com_miniyus_keyword-search-backend_internal_search.PatchSearch:
     properties:
       description:
         type: string
@@ -505,7 +505,7 @@ definitions:
     - host_id
     - publish
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.Response:
+  github_com_miniyus_keyword-search-backend_internal_search.Response:
     properties:
       created_at:
         type: string
@@ -524,7 +524,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.ResponseAll:
+  github_com_miniyus_keyword-search-backend_internal_search.ResponseAll:
     properties:
       data:
         items:
@@ -537,11 +537,11 @@ definitions:
       total_count:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.ResponseByHost:
+  github_com_miniyus_keyword-search-backend_internal_search.ResponseByHost:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
         type: array
       page:
         type: integer
@@ -550,7 +550,7 @@ definitions:
       total_count:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_search.UpdateSearch:
+  github_com_miniyus_keyword-search-backend_internal_search.UpdateSearch:
     properties:
       description:
         type: string
@@ -569,7 +569,7 @@ definitions:
     - query
     - query_key
     type: object
-  github_com_miniyus_keyword-search-backend_internal_api_short_url.Response:
+  github_com_miniyus_keyword-search-backend_internal_short_url.Response:
     properties:
       url:
         type: string
@@ -582,7 +582,7 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
-  internal_api_api_auth.ResetPasswordStruct:
+  internal_api_auth.ResetPasswordStruct:
     properties:
       password:
         type: string
@@ -592,7 +592,7 @@ definitions:
     - password
     - password_confirm
     type: object
-  internal_api_api_auth.SignIn:
+  internal_api_auth.SignIn:
     properties:
       password:
         type: string
@@ -602,7 +602,7 @@ definitions:
     - password
     - username
     type: object
-  internal_api_api_auth.SignUp:
+  internal_api_auth.SignUp:
     properties:
       email:
         type: string
@@ -618,7 +618,7 @@ definitions:
     - password_confirm
     - username
     type: object
-  internal_api_api_auth.SignUpResponse:
+  internal_api_auth.SignUpResponse:
     properties:
       expires_at:
         type: string
@@ -629,7 +629,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  internal_api_api_auth.TokenInfo:
+  internal_api_auth.TokenInfo:
     properties:
       expires_at:
         type: string
@@ -638,7 +638,7 @@ definitions:
       token:
         type: string
     type: object
-  internal_api_groups.CreateAction:
+  internal_groups.CreateAction:
     properties:
       method:
         $ref: '#/definitions/permission.Method'
@@ -648,23 +648,23 @@ definitions:
     - method
     - resource
     type: object
-  internal_api_groups.CreateGroup:
+  internal_groups.CreateGroup:
     properties:
       name:
         type: string
       permissions:
         items:
-          $ref: '#/definitions/internal_api_groups.CreatePermission'
+          $ref: '#/definitions/internal_groups.CreatePermission'
         type: array
     required:
     - name
     - permissions
     type: object
-  internal_api_groups.CreatePermission:
+  internal_groups.CreatePermission:
     properties:
       actions:
         items:
-          $ref: '#/definitions/internal_api_groups.CreateAction'
+          $ref: '#/definitions/internal_groups.CreateAction'
         type: array
       name:
         type: string
@@ -672,11 +672,11 @@ definitions:
     - actions
     - name
     type: object
-  internal_api_groups.ListResponse:
+  internal_groups.ListResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/internal_api_groups.ResponseGroup'
+          $ref: '#/definitions/internal_groups.ResponseGroup'
         type: array
       page:
         type: integer
@@ -685,34 +685,34 @@ definitions:
       total_count:
         type: integer
     type: object
-  internal_api_groups.ResponseAction:
+  internal_groups.ResponseAction:
     properties:
       method:
         $ref: '#/definitions/permission.Method'
       resource:
         type: string
     type: object
-  internal_api_groups.ResponseGroup:
+  internal_groups.ResponseGroup:
     properties:
       actions:
         items:
-          $ref: '#/definitions/internal_api_groups.ResponseAction'
+          $ref: '#/definitions/internal_groups.ResponseAction'
         type: array
       id:
         type: integer
       name:
         type: string
     type: object
-  internal_api_groups.UpdateGroup:
+  internal_groups.UpdateGroup:
     properties:
       name:
         type: string
       permissions:
         items:
-          $ref: '#/definitions/internal_api_groups.CreatePermission'
+          $ref: '#/definitions/internal_groups.CreatePermission'
         type: array
     type: object
-  internal_api_hosts.CreateHost:
+  internal_hosts.CreateHost:
     properties:
       description:
         type: string
@@ -733,11 +733,11 @@ definitions:
     - publish
     - subject
     type: object
-  internal_api_hosts.HostListResponse:
+  internal_hosts.HostListResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/internal_api_hosts.HostResponse'
+          $ref: '#/definitions/internal_hosts.HostResponse'
         type: array
       page:
         type: integer
@@ -746,7 +746,7 @@ definitions:
       total_count:
         type: integer
     type: object
-  internal_api_hosts.HostResponse:
+  internal_hosts.HostResponse:
     properties:
       description:
         type: string
@@ -763,11 +763,11 @@ definitions:
       user_id:
         type: integer
     type: object
-  internal_api_hosts.HostSubjectsResponse:
+  internal_hosts.HostSubjectsResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/internal_api_hosts.Subjects'
+          $ref: '#/definitions/internal_hosts.Subjects'
         type: array
       page:
         type: integer
@@ -776,7 +776,7 @@ definitions:
       total_count:
         type: integer
     type: object
-  internal_api_hosts.PatchHost:
+  internal_hosts.PatchHost:
     properties:
       description:
         type: string
@@ -789,14 +789,14 @@ definitions:
       subject:
         type: string
     type: object
-  internal_api_hosts.Subjects:
+  internal_hosts.Subjects:
     properties:
       id:
         type: integer
       subject:
         type: string
     type: object
-  internal_api_hosts.UpdateHost:
+  internal_hosts.UpdateHost:
     properties:
       description:
         type: string
@@ -815,7 +815,7 @@ definitions:
     - publish
     - subject
     type: object
-  internal_api_search.CreateSearch:
+  internal_search.CreateSearch:
     properties:
       description:
         type: string
@@ -834,7 +834,7 @@ definitions:
     - query
     - query_key
     type: object
-  internal_api_search.PatchSearch:
+  internal_search.PatchSearch:
     properties:
       description:
         type: string
@@ -850,7 +850,7 @@ definitions:
     - host_id
     - publish
     type: object
-  internal_api_search.Response:
+  internal_search.Response:
     properties:
       created_at:
         type: string
@@ -869,7 +869,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  internal_api_search.ResponseAll:
+  internal_search.ResponseAll:
     properties:
       data:
         items:
@@ -882,7 +882,7 @@ definitions:
       total_count:
         type: integer
     type: object
-  internal_api_search.UpdateSearch:
+  internal_search.UpdateSearch:
     properties:
       description:
         type: string
@@ -901,7 +901,7 @@ definitions:
     - query
     - query_key
     type: object
-  internal_api_short_url.Response:
+  internal_short_url.Response:
     properties:
       url:
         type: string
@@ -925,7 +925,7 @@ definitions:
       status:
         type: boolean
     type: object
-host: localhost:8080
+host: localhost:9090
 info:
   contact:
     email: miniyu97@gmail.com
@@ -965,7 +965,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.ResetPasswordStruct'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.ResetPasswordStruct'
       produces:
       - application/json
       responses:
@@ -993,14 +993,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUp'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignUp'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignUpResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignUpResponse'
         "400":
           description: Bad Request
           schema:
@@ -1040,14 +1040,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.SignIn'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignIn'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_api_auth.TokenInfo'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.TokenInfo'
         "400":
           description: Bad Request
           schema:
@@ -1077,7 +1077,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_groups.ListResponse'
+            $ref: '#/definitions/internal_groups.ListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1096,14 +1096,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_api_groups.CreateGroup'
+          $ref: '#/definitions/internal_groups.CreateGroup'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_api_groups.ResponseGroup'
+            $ref: '#/definitions/internal_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1131,14 +1131,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_api_groups.UpdateGroup'
+          $ref: '#/definitions/internal_groups.UpdateGroup'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_groups.ResponseGroup'
+            $ref: '#/definitions/internal_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1195,7 +1195,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_groups.ResponseGroup'
+            $ref: '#/definitions/internal_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1222,7 +1222,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_groups.ResponseGroup'
+            $ref: '#/definitions/internal_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1254,7 +1254,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostListResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1274,14 +1274,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.CreateHost'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.CreateHost'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1342,7 +1342,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1375,14 +1375,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.PatchHost'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.PatchHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1415,14 +1415,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.UpdateHost'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.UpdateHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1467,7 +1467,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.ResponseByHost'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.ResponseByHost'
         "400":
           description: Bad Request
           schema:
@@ -1496,14 +1496,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.MultiCreateSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.MultiCreateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1544,7 +1544,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_search.DescriptionWithPage'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.DescriptionWithPage'
         "400":
           description: Bad Request
           schema:
@@ -1580,7 +1580,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_hosts.HostSubjectsResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostSubjectsResponse'
         "400":
           description: Bad Request
           schema:
@@ -1609,14 +1609,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_search.CreateSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_api_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1677,7 +1677,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1710,14 +1710,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_search.PatchSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1750,14 +1750,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_search.UpdateSearch'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_search.Response'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1797,7 +1797,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_search.ResponseAll'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.ResponseAll'
         "400":
           description: Bad Request
           schema:
@@ -1832,7 +1832,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response'
+            $ref: '#/definitions/internal_short_url.Response'
         "404":
           description: Not Found
       security:
@@ -1857,7 +1857,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_short_url.Response'
+            $ref: '#/definitions/internal_short_url.Response'
         "302":
           description: Found
           schema:

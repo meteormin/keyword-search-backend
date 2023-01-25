@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/keyword-search-backend/api_error"
 	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
