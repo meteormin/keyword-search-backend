@@ -36,7 +36,7 @@ func ToUserResponse(user *entity.User) UserResponse {
 	return UserResponse{
 		Id:              user.ID,
 		Username:        user.Username,
-		Role:            user.Role,
+		Role:            string(user.Role),
 		Email:           user.Email,
 		EmailVerifiedAt: emailVerifiedAt,
 		CreatedAt:       createdAt.Format(utils.DefaultDateLayout),
