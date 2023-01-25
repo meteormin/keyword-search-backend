@@ -1077,7 +1077,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_groups.ListResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1096,14 +1096,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_groups.CreateGroup'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreateGroup'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1131,14 +1131,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_groups.UpdateGroup'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.UpdateGroup'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1195,7 +1195,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1222,7 +1222,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1609,14 +1609,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.CreateSearch'
+          $ref: '#/definitions/internal_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
+            $ref: '#/definitions/internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1677,7 +1677,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
+            $ref: '#/definitions/internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1710,14 +1710,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.PatchSearch'
+          $ref: '#/definitions/internal_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
+            $ref: '#/definitions/internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1750,14 +1750,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.UpdateSearch'
+          $ref: '#/definitions/internal_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
+            $ref: '#/definitions/internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1797,7 +1797,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.ResponseAll'
+            $ref: '#/definitions/internal_search.ResponseAll'
         "400":
           description: Bad Request
           schema:

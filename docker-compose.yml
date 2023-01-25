@@ -4,7 +4,7 @@ services:
   #    container_name: go-fiber_debugger
   #    build:
   #      context: .
-  #      dockerfile: Dockerfile.debug
+  #      dockerfile: debug.Dockerfile
   #    extra_hosts:
   #      - 'host.docker.internal:host-gateway'
   #    ports:
@@ -15,11 +15,23 @@ services:
   #    depends_on:
   #      - redis
   #      - pgsql
+  godoc:
+    container_name: godoc
+    image: miniyus/godoc
+    build:
+      context: .
+      dockerfile: godoc.Dockerfile
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '6060:6060'
+    networks:
+      - ks-backend
   keyword-search-backend:
     container_name: keyword-search-fiber
-    image: keyword-search-backend
+    image: miniyus/keyword-search-backend
     build:
-      context: ..
+      context: .
       dockerfile: Dockerfile
       args:
         SELECT_ENV: '.${APP_ENV:-local}'
@@ -37,12 +49,12 @@ services:
     volumes:
       - './data:/home/gofiber/data'
     networks:
-      - go-web
+      - ks-backend
     depends_on:
       - redis
       - pgsql
   pgsql:
-    container_name: go-pgsql
+    container_name: ks-pgsql
     image: 'postgres:14'
     ports:
       - '${FORWARD_DB_PORT:-5432}:5432'
@@ -54,27 +66,27 @@ services:
     volumes:
       - 'go-pgsql:/var/lib/postgresql/data'
     networks:
-      - go-web
+      - ks-backend
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
       retries: 3
       timeout: 5s
   redis:
-    container_name: go-redis
+    container_name: ks-redis
     image: 'redis:alpine'
     ports:
       - '${FORWARD_REDIS_PORT:-6379}:6379'
     volumes:
       - 'go-redis:/data'
     networks:
-      - go-web
+      - ks-backend
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       retries: 3
       timeout: 5s
 
 networks:
-  go-web:
+  ks-backend:
     driver: bridge
 volumes:
   go-pgsql:

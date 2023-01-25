@@ -2,7 +2,7 @@ FROM golang:1.19-alpine as build
 
 RUN apk --no-cache add tzdata && \
 	cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-	echo "Asia/Seoul" > /etc/timezone
+	echo "${TIME_ZONE}" > /etc/timezone
 
 RUN apk add --no-cache make
 
@@ -10,14 +10,10 @@ RUN mkdir /fiber
 
 WORKDIR /fiber
 
-COPY ../go.mod .
-COPY ../go.sum .
-RUN go mod download
-RUN go install github.com/swaggo/swag/cmd/swag@latest
+COPY . .
 
-COPY .. .
-
-#RUN swag init --parseDependency --parseInternal --parseDepth 1 -g ./cmd/gofiber/main.go --output ./api/gofiber
+RUN CGO_ENABLED=0 go mod download
+RUN CGO_ENABLED=0 go install github.com/swaggo/swag/cmd/swag@latest
 RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} make build
 
 FROM ubuntu:22.04
@@ -51,8 +47,8 @@ WORKDIR /home/gofiber
 COPY --from=build /fiber/build ./build
 
 COPY .env${SELECT_ENV} ./.env
-COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ../scripts/start-container.sh /usr/local/bin/start-container
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY start-container.sh /usr/local/bin/start-container
 
 RUN chown -R gofiber:$GO_GROUP /home/gofiber
 RUN chgrp -R $GO_GROUP /home/gofiber

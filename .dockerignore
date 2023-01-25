@@ -1,0 +1,7 @@
+./tests
+./
+docker-compose.yml
+Dockerfile
+*.Dockerfile
+scripts
+build
