@@ -9,6 +9,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/api_error"
 	"github.com/miniyus/keyword-search-backend/app"
 	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/create_admin"
 	"github.com/miniyus/keyword-search-backend/resolver"
 	"github.com/miniyus/keyword-search-backend/routes"
 )
@@ -29,6 +30,7 @@ import (
 // @description				   Bearer token type
 func main() {
 	a := app.New()
+	create_admin.CreateAdmin(a)
 
 	a.Middleware(func(fiberApp *fiber.App, application app.Application) {
 		configure := application.Config()

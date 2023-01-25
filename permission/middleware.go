@@ -13,6 +13,7 @@ import (
 type HasPermissionParameter struct {
 	DB           *gorm.DB
 	DefaultPerms Collection
+	FilterFunc   func(currentUser *auth.User, p Permission) bool
 }
 
 // HasPermission check has permissions middleware
@@ -75,6 +76,10 @@ func HasPermission(parameter HasPermissionParameter, permissions ...Permission) 
 		}
 
 		userHasPerm := permCollection.Filter(func(p Permission, i int) bool {
+			if parameter.FilterFunc != nil {
+				return parameter.FilterFunc(currentUser, p)
+			}
+
 			if currentUser.GroupId != nil {
 				return currentUser.GroupId == &p.GroupId
 			}
@@ -94,7 +99,7 @@ func HasPermission(parameter HasPermissionParameter, permissions ...Permission) 
 
 func checkPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
 	if len(hasPerm) == 0 {
-		return true
+		return false
 	}
 
 	pass := false

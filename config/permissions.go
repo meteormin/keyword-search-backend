@@ -22,15 +22,48 @@ const (
 func getPermissions() []PermissionConfig {
 	return []PermissionConfig{
 		{
-			Name:    "ADMIN",
+			Name:    "Admin",
 			GroupId: 1,
 			Methods: []PermissionMethod{GET, POST, PUT, PATCH, DELETE},
 			Resources: []string{
 				"/users",
 				"/hosts",
 				"/search",
-				"/short-url",
+				"/redirect",
 				"/groups",
+			},
+		},
+		{
+			Name:    "Owner",
+			GroupId: 1,
+			Methods: []PermissionMethod{GET, POST, PUT, PATCH, DELETE},
+			Resources: []string{
+				"/users",
+				"/hosts",
+				"/search",
+				"/redirect",
+			},
+		},
+		{
+			Name:    "Manager",
+			GroupId: 1,
+			Methods: []PermissionMethod{GET, POST, PUT, PATCH},
+			Resources: []string{
+				"/users",
+				"/hosts",
+				"/search",
+				"/redirect",
+				"/groups",
+			},
+		},
+		{
+			Name:    "Member",
+			GroupId: 1,
+			Methods: []PermissionMethod{GET, POST},
+			Resources: []string{
+				"/hosts",
+				"/search",
+				"/redirect",
 			},
 		},
 	}

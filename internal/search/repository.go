@@ -39,7 +39,7 @@ func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
 func (r *RepositoryStruct) Count(search entity.Search) (int64, error) {
 	var count int64 = 0
 
-	rs := r.db.Model(search).Count(&count)
+	rs := r.db.Model(&search).Count(&count)
 	_, err := database.HandleResult(rs)
 
 	return count, err
@@ -63,8 +63,8 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.S
 	var search []entity.Search
 	var count int64
 
-	where := entity.Search{HostId: hostId}
-	rs := r.db.Model(entity.Search{}).Where(where).Count(&count)
+	where := &entity.Search{HostId: hostId}
+	rs := r.db.Model(&entity.Search{}).Where(where).Count(&count)
 	_, err := database.HandleResult(rs)
 	if err != nil {
 		return search, count, err
@@ -84,8 +84,8 @@ func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page utils.Page)
 	var search []entity.Search
 	var count int64
 
-	where := entity.Search{HostId: hostId}
-	rs := r.db.Model(entity.Search{}).Where(where).Count(&count)
+	where := &entity.Search{HostId: hostId}
+	rs := r.db.Model(&entity.Search{}).Where(where).Count(&count)
 	_, err := database.HandleResult(rs)
 	if err != nil {
 		return search, count, err
@@ -102,14 +102,14 @@ func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page utils.Page)
 }
 
 func (r *RepositoryStruct) Find(pk uint) (*entity.Search, error) {
-	var search *entity.Search
+	var search entity.Search
 	rs := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).First(&search, pk)
 	_, err := database.HandleResult(rs)
 	if search.Host == nil {
 		return nil, fiber.ErrForbidden
 	}
 
-	return search, err
+	return &search, err
 }
 
 func (r *RepositoryStruct) Create(search entity.Search) (*entity.Search, error) {
@@ -132,7 +132,7 @@ func (r *RepositoryStruct) BatchCreate(search []entity.Search) ([]entity.Search,
 }
 
 func (r *RepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Search, error) {
-	var search *entity.Search
+	var search entity.Search
 	rs := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).
 		Where(&entity.Search{ShortUrl: &code}).
 		First(&search)
@@ -150,7 +150,7 @@ func (r *RepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Sea
 		return nil, fiber.ErrForbidden
 	}
 
-	return search, err
+	return &search, err
 }
 
 func (r *RepositoryStruct) Update(pk uint, search entity.Search) (*entity.Search, error) {
@@ -173,6 +173,9 @@ func (r *RepositoryStruct) Update(pk uint, search entity.Search) (*entity.Search
 		search.ID = exists.ID
 		result := r.db.Save(&search)
 		_, err = database.HandleResult(result)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &search, nil

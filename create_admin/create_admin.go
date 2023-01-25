@@ -15,7 +15,7 @@ import (
 
 func existsAdmin(db *gorm.DB) bool {
 	admin := &entity.User{}
-	rs := db.Where(entity.User{Role: string(entity.Admin)}).Find(admin)
+	rs := db.Where(entity.User{Role: entity.Admin}).Find(admin)
 	rs, err := database.HandleResult(rs)
 	if rs.RowsAffected == 0 {
 		return false
@@ -25,13 +25,13 @@ func existsAdmin(db *gorm.DB) bool {
 		return false
 	}
 
-	log.Println("Skip create admin: already exists admin account")
 	return true
 }
 
 func CreateAdmin(app app.Application) {
 	db := app.DB()
 	if existsAdmin(db) {
+		log.Println("Skip create admin: already exists admin account")
 		return
 	}
 	configs := app.Config()
@@ -60,7 +60,7 @@ func CreateAdmin(app app.Application) {
 		Username:        username,
 		Password:        hashedPassword,
 		Email:           email,
-		Role:            string(entity.Admin),
+		Role:            entity.Admin,
 		EmailVerifiedAt: &now,
 	}
 

@@ -100,7 +100,7 @@ func (r *RepositoryStruct) Find(pk uint) (*entity.Group, error) {
 func (r *RepositoryStruct) FindByName(groupName string) (*entity.Group, error) {
 	group := &entity.Group{}
 
-	result := r.db.Preload("Permissions.Actions").Where(entity.Group{Name: groupName}).First(group)
+	result := r.db.Preload("Permissions.Actions").Where(&entity.Group{Name: groupName}).First(group)
 	_, err := database.HandleResult(result)
 	if err != nil {
 		return nil, err

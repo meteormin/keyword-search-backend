@@ -59,7 +59,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 	var hosts []entity.Host
 	var cnt int64 = 0
 
-	result := r.db.Model(entity.Host{}).Where(entity.Host{UserId: userId}).Count(&cnt)
+	result := r.db.Model(&entity.Host{}).Where(&entity.Host{UserId: userId}).Count(&cnt)
 	_, err := database.HandleResult(result)
 
 	if cnt == 0 {
@@ -67,7 +67,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 	}
 
 	result = r.db.Scopes(utils.Paginate(page)).
-		Where(entity.Host{UserId: userId}).
+		Where(&entity.Host{UserId: userId}).
 		Order("id desc").
 		Find(&hosts)
 	_, err = database.HandleResult(result)
@@ -120,6 +120,9 @@ func (r *RepositoryStruct) Update(pk uint, host entity.Host) (*entity.Host, erro
 		host.ID = exists.ID
 		result := r.db.Save(&host)
 		_, err = database.HandleResult(result)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &host, nil
@@ -156,7 +159,7 @@ func (r *RepositoryStruct) GetByGroupId(groupId uint, page utils.Page) ([]entity
 		userIds = append(userIds, int(user.ID))
 	}
 
-	rs = r.db.Model(entity.Host{}).Where("user_id IN ?", userIds).Count(&count)
+	rs = r.db.Model(&entity.Host{}).Where("user_id IN ?", userIds).Count(&count)
 	_, err = database.HandleResult(rs)
 	if err != nil {
 		return hosts, 0, err
@@ -175,7 +178,7 @@ func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page utils.Page) ([]
 	var hosts []entity.Host
 	var cnt int64 = 0
 
-	result := r.db.Model(entity.Host{}).Where(entity.Host{UserId: userId}).Count(&cnt)
+	result := r.db.Model(&entity.Host{}).Where(&entity.Host{UserId: userId}).Count(&cnt)
 	_, err := database.HandleResult(result)
 
 	if cnt == 0 {
@@ -183,7 +186,7 @@ func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page utils.Page) ([]
 	}
 
 	result = r.db.Select("id", "subject").Scopes(utils.Paginate(page)).
-		Where(entity.Host{UserId: userId}).
+		Where(&entity.Host{UserId: userId}).
 		Order("id desc").
 		Find(&hosts)
 	_, err = database.HandleResult(result)
