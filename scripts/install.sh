@@ -10,3 +10,8 @@ fi
 echo "go mod download"
 go mod download
 
+echo "go install swaggo"
+go install github.com/swaggo/swag/cmd/swag@latest
+
+echo "go install godoc"
+go install golang.org/x/tools/cmd/godoc@latest

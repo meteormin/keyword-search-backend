@@ -19,7 +19,7 @@ services:
     container_name: keyword-search-fiber
     image: keyword-search-backend
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
       args:
         SELECT_ENV: '.${APP_ENV:-local}'

@@ -2,7 +2,7 @@ package short_url
 
 import (
 	"github.com/go-redis/redis/v9"
-	"github.com/miniyus/keyword-search-backend/internal/api/search"
+	"github.com/miniyus/keyword-search-backend/internal/search"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )

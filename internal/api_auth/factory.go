@@ -2,7 +2,7 @@ package api_auth
 
 import (
 	"github.com/miniyus/keyword-search-backend/auth"
-	"github.com/miniyus/keyword-search-backend/internal/api/users"
+	"github.com/miniyus/keyword-search-backend/internal/users"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	"go.uber.org/zap"
 	"gorm.io/gorm"

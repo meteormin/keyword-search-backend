@@ -5,8 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/keyword-search-backend/api_error"
 	"github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/internal/api"
-	"github.com/miniyus/keyword-search-backend/internal/api/search"
+	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"github.com/miniyus/keyword-search-backend/utils"
@@ -140,7 +139,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := api.HandleValidate(c, dto)
+	errRes := internal.HandleValidate(c, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -176,7 +175,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	foundJob, err := api.FindJobFromQueueWorker(c, jobId, string(config.DefaultWorker))
+	foundJob, err := internal.FindJobFromQueueWorker(c, jobId, string(config.DefaultWorker))
 	if err != nil {
 		return err
 	}

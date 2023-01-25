@@ -10,12 +10,12 @@ RUN mkdir /fiber
 
 WORKDIR /fiber
 
-COPY go.mod .
-COPY go.sum .
+COPY ../go.mod .
+COPY ../go.sum .
 RUN go mod download
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
-COPY . .
+COPY .. .
 
 #RUN swag init --parseDependency --parseInternal --parseDepth 1 -g ./cmd/gofiber/main.go --output ./api/gofiber
 RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} make build
@@ -52,7 +52,7 @@ COPY --from=build /fiber/build ./build
 
 COPY .env${SELECT_ENV} ./.env
 COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY scripts/start-container.sh /usr/local/bin/start-container
+COPY ../scripts/start-container.sh /usr/local/bin/start-container
 
 RUN chown -R gofiber:$GO_GROUP /home/gofiber
 RUN chgrp -R $GO_GROUP /home/gofiber

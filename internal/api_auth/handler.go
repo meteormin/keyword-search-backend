@@ -5,7 +5,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/miniyus/keyword-search-backend/api_error"
 	"github.com/miniyus/keyword-search-backend/auth"
-	"github.com/miniyus/keyword-search-backend/internal/api"
+	"github.com/miniyus/keyword-search-backend/internal"
 	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/utils"
 )
@@ -32,7 +32,7 @@ func NewHandler(service Service) Handler {
 }
 
 func validateSignUp(ctx *fiber.Ctx, signUp *SignUp) (bool, *api_error.ValidationErrorResponse) {
-	errRes := api.HandleValidate(ctx, signUp)
+	errRes := internal.HandleValidate(ctx, signUp)
 	if errRes != nil {
 		return false, errRes
 	}
@@ -70,7 +70,7 @@ func (h *HandlerStruct) SignUp(ctx *fiber.Ctx) error {
 }
 
 func validateSignIn(ctx *fiber.Ctx, in *SignIn) (bool, *api_error.ValidationErrorResponse) {
-	errRes := api.HandleValidate(ctx, in)
+	errRes := internal.HandleValidate(ctx, in)
 	if errRes != nil {
 		return false, errRes
 	}
@@ -153,7 +153,7 @@ func (h *HandlerStruct) ResetPassword(ctx *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := api.HandleValidate(ctx, dto)
+	errRes := internal.HandleValidate(ctx, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
