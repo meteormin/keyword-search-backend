@@ -18,7 +18,7 @@ func FilterFunc(parameter FilterParameter) func(user *auth.User, perm permission
 		if user.GroupId != nil {
 			get, err := repo.GetByUserId(user.Id)
 			if err != nil {
-				return false
+				return *user.GroupId == perm.GroupId
 			}
 
 			filtered := utils.NewCollection(get).Filter(func(v entity.GroupDetail, i int) bool {

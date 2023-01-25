@@ -20,7 +20,6 @@ type User struct {
 	Role            UserRole   `gorm:"column:role;type:varchar(10)" json:"role"`
 	EmailVerifiedAt *time.Time `gorm:"column:email_verified_at" json:"email_verified_at"`
 	Group           Group
-	Hosts           []*Host       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"hosts"`
-	BookMarks       []*BookMark   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"bookmarks"`
-	GroupDetails    []GroupDetail `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"group_details"`
+	Hosts           []*Host     `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"hosts"`
+	BookMarks       []*BookMark `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"bookmarks"`
 }

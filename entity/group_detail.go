@@ -15,6 +15,6 @@ type GroupDetail struct {
 	GroupId uint `json:"group_id" gorm:"column:group_id;type:bigint"`
 	Group   Group
 	UserId  uint `json:"user_id" gorm:"column:user_id;type:bigint"`
-	Users   User
+	User    User
 	Role    GroupRole `json:"role" gorm:"column:role;type:varchar(10)"`
 }
