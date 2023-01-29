@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/miniyus/keyword-search-backend/internal/group_detail"
 	"gorm.io/gorm"
 	"time"
 )
@@ -22,4 +23,12 @@ type User struct {
 	Group           Group
 	Hosts           []*Host     `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"hosts"`
 	BookMarks       []*BookMark `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"bookmarks"`
+}
+
+func (u *User) AfterCreate(tx *gorm.DB) (err error) {
+	groupDetailHandler := group_detail.HandleCreatedUser(group_detail.CreateParameter{
+		DB: tx,
+	})
+
+	return groupDetailHandler(u, tx)
 }

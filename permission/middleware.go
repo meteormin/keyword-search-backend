@@ -57,6 +57,7 @@ func HasPermission(parameter HasPermissionParameter, permissions ...Permission) 
 					return err
 				}
 			} else {
+
 				permCollection = parameter.DefaultPerms
 			}
 
