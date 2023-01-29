@@ -100,37 +100,6 @@ definitions:
           $ref: '#/definitions/entity.User'
         type: array
     type: object
-  entity.GroupDetail:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      group:
-        $ref: '#/definitions/entity.Group'
-      group_id:
-        type: integer
-      id:
-        type: integer
-      role:
-        $ref: '#/definitions/entity.GroupRole'
-      updatedAt:
-        type: string
-      user_id:
-        type: integer
-      users:
-        $ref: '#/definitions/entity.User'
-    type: object
-  entity.GroupRole:
-    enum:
-    - owner
-    - manager
-    - member
-    type: string
-    x-enum-varnames:
-    - Owner
-    - Manager
-    - Member
   entity.Host:
     properties:
       createdAt:
@@ -222,10 +191,6 @@ definitions:
         type: string
       group:
         $ref: '#/definitions/entity.Group'
-      group_details:
-        items:
-          $ref: '#/definitions/entity.GroupDetail'
-        type: array
       group_id:
         type: integer
       hosts:
@@ -1006,7 +971,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_auth.ResetPasswordStruct'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.ResetPasswordStruct'
       produces:
       - application/json
       responses:
@@ -1034,14 +999,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_auth.SignUp'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignUp'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_api_auth.SignUpResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignUpResponse'
         "400":
           description: Bad Request
           schema:
@@ -1081,14 +1046,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_api_auth.SignIn'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignIn'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_auth.TokenInfo'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.TokenInfo'
         "400":
           description: Bad Request
           schema:
@@ -1118,7 +1083,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_groups.ListResponse'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1137,14 +1102,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_groups.CreateGroup'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreateGroup'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1172,14 +1137,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_groups.UpdateGroup'
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.UpdateGroup'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1236,7 +1201,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1263,7 +1228,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_groups.ResponseGroup'
+            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1295,7 +1260,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostListResponse'
+            $ref: '#/definitions/internal_hosts.HostListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1315,14 +1280,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.CreateHost'
+          $ref: '#/definitions/internal_hosts.CreateHost'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
+            $ref: '#/definitions/internal_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1383,7 +1348,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
+            $ref: '#/definitions/internal_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1416,14 +1381,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.PatchHost'
+          $ref: '#/definitions/internal_hosts.PatchHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
+            $ref: '#/definitions/internal_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1456,14 +1421,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.UpdateHost'
+          $ref: '#/definitions/internal_hosts.UpdateHost'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
+            $ref: '#/definitions/internal_hosts.HostResponse'
         "400":
           description: Bad Request
           schema:
@@ -1621,7 +1586,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostSubjectsResponse'
+            $ref: '#/definitions/internal_hosts.HostSubjectsResponse'
         "400":
           description: Bad Request
           schema:
@@ -1650,14 +1615,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.CreateSearch'
+          $ref: '#/definitions/internal_search.CreateSearch'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
+            $ref: '#/definitions/internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1718,7 +1683,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
+            $ref: '#/definitions/internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1751,14 +1716,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.PatchSearch'
+          $ref: '#/definitions/internal_search.PatchSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
+            $ref: '#/definitions/internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1791,14 +1756,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.UpdateSearch'
+          $ref: '#/definitions/internal_search.UpdateSearch'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.Response'
+            $ref: '#/definitions/internal_search.Response'
         "400":
           description: Bad Request
           schema:
@@ -1838,7 +1803,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_search.ResponseAll'
+            $ref: '#/definitions/internal_search.ResponseAll'
         "400":
           description: Bad Request
           schema:
