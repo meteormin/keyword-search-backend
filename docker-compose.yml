@@ -1,20 +1,20 @@
 version: '3'
 services:
-  #  debugger:
-  #    container_name: go-fiber_debugger
-  #    build:
-  #      context: .
-  #      dockerfile: debug.Dockerfile
-  #    extra_hosts:
-  #      - 'host.docker.internal:host-gateway'
-  #    ports:
-  #      - '8000:${APP_PORT:-8000}'
-  #      - '2345:2345'
-  #    networks:
-  #      - go-web
-  #    depends_on:
-  #      - redis
-  #      - pgsql
+  debugger:
+    container_name: go-fiber_debugger
+    build:
+      context: .
+      dockerfile: debug.Dockerfile
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '8000:${APP_PORT:-8000}'
+      - '2345:2345'
+    networks:
+      - ks-backend
+    depends_on:
+      - redis
+      - pgsql
   godoc:
     container_name: godoc
     image: miniyus/godoc

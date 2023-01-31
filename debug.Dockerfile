@@ -4,6 +4,7 @@ EXPOSE 8000 2345
 
 COPY . .
 
+COPY .env.development ./.env
 RUN CGO_ENABLED=0 go install -ldflags "-s -w -extldflags '-static'" github.com/go-delve/delve/cmd/dlv@latest
 RUN CGO_ENABLED=0 go mod download
 RUN CGO_ENABLED=0 go build -gcflags "all=-N -l" -o gofiber ./cmd/gofiber/main.go
