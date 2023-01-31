@@ -6,8 +6,14 @@ import (
 )
 
 func app() fiber.Config {
+	prefork := false
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == string(PRD) {
+		prefork = true
+	}
+
 	return fiber.Config{
 		AppName: os.Getenv("APP_NAME"),
-		Prefork: true,
+		Prefork: prefork,
 	}
 }

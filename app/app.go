@@ -104,7 +104,13 @@ func New(configs ...*configure.Configs) Application {
 		config = configs[0]
 	}
 
-	config.App.ErrorHandler = api_error.OverrideDefaultErrorHandler(config)
+	fiberConfig := config.App
+	dbConfig := config.Database
+
+	fiberConfig.ErrorHandler = api_error.OverrideDefaultErrorHandler(config)
+	if fiber.IsChild() {
+		dbConfig.AutoMigrate = false
+	}
 
 	return &app{
 		fiber.New(config.App),
