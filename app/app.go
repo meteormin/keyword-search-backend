@@ -31,22 +31,32 @@ type app struct {
 	db     *gorm.DB
 }
 
+// Fiber
+// get fiber application
 func (a *app) Fiber() *fiber.App {
 	return a.fiber
 }
 
+// Config
+// get configuration
 func (a *app) Config() *configure.Configs {
 	return a.config
 }
 
+// DB
+// get database connection
 func (a *app) DB() *gorm.DB {
 	return a.db
 }
 
+// Middleware
+// add middleware from closure
 func (a *app) Middleware(fn MiddlewareRegister) {
 	fn(a.Fiber(), a)
 }
 
+// Route
+// register route group
 func (a *app) Route(prefix string, fn RouterGroup, name ...string) {
 	r := NewRouter(a.Fiber(), prefix, name...)
 
@@ -80,6 +90,9 @@ func (a *app) Stats() {
 	}
 
 }
+
+// Run
+// run fiber application
 func (a *app) Run() {
 	port := a.config.AppPort
 	err := a.fiber.Listen(":" + strconv.Itoa(port))
