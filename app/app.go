@@ -113,8 +113,8 @@ func New(configs ...*configure.Configs) Application {
 	}
 
 	return &app{
-		fiber.New(config.App),
+		fiber.New(fiberConfig),
 		config,
-		database.DB(config.Database),
+		database.DB(dbConfig),
 	}
 }
