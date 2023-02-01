@@ -186,7 +186,7 @@ func (w *JobWorker) Start() {
 
 				if convJob != nil {
 					if convJob.Status != SUCCESS {
-						err := w.queue.Enqueue(job)
+						err = w.queue.Enqueue(job)
 						if err != nil {
 							log.Println(err)
 							continue
