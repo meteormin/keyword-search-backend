@@ -212,239 +212,6 @@ definitions:
     type: string
     x-enum-varnames:
     - Admin
-  github_com_miniyus_keyword-search-backend_internal_api_auth.ResetPasswordStruct:
-    properties:
-      password:
-        type: string
-      password_confirm:
-        type: string
-    required:
-    - password
-    - password_confirm
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_api_auth.SignIn:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_api_auth.SignUp:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-      password_confirm:
-        type: string
-      username:
-        type: string
-    required:
-    - email
-    - password
-    - password_confirm
-    - username
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_api_auth.SignUpResponse:
-    properties:
-      expires_at:
-        type: string
-      expires_in:
-        type: integer
-      token:
-        type: string
-      user_id:
-        type: integer
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_api_auth.TokenInfo:
-    properties:
-      expires_at:
-        type: string
-      expires_in:
-        type: integer
-      token:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_groups.CreateAction:
-    properties:
-      method:
-        $ref: '#/definitions/permission.Method'
-      resource:
-        type: string
-    required:
-    - method
-    - resource
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_groups.CreateGroup:
-    properties:
-      name:
-        type: string
-      permissions:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission'
-        type: array
-    required:
-    - name
-    - permissions
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission:
-    properties:
-      actions:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreateAction'
-        type: array
-      name:
-        type: string
-    required:
-    - actions
-    - name
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_groups.ListResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
-        type: array
-      page:
-        type: integer
-      page_size:
-        type: integer
-      total_count:
-        type: integer
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_groups.ResponseAction:
-    properties:
-      method:
-        $ref: '#/definitions/permission.Method'
-      resource:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup:
-    properties:
-      actions:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseAction'
-        type: array
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_groups.UpdateGroup:
-    properties:
-      name:
-        type: string
-      permissions:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission'
-        type: array
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_hosts.CreateHost:
-    properties:
-      description:
-        type: string
-      host:
-        type: string
-      path:
-        type: string
-      publish:
-        type: boolean
-      subject:
-        type: string
-      user_id:
-        type: integer
-    required:
-    - description
-    - host
-    - path
-    - publish
-    - subject
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_hosts.HostListResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse'
-        type: array
-      page:
-        type: integer
-      page_size:
-        type: integer
-      total_count:
-        type: integer
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse:
-    properties:
-      description:
-        type: string
-      host:
-        type: string
-      id:
-        type: integer
-      path:
-        type: string
-      publish:
-        type: boolean
-      subject:
-        type: string
-      user_id:
-        type: integer
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_hosts.HostSubjectsResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.Subjects'
-        type: array
-      page:
-        type: integer
-      page_size:
-        type: integer
-      total_count:
-        type: integer
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_hosts.PatchHost:
-    properties:
-      description:
-        type: string
-      host:
-        type: string
-      path:
-        type: string
-      publish:
-        type: boolean
-      subject:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_hosts.Subjects:
-    properties:
-      id:
-        type: integer
-      subject:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_hosts.UpdateHost:
-    properties:
-      description:
-        type: string
-      host:
-        type: string
-      path:
-        type: string
-      publish:
-        type: boolean
-      subject:
-        type: string
-    required:
-    - description
-    - host
-    - path
-    - publish
-    - subject
-    type: object
   github_com_miniyus_keyword-search-backend_internal_search.CreateSearch:
     properties:
       description:
@@ -495,22 +262,6 @@ definitions:
     required:
     - search
     type: object
-  github_com_miniyus_keyword-search-backend_internal_search.PatchSearch:
-    properties:
-      description:
-        type: string
-      host_id:
-        type: integer
-      publish:
-        type: boolean
-      query:
-        type: string
-      query_key:
-        type: string
-    required:
-    - host_id
-    - publish
-    type: object
   github_com_miniyus_keyword-search-backend_internal_search.Response:
     properties:
       created_at:
@@ -530,19 +281,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  github_com_miniyus_keyword-search-backend_internal_search.ResponseAll:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/entity.Search'
-        type: array
-      page:
-        type: integer
-      page_size:
-        type: integer
-      total_count:
-        type: integer
-    type: object
   github_com_miniyus_keyword-search-backend_internal_search.ResponseByHost:
     properties:
       data:
@@ -555,30 +293,6 @@ definitions:
         type: integer
       total_count:
         type: integer
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_search.UpdateSearch:
-    properties:
-      description:
-        type: string
-      host_id:
-        type: integer
-      publish:
-        type: boolean
-      query:
-        type: string
-      query_key:
-        type: string
-    required:
-    - description
-    - host_id
-    - publish
-    - query
-    - query_key
-    type: object
-  github_com_miniyus_keyword-search-backend_internal_short_url.Response:
-    properties:
-      url:
-        type: string
     type: object
   gorm.DeletedAt:
     properties:
@@ -971,7 +685,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.ResetPasswordStruct'
+          $ref: '#/definitions/internal_api_auth.ResetPasswordStruct'
       produces:
       - application/json
       responses:
@@ -999,14 +713,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignUp'
+          $ref: '#/definitions/internal_api_auth.SignUp'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignUpResponse'
+            $ref: '#/definitions/internal_api_auth.SignUpResponse'
         "400":
           description: Bad Request
           schema:
@@ -1046,14 +760,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignIn'
+          $ref: '#/definitions/internal_api_auth.SignIn'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.TokenInfo'
+            $ref: '#/definitions/internal_api_auth.TokenInfo'
         "400":
           description: Bad Request
           schema:
@@ -1083,7 +797,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ListResponse'
+            $ref: '#/definitions/internal_groups.ListResponse'
         "403":
           description: Forbidden
           schema:
@@ -1102,14 +816,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreateGroup'
+          $ref: '#/definitions/internal_groups.CreateGroup'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
+            $ref: '#/definitions/internal_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1137,14 +851,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.UpdateGroup'
+          $ref: '#/definitions/internal_groups.UpdateGroup'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
+            $ref: '#/definitions/internal_groups.ResponseGroup'
         "400":
           description: Bad Request
           schema:
@@ -1201,7 +915,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
+            $ref: '#/definitions/internal_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1228,7 +942,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup'
+            $ref: '#/definitions/internal_groups.ResponseGroup'
         "403":
           description: Forbidden
           schema:
@@ -1838,7 +1552,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_short_url.Response'
+            $ref: '#/definitions/internal_short_url.Response'
         "404":
           description: Not Found
       security:
@@ -1863,7 +1577,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_miniyus_keyword-search-backend_internal_short_url.Response'
+            $ref: '#/definitions/internal_short_url.Response'
         "302":
           description: Found
           schema:

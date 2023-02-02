@@ -72,7 +72,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.ResetPasswordStruct"
+                            "$ref": "#/definitions/internal_api_auth.ResetPasswordStruct"
                         }
                     }
                 ],
@@ -112,7 +112,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignUp"
+                            "$ref": "#/definitions/internal_api_auth.SignUp"
                         }
                     }
                 ],
@@ -120,7 +120,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignUpResponse"
+                            "$ref": "#/definitions/internal_api_auth.SignUpResponse"
                         }
                     },
                     "400": {
@@ -186,7 +186,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.SignIn"
+                            "$ref": "#/definitions/internal_api_auth.SignIn"
                         }
                     }
                 ],
@@ -194,7 +194,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_api_auth.TokenInfo"
+                            "$ref": "#/definitions/internal_api_auth.TokenInfo"
                         }
                     },
                     "400": {
@@ -244,7 +244,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ListResponse"
+                            "$ref": "#/definitions/internal_groups.ListResponse"
                         }
                     },
                     "403": {
@@ -285,7 +285,7 @@
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.UpdateGroup"
+                            "$ref": "#/definitions/internal_groups.UpdateGroup"
                         }
                     }
                 ],
@@ -293,7 +293,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup"
+                            "$ref": "#/definitions/internal_groups.ResponseGroup"
                         }
                     },
                     "400": {
@@ -333,7 +333,7 @@
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreateGroup"
+                            "$ref": "#/definitions/internal_groups.CreateGroup"
                         }
                     }
                 ],
@@ -341,7 +341,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup"
+                            "$ref": "#/definitions/internal_groups.ResponseGroup"
                         }
                     },
                     "400": {
@@ -390,7 +390,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup"
+                            "$ref": "#/definitions/internal_groups.ResponseGroup"
                         }
                     },
                     "403": {
@@ -433,7 +433,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup"
+                            "$ref": "#/definitions/internal_groups.ResponseGroup"
                         }
                     },
                     "403": {
@@ -1425,7 +1425,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_short_url.Response"
+                            "$ref": "#/definitions/internal_short_url.Response"
                         }
                     },
                     "404": {
@@ -1465,7 +1465,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_short_url.Response"
+                            "$ref": "#/definitions/internal_short_url.Response"
                         }
                     },
                     "302": {
@@ -1842,357 +1842,6 @@
                 "Admin"
             ]
         },
-        "github_com_miniyus_keyword-search-backend_internal_api_auth.ResetPasswordStruct": {
-            "type": "object",
-            "required": [
-                "password",
-                "password_confirm"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "password_confirm": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_api_auth.SignIn": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_api_auth.SignUp": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "password_confirm",
-                "username"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "password_confirm": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_api_auth.SignUpResponse": {
-            "type": "object",
-            "properties": {
-                "expires_at": {
-                    "type": "string"
-                },
-                "expires_in": {
-                    "type": "integer"
-                },
-                "token": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_api_auth.TokenInfo": {
-            "type": "object",
-            "properties": {
-                "expires_at": {
-                    "type": "string"
-                },
-                "expires_in": {
-                    "type": "integer"
-                },
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_groups.CreateAction": {
-            "type": "object",
-            "required": [
-                "method",
-                "resource"
-            ],
-            "properties": {
-                "method": {
-                    "$ref": "#/definitions/permission.Method"
-                },
-                "resource": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_groups.CreateGroup": {
-            "type": "object",
-            "required": [
-                "name",
-                "permissions"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission"
-                    }
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission": {
-            "type": "object",
-            "required": [
-                "actions",
-                "name"
-            ],
-            "properties": {
-                "actions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreateAction"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_groups.ListResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total_count": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_groups.ResponseAction": {
-            "type": "object",
-            "properties": {
-                "method": {
-                    "$ref": "#/definitions/permission.Method"
-                },
-                "resource": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_groups.ResponseGroup": {
-            "type": "object",
-            "properties": {
-                "actions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.ResponseAction"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_groups.UpdateGroup": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_groups.CreatePermission"
-                    }
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_hosts.CreateHost": {
-            "type": "object",
-            "required": [
-                "description",
-                "host",
-                "path",
-                "publish",
-                "subject"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "host": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "publish": {
-                    "type": "boolean"
-                },
-                "subject": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_hosts.HostListResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total_count": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_hosts.HostResponse": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "host": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "publish": {
-                    "type": "boolean"
-                },
-                "subject": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_hosts.HostSubjectsResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_internal_hosts.Subjects"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total_count": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_hosts.PatchHost": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "host": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "publish": {
-                    "type": "boolean"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_hosts.Subjects": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_hosts.UpdateHost": {
-            "type": "object",
-            "required": [
-                "description",
-                "host",
-                "path",
-                "publish",
-                "subject"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "host": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "publish": {
-                    "type": "boolean"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            }
-        },
         "github_com_miniyus_keyword-search-backend_internal_search.CreateSearch": {
             "type": "object",
             "required": [
@@ -2268,30 +1917,6 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_search.PatchSearch": {
-            "type": "object",
-            "required": [
-                "host_id",
-                "publish"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "host_id": {
-                    "type": "integer"
-                },
-                "publish": {
-                    "type": "boolean"
-                },
-                "query": {
-                    "type": "string"
-                },
-                "query_key": {
-                    "type": "string"
-                }
-            }
-        },
         "github_com_miniyus_keyword-search-backend_internal_search.Response": {
             "type": "object",
             "properties": {
@@ -2321,26 +1946,6 @@
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_internal_search.ResponseAll": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.Search"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total_count": {
-                    "type": "integer"
-                }
-            }
-        },
         "github_com_miniyus_keyword-search-backend_internal_search.ResponseByHost": {
             "type": "object",
             "properties": {
@@ -2358,41 +1963,6 @@
                 },
                 "total_count": {
                     "type": "integer"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_search.UpdateSearch": {
-            "type": "object",
-            "required": [
-                "description",
-                "host_id",
-                "publish",
-                "query",
-                "query_key"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "host_id": {
-                    "type": "integer"
-                },
-                "publish": {
-                    "type": "boolean"
-                },
-                "query": {
-                    "type": "string"
-                },
-                "query_key": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_internal_short_url.Response": {
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string"
                 }
             }
         },

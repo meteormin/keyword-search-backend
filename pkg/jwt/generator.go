@@ -19,6 +19,12 @@ type GeneratorStruct struct {
 	Exp        int
 }
 
+func NewGenerator(priv *rsa.PrivateKey, pub crypto.PublicKey, exp int) Generator {
+	return &GeneratorStruct{
+		priv, pub, exp,
+	}
+}
+
 func (g *GeneratorStruct) Generate(claims jwtLib.Claims, privateKey *rsa.PrivateKey) (*string, error) {
 	token := jwtLib.NewWithClaims(jwtLib.SigningMethodRS256, claims)
 	t, err := token.SignedString(privateKey)

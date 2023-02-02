@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	jwtWare "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
-	configure "github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"log"
@@ -64,7 +64,7 @@ func AccessLogMiddleware(logger ...*zap.SugaredLogger) fiber.Handler {
 		var err error
 
 		if zLogger == nil {
-			zLogger, err = configure.GetContext[*zap.SugaredLogger](c, configure.LoggerKey)
+			zLogger, err = utils.GetContext[*zap.SugaredLogger](c, utils.LoggerKey)
 			if err != nil {
 				return err
 			}
@@ -73,7 +73,7 @@ func AccessLogMiddleware(logger ...*zap.SugaredLogger) fiber.Handler {
 		start := time.Now()
 		err = c.Next()
 		elapsed := time.Since(start).Milliseconds()
-		cu, ok := c.Locals(configure.AuthUserKey).(*User)
+		cu, ok := c.Locals(utils.AuthUserKey).(*User)
 		userID := ""
 		if !ok {
 			userID = "guest"
@@ -140,7 +140,7 @@ func GetUserFromJWT() fiber.Handler {
 			ExpiresIn: &expiresIn,
 		}
 
-		c.Locals(configure.AuthUserKey, currentUser)
+		c.Locals(utils.AuthUserKey, currentUser)
 		return c.Next()
 	}
 }
@@ -149,28 +149,27 @@ func GetUserFromJWT() fiber.Handler {
 // jwt 유효성 체크 미들웨어
 func JwtMiddleware(jwtConfig ...jwtWare.Config) fiber.Handler {
 	var config *jwtWare.Config
-	if len(jwtConfig) != 0 {
-		config = &jwtConfig[0]
+	if len(jwtConfig) == 0 {
+		return newJwtMiddleware()
 	}
-
+	config = &jwtConfig[0]
 	return func(c *fiber.Ctx) error {
-		if config == nil {
-			cfg, err := configure.GetContext[*configure.Configs](c, configure.ConfigsKey)
-			if err != nil {
-				return err
-			}
-			config = &cfg.Auth.Jwt
-		}
-
 		middleware := newJwtMiddleware(*config)
 
 		return middleware(c)
 	}
 }
 
-func newJwtMiddleware(config jwtWare.Config) fiber.Handler {
-	jwtConfig := config
+func newJwtMiddleware(config ...jwtWare.Config) fiber.Handler {
+	if len(config) == 0 {
+		return jwtWare.New(jwtWare.Config{
+			ErrorHandler: jwtError(),
+		})
+	}
+
+	jwtConfig := config[0]
 	jwtConfig.ErrorHandler = jwtError()
+
 	return jwtWare.New(jwtConfig)
 }
 
@@ -198,12 +197,12 @@ func CheckExpired(database ...*gorm.DB) fiber.Handler {
 	}
 
 	return func(c *fiber.Ctx) error {
-		user, err := configure.GetContext[*User](c, configure.AuthUserKey)
+		user, err := utils.GetContext[*User](c, utils.AuthUserKey)
 		if err != nil {
 			return err
 		}
 		if db == nil {
-			db, err = configure.GetContext[*gorm.DB](c, configure.DBKey)
+			db, err = utils.GetContext[*gorm.DB](c, utils.DBKey)
 
 			if err != nil {
 				return err
@@ -228,7 +227,7 @@ func CheckExpired(database ...*gorm.DB) fiber.Handler {
 }
 
 func GetAuthUser(c *fiber.Ctx) (*User, error) {
-	user, err := configure.GetContext[*User](c, configure.AuthUserKey)
+	user, err := utils.GetContext[*User](c, utils.AuthUserKey)
 	if err != nil {
 		return nil, err
 	}

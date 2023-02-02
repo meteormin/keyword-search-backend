@@ -6,6 +6,9 @@ import (
 	fCors "github.com/gofiber/fiber/v2/middleware/cors"
 	fCsrf "github.com/gofiber/fiber/v2/middleware/csrf"
 	loggerMiddleware "github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/miniyus/keyword-search-backend/database"
+	"github.com/miniyus/keyword-search-backend/logger"
+	"github.com/miniyus/keyword-search-backend/permission"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"log"
 	"os"
@@ -27,17 +30,19 @@ type Configs struct {
 	TimeZone     string
 	App          fiber.Config
 	Logger       loggerMiddleware.Config
-	CustomLogger LoggerConfig
-	Database     DB
+	CustomLogger logger.Config
+	Database     database.Config
 	Path         Path
 	Auth         Auth
 	Cors         fCors.Config
 	Csrf         fCsrf.Config
-	Permission   []PermissionConfig
+	Permission   []permission.Config
 	CreateAdmin  CreateAdminConfig
 	RedisConfig  *redis.Options
 	QueueConfig  worker.DispatcherOption
 }
+
+var cfg *Configs
 
 func GetConfigs() *Configs {
 	port, err := strconv.Atoi(os.Getenv("APP_PORT"))
@@ -47,22 +52,26 @@ func GetConfigs() *Configs {
 		port = 8000
 	}
 
-	return &Configs{
-		AppEnv:       Env(os.Getenv("APP_ENV")),
-		AppPort:      port,
-		Locale:       os.Getenv("LOCALE"),
-		TimeZone:     os.Getenv("TIME_ZONE"),
-		App:          app(),
-		Logger:       flogger(),
-		CustomLogger: logger(),
-		Database:     database(),
-		Path:         getPath(),
-		Auth:         auth(),
-		Cors:         cors(),
-		Csrf:         csrf(),
-		Permission:   getPermissions(),
-		CreateAdmin:  createAdminConfig(),
-		RedisConfig:  redisConfig(),
-		QueueConfig:  queueConfig(),
+	if cfg == nil {
+		cfg = &Configs{
+			AppEnv:       Env(os.Getenv("APP_ENV")),
+			AppPort:      port,
+			Locale:       os.Getenv("LOCALE"),
+			TimeZone:     os.Getenv("TIME_ZONE"),
+			App:          app(),
+			Logger:       flogger(),
+			CustomLogger: loggerConfig(),
+			Database:     databaseConfig(),
+			Path:         getPath(),
+			Auth:         auth(),
+			Cors:         cors(),
+			Csrf:         csrf(),
+			Permission:   permissionConfig(),
+			CreateAdmin:  createAdminConfig(),
+			RedisConfig:  redisConfig(),
+			QueueConfig:  queueConfig(),
+		}
 	}
+
+	return cfg
 }

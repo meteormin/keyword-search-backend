@@ -1,4 +1,4 @@
-package config
+package utils
 
 import (
 	"errors"
@@ -11,13 +11,10 @@ type ContextKey string
 // context constants
 // ctx.Locals() 메서드에서 주로 사용됨
 const (
-	DBKey          ContextKey = "db"
-	ConfigsKey     ContextKey = "config"
-	LoggerKey      ContextKey = "logger"
-	AuthUserKey    ContextKey = "authUser"
-	PermissionsKey ContextKey = "permissions"
-	RedisKey       ContextKey = "redis"
-	JobDispatcher  ContextKey = "jobDispatcher"
+	DBKey       ContextKey = "db"
+	ConfigsKey  ContextKey = "config"
+	LoggerKey   ContextKey = "logger"
+	AuthUserKey ContextKey = "authUser"
 )
 
 func AddContext(localsKey ContextKey, value interface{}) fiber.Handler {

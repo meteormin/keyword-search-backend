@@ -21,13 +21,15 @@ type Handler interface {
 }
 
 type HandlerStruct struct {
-	service search.Service
+	service    search.Service
+	dispatcher worker.Dispatcher
 	logger.HasLoggerStruct
 }
 
-func NewHandler(s search.Service) Handler {
+func NewHandler(s search.Service, dispatcher worker.Dispatcher) Handler {
 	return &HandlerStruct{
-		service: s,
+		service:    s,
+		dispatcher: dispatcher,
 		HasLoggerStruct: logger.HasLoggerStruct{
 			Logger: s.GetLogger(),
 		},
@@ -145,20 +147,18 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	jDispatcher, err := config.GetContext[worker.Dispatcher](c, jobDispatcher)
-
 	if err != nil {
 		return err
 	}
 
-	jDispatcher.SelectWorker(string(config.DefaultWorker))
+	h.dispatcher.SelectWorker(string(config.DefaultWorker))
 
 	jobId := fmt.Sprintf("hosts.%s", strconv.Itoa(int(hostId)))
 
 	searchCollection := utils.NewCollection(dto.Search)
 	searchCollection.Chunk(100, func(v []*search.CreateSearch, i int) {
 
-		err = jDispatcher.Dispatch(jobId, func(job worker.Job) error {
+		err = h.dispatcher.Dispatch(jobId, func(job worker.Job) error {
 			create, err := h.service.BatchCreate(uint(hostId), dto.Search)
 			if err != nil {
 				return err
@@ -175,8 +175,9 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	findJob := internal.FindJobFromQueueWorker(h.dispatcher)
 
-	foundJob, err := internal.FindJobFromQueueWorker(c, jobId, string(config.DefaultWorker))
+	foundJob, err := findJob(c, jobId, string(config.DefaultWorker))
 	if err != nil {
 		return err
 	}

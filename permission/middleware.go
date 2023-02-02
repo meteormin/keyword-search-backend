@@ -3,7 +3,6 @@ package permission
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/auth"
-	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/utils"
 	"gorm.io/gorm"
@@ -16,28 +15,21 @@ type HasPermissionParameter struct {
 	FilterFunc   func(currentUser *auth.User, p Permission) bool
 }
 
-// HasPermission check has permissions middleware
+// HasPermission
+// check has permissions middleware
 func HasPermission(parameter HasPermissionParameter, permissions ...Permission) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		pass := false
 
-		currentUser, err := config.GetContext[*auth.User](c, config.AuthUserKey)
+		currentUser, err := utils.GetContext[*auth.User](c, utils.AuthUserKey)
 
 		if currentUser.Role == string(entity.Admin) {
 			return c.Next()
 		}
 
 		var permCollection Collection
-		var db *gorm.DB
 
-		if parameter.DB == nil {
-			db, err = config.GetContext[*gorm.DB](c, config.DBKey)
-			if err != nil {
-				return err
-			}
-		} else {
-			db = parameter.DB
-		}
+		db := parameter.DB
 
 		repo := NewRepository(db)
 
@@ -50,26 +42,17 @@ func HasPermission(parameter HasPermissionParameter, permissions ...Permission) 
 		}
 
 		if permCollection == nil {
-			if parameter.DefaultPerms == nil {
-				permCollection, err = config.GetContext[Collection](c, config.PermissionsKey)
+			permCollection = parameter.DefaultPerms
+		}
 
-				if err != nil {
-					return err
-				}
-			} else {
+		entities := make([]entity.Permission, 0)
+		permCollection.For(func(perm Permission, i int) {
+			entities = append(entities, ToPermissionEntity(perm))
+		})
 
-				permCollection = parameter.DefaultPerms
-			}
-
-			entities := make([]entity.Permission, 0)
-			permCollection.For(func(perm Permission, i int) {
-				entities = append(entities, ToPermissionEntity(perm))
-			})
-
-			_, err = repo.Save(entities)
-			if err != nil {
-				return err
-			}
+		_, err = repo.Save(entities)
+		if err != nil {
+			return err
 		}
 
 		if len(permissions) != 0 {

@@ -2,18 +2,41 @@ package database
 
 import (
 	"fmt"
-	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/database/migrations"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	gormLogger "gorm.io/gorm/logger"
 	"log"
 	"os"
+	"time"
 )
+
+type Config struct {
+	Host        string
+	Dbname      string
+	Username    string
+	Password    string
+	Port        string
+	TimeZone    string
+	SSLMode     bool
+	AutoMigrate bool
+	Logger      gormLogger.Config
+	MaxIdleConn int
+	MaxOpenConn int
+	MaxLifeTime time.Duration
+}
+
+var db *gorm.DB
 
 // DB
 // gorm.DB 객체 생성 함수
-func DB(config config.DB) *gorm.DB {
+func DB(config Config) *gorm.DB {
+
+	if db != nil {
+		return db
+	}
+
 	var sslMode string = "disable"
 	if config.SSLMode {
 		sslMode = "enable"

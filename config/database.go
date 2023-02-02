@@ -1,35 +1,21 @@
 package config
 
 import (
+	"github.com/miniyus/keyword-search-backend/database"
 	gormLogger "gorm.io/gorm/logger"
 	"os"
 	"strconv"
 	"time"
 )
 
-type DB struct {
-	Host        string
-	Dbname      string
-	Username    string
-	Password    string
-	Port        string
-	TimeZone    string
-	SSLMode     bool
-	AutoMigrate bool
-	Logger      gormLogger.Config
-	MaxIdleConn int
-	MaxOpenConn int
-	MaxLifeTime time.Duration
-}
-
-func database() DB {
+func databaseConfig() database.Config {
 	autoMigrate, err := strconv.ParseBool(os.Getenv("DB_AUTO_MIGRATE"))
 
 	if err != nil {
 		autoMigrate = false
 	}
 
-	return DB{
+	return database.Config{
 		Host:        os.Getenv("DB_HOST"),
 		Dbname:      os.Getenv("DB_DATABASE"),
 		Username:    os.Getenv("DB_USERNAME"),

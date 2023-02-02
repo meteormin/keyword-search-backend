@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/miniyus/keyword-search-backend/app"
 	"github.com/miniyus/keyword-search-backend/auth"
+	configure "github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/api_auth"
 	"github.com/miniyus/keyword-search-backend/internal/group_detail"
 	"github.com/miniyus/keyword-search-backend/internal/groups"
@@ -13,36 +14,48 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/test_api"
 	"github.com/miniyus/keyword-search-backend/internal/users"
 	"github.com/miniyus/keyword-search-backend/permission"
-	"github.com/miniyus/keyword-search-backend/resolver"
+	"github.com/miniyus/keyword-search-backend/pkg/jwt"
+	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
+	"github.com/miniyus/keyword-search-backend/pkg/worker"
+	"github.com/miniyus/keyword-search-backend/utils"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+	"path"
 )
 
 const ApiPrefix = "/api"
 
 func Api(apiRouter app.Router, a app.Application) {
-	zapLogger := resolver.MakeLogger(a.Config().CustomLogger)
+	var cfg *configure.Configs
+	a.Resolve(&cfg)
 
-	tokenGenerator := resolver.MakeJwtGenerator(resolver.JwtGeneratorConfig{
-		DataPath: a.Config().Path.DataPath,
-		Exp:      a.Config().Auth.Exp,
-	})
+	var zapLogger *zap.SugaredLogger
+	a.Resolve(&zapLogger)
 
-	permissionCollection := resolver.MakePermissionCollection(a.Config().Permission)
+	var db *gorm.DB
+	a.Resolve(&db)
 
-	jDispatcher := resolver.MakeJobDispatcher(resolver.JobDispatcherConfig{
-		RedisCfg:  a.Config().RedisConfig,
-		WorkerCfg: a.Config().QueueConfig,
-	})
+	privateKey := rsGen.PrivatePemDecode(path.Join(cfg.Path.DataPath, "secret/private.pem"))
+	tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
+
+	permissions := permission.NewPermissionsFromConfig(cfg.Permission)
+	permissionCollection := permission.NewPermissionCollection(permissions...)
+
+	opts := cfg.QueueConfig
+	opts.Redis = utils.RedisClientMaker(cfg.RedisConfig)
+
+	jDispatcher := worker.NewDispatcher(opts)
 
 	authMiddlewareParam := auth.MiddlewaresParameter{
-		Cfg: a.Config().Auth.Jwt,
-		DB:  a.DB(),
+		Cfg: cfg.Auth.Jwt,
+		DB:  db,
 	}
 
 	hasPermParam := permission.HasPermissionParameter{
-		DB:           a.DB(),
-		DefaultPerms: permissionCollection(),
+		DB:           db,
+		DefaultPerms: permissionCollection,
 		FilterFunc: group_detail.FilterFunc(group_detail.FilterParameter{
-			DB: a.DB(),
+			DB: db,
 		}),
 	}
 
@@ -50,9 +63,9 @@ func Api(apiRouter app.Router, a app.Application) {
 		api_auth.Prefix,
 		api_auth.Register(
 			api_auth.New(
-				a.DB(),
-				tokenGenerator(),
-				zapLogger(),
+				db,
+				tokenGenerator,
+				zapLogger,
 			),
 			authMiddlewareParam,
 		),
@@ -60,52 +73,48 @@ func Api(apiRouter app.Router, a app.Application) {
 
 	apiRouter.Route(
 		groups.Prefix,
-		groups.Register(groups.New(a.DB(), zapLogger())),
+		groups.Register(groups.New(db, zapLogger)),
 		auth.Middlewares(authMiddlewareParam, permission.HasPermission(hasPermParam))...,
 	).Name("api.groups")
 
 	apiRouter.Route(
 		users.Prefix,
-		users.Register(users.New(a.DB(), zapLogger())),
+		users.Register(users.New(db, zapLogger)),
 		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.users")
 
 	apiRouter.Route(
 		hosts.Prefix,
-		hosts.Register(hosts.New(a.DB(), zapLogger())),
+		hosts.Register(hosts.New(db, zapLogger)),
 		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.hosts")
 
 	apiRouter.Route(
 		search.Prefix,
-		search.Register(search.New(a.DB(), zapLogger())),
+		search.Register(search.New(db, zapLogger)),
 		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.search")
 
-	hostSearchHandler := host_search.New(a.DB(), zapLogger())
-	hostSearchParameter := host_search.RegisterParameter{
-		HasPerm:       hasPermParam,
-		JobDispatcher: jDispatcher(),
-	}
+	hostSearchHandler := host_search.New(db, zapLogger, jDispatcher)
 
 	apiRouter.Route(
 		host_search.Prefix,
-		host_search.Register(hostSearchHandler, hostSearchParameter),
+		host_search.Register(hostSearchHandler, hasPermParam),
 		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.hosts.search")
 
 	apiRouter.Route(
 		short_url.Prefix,
 		short_url.Register(short_url.New(
-			a.DB(),
-			resolver.MakeRedisClient(a.Config().RedisConfig),
-			zapLogger(),
+			db,
+			utils.RedisClientMaker(cfg.RedisConfig),
+			zapLogger,
 		)),
 		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.short_url")
 
 	apiRouter.Route(
 		test_api.Prefix,
-		test_api.Register(jDispatcher(), zapLogger()),
+		test_api.Register(jDispatcher, zapLogger),
 	).Name("api.test_api")
 }

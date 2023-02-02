@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	loggerMiddleware "github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/miniyus/keyword-search-backend/logger"
 	"go.uber.org/zap/zapcore"
 	"os"
 	"time"
@@ -17,20 +18,7 @@ func flogger() loggerMiddleware.Config {
 	}
 }
 
-type LoggerConfig struct {
-	TimeFormat string
-	FilePath   string
-	Filename   string
-	MaxSize    int
-	MaxBackups int
-	MaxAge     int
-	Compress   bool
-	TimeKey    string
-	TimeZone   string
-	LogLevel   zapcore.Level
-}
-
-func logger() LoggerConfig {
+func loggerConfig() logger.Config {
 	loc, err := time.LoadLocation(os.Getenv("TIME_ZONE"))
 	var today string
 	if err != nil {
@@ -41,7 +29,7 @@ func logger() LoggerConfig {
 
 	filePath := getPath().LogPath
 	filename := fmt.Sprintf("log-%s.log", today)
-	return LoggerConfig{
+	return logger.Config{
 		TimeFormat: "2006-01-02 15:04:05",
 		FilePath:   filePath,
 		Filename:   filename,

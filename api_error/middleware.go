@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	configure "github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"go.uber.org/zap"
 	"runtime/debug"
 )
@@ -18,7 +19,7 @@ func OverrideDefaultErrorHandler(cfg *configure.Configs) fiber.ErrorHandler {
 		var config *configure.Configs
 		var insideErr error
 		if cfg == nil {
-			config, insideErr = configure.GetContext[*configure.Configs](ctx, configure.ConfigsKey)
+			config, insideErr = utils.GetContext[*configure.Configs](ctx, utils.ConfigsKey)
 			if err != nil {
 				errRes := NewFromError(ctx, insideErr)
 				return errRes.Response()
@@ -29,7 +30,7 @@ func OverrideDefaultErrorHandler(cfg *configure.Configs) fiber.ErrorHandler {
 		}
 
 		var logger *zap.SugaredLogger
-		logger, insideErr = configure.GetContext[*zap.SugaredLogger](ctx, configure.LoggerKey)
+		logger, insideErr = utils.GetContext[*zap.SugaredLogger](ctx, utils.LoggerKey)
 
 		if insideErr != nil {
 			errRes := NewFromError(ctx, insideErr)
@@ -57,7 +58,7 @@ func ErrorHandler(cfg *configure.Configs) fiber.Handler {
 		var config *configure.Configs
 		var insideErr error
 		if cfg == nil {
-			config, insideErr = configure.GetContext[*configure.Configs](ctx, configure.ConfigsKey)
+			config, insideErr = utils.GetContext[*configure.Configs](ctx, utils.ConfigsKey)
 			if err != nil {
 				errRes := NewFromError(ctx, insideErr)
 				return errRes.Response()
@@ -67,7 +68,7 @@ func ErrorHandler(cfg *configure.Configs) fiber.Handler {
 		}
 
 		var logger *zap.SugaredLogger
-		logger, insideErr = configure.GetContext[*zap.SugaredLogger](ctx, configure.LoggerKey)
+		logger, insideErr = utils.GetContext[*zap.SugaredLogger](ctx, utils.LoggerKey)
 
 		if insideErr != nil {
 			errRes := NewFromError(ctx, insideErr)

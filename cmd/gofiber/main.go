@@ -10,8 +10,13 @@ import (
 	"github.com/miniyus/keyword-search-backend/app"
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/create_admin"
-	"github.com/miniyus/keyword-search-backend/resolver"
+	"github.com/miniyus/keyword-search-backend/database"
+	"github.com/miniyus/keyword-search-backend/logger"
+	"github.com/miniyus/keyword-search-backend/pkg/IOContainer"
 	"github.com/miniyus/keyword-search-backend/routes"
+	"github.com/miniyus/keyword-search-backend/utils"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 // @title keyword-search-backend Swagger API Documentation
@@ -29,29 +34,53 @@ import (
 // @name						Authorization
 // @description				   Bearer token type
 func main() {
-	a := app.New()
+	cfg := config.GetConfigs()
+	a := app.New(cfg)
 	create_admin.CreateAdmin(a)
 
-	a.Middleware(func(fiberApp *fiber.App, application app.Application) {
-		configure := application.Config()
-
-		fiberApp.Use(flogger.New(configure.Logger))
-		fiberApp.Use(recover.New(recover.Config{
-			EnableStackTrace: !application.IsProduction(),
-		}))
-		fiberApp.Use(api_error.ErrorHandler(configure))
-		fiberApp.Use(cors.New(configure.Cors))
-
-		// Add Context Config
-		fiberApp.Use(config.AddContext(config.ConfigsKey, configure))
-		// Add Context Logger
-		logger := resolver.MakeLogger(configure.CustomLogger)
-		fiberApp.Use(config.AddContext(config.LoggerKey, logger()))
-	})
-
+	a.RegisterContainer(bindings(cfg))
+	a.Middleware(middlewares)
 	a.Route(routes.ApiPrefix, routes.Api, "api")
 	a.Route("/", routes.External, "external")
-
 	a.Stats()
 	a.Run()
+}
+
+func bindings(configs *config.Configs) app.RegisterContainer {
+	return func(c IOContainer.Container) {
+		var cfg *config.Configs
+		c.Bind(&cfg, func() *config.Configs {
+			return configs
+		})
+
+		var db *gorm.DB
+		c.Bind(&db, database.DB(configs.Database))
+
+		var zLogger *zap.SugaredLogger
+		c.Bind(&zLogger, func() *zap.SugaredLogger {
+			return logger.New(configs.CustomLogger)
+		})
+	}
+}
+
+func middlewares(fiberApp *fiber.App, application app.Application) {
+	var cfg *config.Configs
+
+	application.Resolve(&cfg)
+
+	fiberApp.Use(flogger.New(cfg.Logger))
+	fiberApp.Use(recover.New(recover.Config{
+		EnableStackTrace: !application.IsProduction(),
+	}))
+
+	fiberApp.Use(api_error.ErrorHandler(cfg))
+	fiberApp.Use(cors.New(cfg.Cors))
+
+	// Add Context Config
+	fiberApp.Use(utils.AddContext(utils.ConfigsKey, cfg))
+	// Add Context Logger
+	var zLogger *zap.SugaredLogger
+	application.Resolve(&zLogger)
+
+	fiberApp.Use(utils.AddContext(utils.LoggerKey, zLogger))
 }
