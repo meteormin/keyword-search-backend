@@ -32,7 +32,7 @@ type Application interface {
 	register(fn Register)
 	Middleware(fn MiddlewareRegister)
 	Route(prefix string, fn RouterGroup, name ...string)
-	Stats()
+	Status()
 	Run()
 	RegisterContainer(fn RegisterContainer)
 	RegisterFiber(fn RegisterFiber)
@@ -132,11 +132,11 @@ func (a *app) Route(prefix string, fn RouterGroup, name ...string) {
 	})
 }
 
-// Stats
+// Status
 // Debug 용도,
 // 현재 생성된 route list
 // 컨테이너가 가지고 있는 정보 콘솔 로그로 보여준다.
-func (a *app) Stats() {
+func (a *app) Status() {
 	if a.IsProduction() {
 		log.Printf("'AppEnv' is %s", configure.PRD)
 		return

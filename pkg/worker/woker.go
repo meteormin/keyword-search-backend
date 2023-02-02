@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v9"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -58,6 +59,7 @@ type Queue interface {
 	Enqueue(job Job) error
 	Dequeue() (*Job, error)
 	Clear()
+	Count() int
 }
 
 type JobQueue struct {
@@ -105,11 +107,18 @@ func (q *JobQueue) Clear() {
 	q.jobChan = make(chan Job)
 }
 
+func (q *JobQueue) Count() int {
+	return len(q.queue)
+}
+
 type Worker interface {
 	GetName() string
 	Start()
 	Stop()
 	AddJob(job Job) error
+	IsRunning() bool
+	MaxJobCount() int
+	JobCount() int
 }
 
 type JobWorker struct {
@@ -119,6 +128,9 @@ type JobWorker struct {
 	quitChan    chan bool
 	redis       func() *redis.Client
 	maxJobCount int
+	isRunning   bool
+	beforeJob   func(j Job)
+	afterJob    func(j Job, err error)
 }
 
 func saveJob(r *redis.Client, key string, job Job) {
@@ -165,6 +177,11 @@ func (w *JobWorker) GetName() string {
 }
 
 func (w *JobWorker) Start() {
+	if w.isRunning {
+		log.Printf("%s worker is running", w.Name)
+		return
+	}
+
 	go func() {
 		log.Printf("Start Worker(%s):", w.Name)
 		for {
@@ -221,6 +238,11 @@ func (w *JobWorker) Start() {
 }
 
 func (w *JobWorker) Stop() {
+	if !w.isRunning {
+		log.Printf("%s worker is not running", w.Name)
+		return
+	}
+
 	go func() {
 		w.quitChan <- true
 	}()
@@ -234,6 +256,18 @@ func (w *JobWorker) AddJob(job Job) error {
 	return nil
 }
 
+func (w *JobWorker) IsRunning() bool {
+	return w.isRunning
+}
+
+func (w *JobWorker) MaxJobCount() int {
+	return w.maxJobCount
+}
+
+func (w *JobWorker) JobCount() int {
+	return w.queue.Count()
+}
+
 type Dispatcher interface {
 	Dispatch(jobId string, closure func(j Job) error) error
 	Run()
@@ -243,18 +277,20 @@ type Dispatcher interface {
 	GetRedis() func() *redis.Client
 	AddWorker(option Option)
 	RemoveWorker(nam string)
+	Status(isConsole bool) *Status
 }
 
 type JobDispatcher struct {
-	workers    []Worker
-	workerPool chan chan Job
-	worker     Worker
-	Redis      func() *redis.Client
+	workers []Worker
+	worker  Worker
+	Redis   func() *redis.Client
 }
 
 type Option struct {
 	Name        string
 	MaxJobCount int
+	BeforeJob   func(j Job)
+	AfterJob    func(j Job)
 }
 
 type DispatcherOption struct {
@@ -281,10 +317,9 @@ func NewDispatcher(opt DispatcherOption) Dispatcher {
 	}
 
 	return &JobDispatcher{
-		workers:    workers,
-		workerPool: make(chan chan Job, len(workers)),
-		worker:     nil,
-		Redis:      opt.Redis,
+		workers: workers,
+		worker:  nil,
+		Redis:   opt.Redis,
 	}
 }
 
@@ -358,5 +393,40 @@ func (d *JobDispatcher) Run() {
 func (d *JobDispatcher) Stop() {
 	for _, w := range d.workers {
 		w.Stop()
+	}
+}
+
+type Status struct {
+	Workers     []map[string]string `json:"workers"`
+	WorkerCount int                 `json:"worker_count"`
+}
+
+func (d *JobDispatcher) Status(isConsole bool) *Status {
+
+	workers := make([]map[string]string, 0)
+	for _, w := range d.workers {
+		workerInfo := map[string]string{
+			"name":          w.GetName(),
+			"is_running":    strconv.FormatBool(w.IsRunning()),
+			"job_count":     strconv.Itoa(w.JobCount()),
+			"max_job_count": strconv.Itoa(w.MaxJobCount()),
+		}
+
+		workers = append(workers, workerInfo)
+	}
+
+	if isConsole {
+		for _, w := range workers {
+			log.Printf("[worker name]: %s", w["name"])
+			log.Printf("[worker is running]: %s", w["is_running"])
+			log.Printf("[worker's job count]: %s", w["job_count"])
+			log.Printf("[worker's max job count]:  %s", w["max_job_count"])
+		}
+		return nil
+	}
+
+	return &Status{
+		Workers:     workers,
+		WorkerCount: len(workers),
 	}
 }

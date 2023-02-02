@@ -42,7 +42,7 @@ func main() {
 	a.Middleware(middlewares)
 	a.Route(routes.ApiPrefix, routes.Api, "api")
 	a.Route("/", routes.External, "external")
-	a.Stats()
+	a.Status()
 	a.Run()
 }
 
