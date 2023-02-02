@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v9"
 	"log"
-	"strconv"
 	"time"
 )
 
@@ -23,11 +22,11 @@ const (
 const DefaultWorker = "default"
 
 type Job struct {
-	JobId     string              `json:"job_id"`
-	Status    JobStatus           `json:"status"`
-	Closure   func(job Job) error `json:"-"`
-	CreatedAt time.Time           `json:"created_at"`
-	UpdatedAt time.Time           `json:"updated_at"`
+	JobId     string               `json:"job_id"`
+	Status    JobStatus            `json:"status"`
+	Closure   func(job *Job) error `json:"-"`
+	CreatedAt time.Time            `json:"created_at"`
+	UpdatedAt time.Time            `json:"updated_at"`
 }
 
 func (j *Job) Marshal() (string, error) {
@@ -47,7 +46,7 @@ func (j *Job) UnMarshal(jsonStr string) error {
 	return nil
 }
 
-func newJob(jobId string, closure func(job Job) error) Job {
+func newJob(jobId string, closure func(job *Job) error) Job {
 	return Job{
 		JobId:   jobId,
 		Closure: closure,
@@ -113,12 +112,14 @@ func (q *JobQueue) Count() int {
 
 type Worker interface {
 	GetName() string
-	Start()
+	Run()
 	Stop()
 	AddJob(job Job) error
 	IsRunning() bool
 	MaxJobCount() int
 	JobCount() int
+	BeforeJob(fn func(j *Job))
+	AfterJob(fn func(j *Job, err error))
 }
 
 type JobWorker struct {
@@ -129,8 +130,8 @@ type JobWorker struct {
 	redis       func() *redis.Client
 	maxJobCount int
 	isRunning   bool
-	beforeJob   func(j Job)
-	afterJob    func(j Job, err error)
+	beforeJob   func(j *Job)
+	afterJob    func(j *Job, err error)
 }
 
 func saveJob(r *redis.Client, key string, job Job) {
@@ -154,21 +155,62 @@ func getJob(r *redis.Client, key string) (*Job, error) {
 	} else {
 		var convJob *Job
 		err = convJob.UnMarshal(val)
+
 		if err != nil {
 			return nil, err
 		}
+
 		return convJob, nil
 	}
 }
 
-func NewWorker(name string, redis func() *redis.Client, maxJobCount int) Worker {
+func work(w *JobWorker, job *Job) {
+	job.CreatedAt = time.Now()
+
+	log.Printf("worker %s, job %s \n", w.Name, job.JobId)
+	if w.beforeJob != nil {
+		w.beforeJob(job)
+	}
+
+	err := job.Closure(job)
+	if err != nil {
+		job.Status = FAIL
+	} else {
+		job.Status = SUCCESS
+	}
+
+	job.UpdatedAt = time.Now()
+
+	if w.afterJob != nil {
+		w.afterJob(job, err)
+	}
+
+	jsonJob, err := job.Marshal()
+	if err != nil {
+		log.Print(err)
+	}
+
+	log.Printf("end job: %s", jsonJob)
+}
+
+type Config struct {
+	Name        string
+	Redis       func() *redis.Client
+	MaxJobCount int
+	BeforeJob   func(j *Job)
+	AfterJob    func(j *Job, err error)
+}
+
+func NewWorker(cfg Config) Worker {
 	return &JobWorker{
-		Name:        name,
-		queue:       NewQueue(maxJobCount),
-		jobChan:     make(chan Job, maxJobCount),
+		Name:        cfg.Name,
+		queue:       NewQueue(cfg.MaxJobCount),
+		jobChan:     make(chan Job, cfg.MaxJobCount),
 		quitChan:    make(chan bool),
-		redis:       redis,
-		maxJobCount: maxJobCount,
+		redis:       cfg.Redis,
+		maxJobCount: cfg.MaxJobCount,
+		beforeJob:   cfg.BeforeJob,
+		afterJob:    cfg.AfterJob,
 	}
 }
 
@@ -176,7 +218,7 @@ func (w *JobWorker) GetName() string {
 	return w.Name
 }
 
-func (w *JobWorker) Start() {
+func (w *JobWorker) Run() {
 	if w.isRunning {
 		log.Printf("%s worker is running", w.Name)
 		return
@@ -212,22 +254,7 @@ func (w *JobWorker) Start() {
 					}
 				}
 
-				job.CreatedAt = time.Now()
-				log.Printf("worker %s, job %s \n", w.Name, job.JobId)
-				err = job.Closure(job)
-				if err != nil {
-					job.Status = FAIL
-				} else {
-					job.Status = SUCCESS
-				}
-
-				job.UpdatedAt = time.Now()
-				jsonJob, err := job.Marshal()
-				if err != nil {
-					log.Print(err)
-				}
-
-				log.Printf("end job: %s", jsonJob)
+				work(w, &job)
 				saveJob(r, key, job)
 			case <-w.quitChan:
 				log.Printf("worker %s stopping\n", w.Name)
@@ -268,165 +295,10 @@ func (w *JobWorker) JobCount() int {
 	return w.queue.Count()
 }
 
-type Dispatcher interface {
-	Dispatch(jobId string, closure func(j Job) error) error
-	Run()
-	Stop()
-	SelectWorker(name string) Dispatcher
-	GetWorkers() []Worker
-	GetRedis() func() *redis.Client
-	AddWorker(option Option)
-	RemoveWorker(nam string)
-	Status(isConsole bool) *Status
+func (w *JobWorker) BeforeJob(fn func(j *Job)) {
+	w.beforeJob = fn
 }
 
-type JobDispatcher struct {
-	workers []Worker
-	worker  Worker
-	Redis   func() *redis.Client
-}
-
-type Option struct {
-	Name        string
-	MaxJobCount int
-	BeforeJob   func(j Job)
-	AfterJob    func(j Job)
-}
-
-type DispatcherOption struct {
-	WorkerOptions []Option
-	Redis         func() *redis.Client
-}
-
-var defaultWorkerOption = []Option{
-	{
-		Name:        DefaultWorker,
-		MaxJobCount: 10,
-	},
-}
-
-func NewDispatcher(opt DispatcherOption) Dispatcher {
-	workers := make([]Worker, 0)
-
-	if len(opt.WorkerOptions) == 0 {
-		opt.WorkerOptions = defaultWorkerOption
-	}
-
-	for _, o := range opt.WorkerOptions {
-		workers = append(workers, NewWorker(o.Name, opt.Redis, o.MaxJobCount))
-	}
-
-	return &JobDispatcher{
-		workers: workers,
-		worker:  nil,
-		Redis:   opt.Redis,
-	}
-}
-
-func (d *JobDispatcher) AddWorker(option Option) {
-	d.workers = append(d.workers, NewWorker(option.Name, d.Redis, option.MaxJobCount))
-}
-
-func (d *JobDispatcher) RemoveWorker(name string) {
-	var rmIndex *int = nil
-	for i, worker := range d.workers {
-		if worker.GetName() == name {
-			rmIndex = &i
-		}
-	}
-
-	if rmIndex != nil {
-		d.workers = append(d.workers[:*rmIndex], d.workers[*rmIndex+1:]...)
-	}
-}
-
-func (d *JobDispatcher) GetRedis() func() *redis.Client {
-	return d.Redis
-}
-
-func (d *JobDispatcher) GetWorkers() []Worker {
-	return d.workers
-}
-
-func (d *JobDispatcher) SelectWorker(name string) Dispatcher {
-	if name == "" {
-		for _, w := range d.workers {
-			if w.GetName() == "default" {
-				d.worker = w
-			}
-		}
-
-	}
-
-	for _, w := range d.workers {
-		if w.GetName() == name {
-			d.worker = w
-		}
-	}
-
-	return d
-}
-
-func (d *JobDispatcher) Dispatch(jobId string, closure func(j Job) error) error {
-	if d.worker == nil {
-		for _, w := range d.workers {
-			if w.GetName() == DefaultWorker {
-				d.worker = w
-			}
-		}
-	}
-
-	err := d.worker.AddJob(newJob(jobId, closure))
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (d *JobDispatcher) Run() {
-	for _, w := range d.workers {
-		w.Start()
-	}
-}
-
-func (d *JobDispatcher) Stop() {
-	for _, w := range d.workers {
-		w.Stop()
-	}
-}
-
-type Status struct {
-	Workers     []map[string]string `json:"workers"`
-	WorkerCount int                 `json:"worker_count"`
-}
-
-func (d *JobDispatcher) Status(isConsole bool) *Status {
-
-	workers := make([]map[string]string, 0)
-	for _, w := range d.workers {
-		workerInfo := map[string]string{
-			"name":          w.GetName(),
-			"is_running":    strconv.FormatBool(w.IsRunning()),
-			"job_count":     strconv.Itoa(w.JobCount()),
-			"max_job_count": strconv.Itoa(w.MaxJobCount()),
-		}
-
-		workers = append(workers, workerInfo)
-	}
-
-	if isConsole {
-		for _, w := range workers {
-			log.Printf("[worker name]: %s", w["name"])
-			log.Printf("[worker is running]: %s", w["is_running"])
-			log.Printf("[worker's job count]: %s", w["job_count"])
-			log.Printf("[worker's max job count]:  %s", w["max_job_count"])
-		}
-		return nil
-	}
-
-	return &Status{
-		Workers:     workers,
-		WorkerCount: len(workers),
-	}
+func (w *JobWorker) AfterJob(fn func(j *Job, err error)) {
+	w.afterJob = fn
 }

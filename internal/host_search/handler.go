@@ -158,7 +158,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 	searchCollection := utils.NewCollection(dto.Search)
 	searchCollection.Chunk(100, func(v []*search.CreateSearch, i int) {
 
-		err = h.dispatcher.Dispatch(jobId, func(job worker.Job) error {
+		err = h.dispatcher.Dispatch(jobId, func(job *worker.Job) error {
 			create, err := h.service.BatchCreate(uint(hostId), dto.Search)
 			if err != nil {
 				return err

@@ -21,7 +21,7 @@ func Register(dispatcher jobWorker.Dispatcher, logger *zap.SugaredLogger) app.Su
 	return func(router fiber.Router) {
 		router.Post("/", func(ctx *fiber.Ctx) error {
 			logger.Infof(ctx.Path())
-			err := dispatcher.SelectWorker(jobWorker.DefaultWorker).Dispatch("test", func(j jobWorker.Job) error {
+			err := dispatcher.SelectWorker(jobWorker.DefaultWorker).Dispatch("test", func(j *jobWorker.Job) error {
 				jStr, jErr := j.Marshal()
 				if jErr != nil {
 					return jErr
@@ -34,7 +34,6 @@ func Register(dispatcher jobWorker.Dispatcher, logger *zap.SugaredLogger) app.Su
 			})
 
 			logger.Infof("run dispatcher")
-			dispatcher.Run()
 
 			if err != nil {
 				return err

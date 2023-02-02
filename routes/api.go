@@ -45,6 +45,7 @@ func Api(apiRouter app.Router, a app.Application) {
 	opts.Redis = utils.RedisClientMaker(cfg.RedisConfig)
 
 	jDispatcher := worker.NewDispatcher(opts)
+	jDispatcher.Run()
 
 	authMiddlewareParam := auth.MiddlewaresParameter{
 		Cfg: cfg.Auth.Jwt,
