@@ -36,14 +36,14 @@ import (
 func main() {
 	cfg := config.GetConfigs()
 	a := app.New(cfg)
-	create_admin.CreateAdmin(a)
-
 	a.RegisterContainer(bindings(cfg))
 	a.Middleware(middlewares)
 	a.Route(routes.ApiPrefix, routes.Api, "api")
 	a.Route("/", routes.External, "external")
 	a.Status()
 	a.Run()
+
+	create_admin.CreateAdmin(a)
 }
 
 func bindings(configs *config.Configs) app.RegisterContainer {
