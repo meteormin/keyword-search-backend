@@ -54,7 +54,9 @@ func bindings(configs *config.Configs) app.RegisterContainer {
 		})
 
 		var db *gorm.DB
-		c.Bind(&db, database.DB(configs.Database))
+		c.Bind(&db, func() *gorm.DB {
+			return database.DB(configs.Database)
+		})
 
 		var zLogger *zap.SugaredLogger
 		c.Bind(&zLogger, func() *zap.SugaredLogger {
