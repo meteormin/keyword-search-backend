@@ -104,8 +104,8 @@ func TestJobDispatcher(t *testing.T) {
 	loopCount := 0
 	for {
 		// Status 메서드는 현재 워커들의 현황을 확인 할 수 있다.
-		// isConsole 파라미터는 콘솔 로그에 워커 현황 출력 여부를 정할 수 있다.
-		stats := dispatcher.Status(true)
+		stats := dispatcher.Status()
+		stats.Print()
 		completed := 0
 		for _, w := range stats.Workers {
 			if w.JobCount == 0 {

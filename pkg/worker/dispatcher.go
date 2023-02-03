@@ -19,7 +19,7 @@ type Dispatcher interface {
 	GetRedis() func() *redis.Client
 	AddWorker(option Option)
 	RemoveWorker(nam string)
-	Status(isConsole bool) *StatusInfo
+	Status() *StatusInfo
 	BeforeJob(fn func(j *Job), workerNames ...string)
 	AfterJob(fn func(j *Job, err error), workerNames ...string)
 }
@@ -244,10 +244,22 @@ type StatusInfo struct {
 	WorkerCount int                `json:"worker_count"`
 }
 
+// Print StatusInfo to Console log
+func (si *StatusInfo) Print() {
+	for _, w := range si.Workers {
+		prefix := fmt.Sprintf("[worker: %s]", w.Name)
+		marshal, err := json.Marshal(w)
+		if err != nil {
+			log.Printf("%s %v", prefix, err)
+		} else {
+			log.Printf("%s %s", prefix, string(marshal))
+		}
+
+	}
+}
+
 // Status 현재 worker들의 상태를 조회한다.
-// if isConsole is 'true' then print console log
-// if isConsole is 'false' then return StatusInfo Struct
-func (d *JobDispatcher) Status(isConsole bool) *StatusInfo {
+func (d *JobDispatcher) Status() *StatusInfo {
 
 	workers := make([]StatusWorkerInfo, 0)
 	for _, w := range d.workers {
@@ -259,21 +271,6 @@ func (d *JobDispatcher) Status(isConsole bool) *StatusInfo {
 		}
 
 		workers = append(workers, workerInfo)
-	}
-
-	if isConsole {
-		log.Println("[Dispatcher's Workers Status]")
-
-		for _, w := range workers {
-			prefix := fmt.Sprintf("[worker: %s]", w.Name)
-			marshal, err := json.Marshal(w)
-			if err != nil {
-				log.Printf("%s %v", prefix, err)
-			} else {
-				log.Printf("%s %s", prefix, string(marshal))
-			}
-
-		}
 	}
 
 	return &StatusInfo{
