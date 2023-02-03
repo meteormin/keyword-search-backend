@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v9"
+	"github.com/google/uuid"
 	"log"
 	"time"
 )
@@ -22,11 +23,13 @@ const (
 const DefaultWorker = "default"
 
 type Job struct {
-	JobId     string               `json:"job_id"`
-	Status    JobStatus            `json:"status"`
-	Closure   func(job *Job) error `json:"-"`
-	CreatedAt time.Time            `json:"created_at"`
-	UpdatedAt time.Time            `json:"updated_at"`
+	UUID       uuid.UUID            `json:"uuid"`
+	WorkerName string               `json:"worker_name"`
+	JobId      string               `json:"job_id"`
+	Status     JobStatus            `json:"status"`
+	Closure    func(job *Job) error `json:"-"`
+	CreatedAt  time.Time            `json:"created_at"`
+	UpdatedAt  time.Time            `json:"updated_at"`
 }
 
 func (j *Job) Marshal() (string, error) {
@@ -46,11 +49,13 @@ func (j *Job) UnMarshal(jsonStr string) error {
 	return nil
 }
 
-func newJob(jobId string, closure func(job *Job) error) Job {
+func newJob(workerName string, jobId string, closure func(job *Job) error) Job {
 	return Job{
-		JobId:   jobId,
-		Closure: closure,
-		Status:  WAIT,
+		UUID:       uuid.New(),
+		WorkerName: workerName,
+		JobId:      jobId,
+		Closure:    closure,
+		Status:     WAIT,
 	}
 }
 
@@ -132,22 +137,49 @@ type JobWorker struct {
 	isRunning   bool
 	beforeJob   func(j *Job)
 	afterJob    func(j *Job, err error)
+	redisClient *redis.Client
+	delay       time.Duration
 }
 
-func saveJob(r *redis.Client, key string, job Job) {
+type Config struct {
+	Name        string
+	Redis       func() *redis.Client
+	MaxJobCount int
+	BeforeJob   func(j *Job)
+	AfterJob    func(j *Job, err error)
+	Delay       time.Duration
+}
+
+func NewWorker(cfg Config) Worker {
+	return &JobWorker{
+		Name:        cfg.Name,
+		queue:       NewQueue(cfg.MaxJobCount),
+		jobChan:     make(chan Job, cfg.MaxJobCount),
+		quitChan:    make(chan bool),
+		redis:       cfg.Redis,
+		maxJobCount: cfg.MaxJobCount,
+		beforeJob:   cfg.BeforeJob,
+		afterJob:    cfg.AfterJob,
+		redisClient: cfg.Redis(),
+		delay:       cfg.Delay,
+	}
+}
+
+func (w *JobWorker) saveJob(key string, job Job) {
 	jsonJob, err := job.Marshal()
 	if err != nil {
 		panic(err)
 	}
 
-	err = r.Set(ctx, key, jsonJob, time.Minute).Err()
+	err = w.redisClient.Set(ctx, key, jsonJob, time.Minute).Err()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func getJob(r *redis.Client, key string) (*Job, error) {
-	val, err := r.Get(ctx, key).Result()
+func (w *JobWorker) getJob(key string) (*Job, error) {
+	val, err := w.redisClient.Get(ctx, key).Result()
+
 	if err == redis.Nil {
 		return nil, nil
 	} else if err != nil {
@@ -164,7 +196,7 @@ func getJob(r *redis.Client, key string) (*Job, error) {
 	}
 }
 
-func work(w *JobWorker, job *Job) {
+func (w *JobWorker) work(job *Job) {
 	job.CreatedAt = time.Now()
 
 	log.Printf("worker %s, job %s \n", w.Name, job.JobId)
@@ -191,27 +223,50 @@ func work(w *JobWorker, job *Job) {
 	}
 
 	log.Printf("end job: %s", jsonJob)
+
+	time.Sleep(w.delay)
 }
 
-type Config struct {
-	Name        string
-	Redis       func() *redis.Client
-	MaxJobCount int
-	BeforeJob   func(j *Job)
-	AfterJob    func(j *Job, err error)
-}
+func (w *JobWorker) routine() {
+	log.Printf("start rountine(worker: %s):", w.Name)
 
-func NewWorker(cfg Config) Worker {
-	return &JobWorker{
-		Name:        cfg.Name,
-		queue:       NewQueue(cfg.MaxJobCount),
-		jobChan:     make(chan Job, cfg.MaxJobCount),
-		quitChan:    make(chan bool),
-		redis:       cfg.Redis,
-		maxJobCount: cfg.MaxJobCount,
-		beforeJob:   cfg.BeforeJob,
-		afterJob:    cfg.AfterJob,
+	for {
+		jobChan, err := w.queue.Dequeue()
+		if err != nil {
+			log.Print(err)
+			continue
+		}
+
+		w.jobChan <- *jobChan
+		select {
+		case job := <-w.jobChan:
+			w.redisClient = w.redis()
+			key := fmt.Sprintf("%s.%s", w.Name, job.JobId)
+			convJob, err := w.getJob(key)
+			if err != nil {
+				log.Println(err)
+			}
+
+			if convJob != nil && convJob.Status != SUCCESS {
+				err = w.queue.Enqueue(job)
+				if err != nil {
+					log.Println(err)
+				}
+				continue
+			}
+
+			w.work(&job)
+			w.saveJob(key, job)
+		case <-w.quitChan:
+			log.Printf("worker %s stopping\n", w.Name)
+			return
+		}
 	}
+}
+
+func (w *JobWorker) quitRoutine() {
+	w.quitChan <- true
+	w.isRunning = false
 }
 
 func (w *JobWorker) GetName() string {
@@ -224,44 +279,9 @@ func (w *JobWorker) Run() {
 		return
 	}
 
-	go func() {
-		log.Printf("Start Worker(%s):", w.Name)
-		for {
-			r := w.redis()
-			jobChan, err := w.queue.Dequeue()
-			if err != nil {
-				log.Print(err)
-				continue
-			}
+	w.isRunning = true
 
-			w.jobChan <- *jobChan
-			select {
-			case job := <-w.jobChan:
-				key := fmt.Sprintf("%s.%s", w.Name, job.JobId)
-				convJob, err := getJob(r, key)
-				if err != nil {
-					log.Println(err)
-				}
-
-				if convJob != nil {
-					if convJob.Status != SUCCESS {
-						err = w.queue.Enqueue(job)
-						if err != nil {
-							log.Println(err)
-							continue
-						}
-						continue
-					}
-				}
-
-				work(w, &job)
-				saveJob(r, key, job)
-			case <-w.quitChan:
-				log.Printf("worker %s stopping\n", w.Name)
-				return
-			}
-		}
-	}()
+	go w.routine()
 }
 
 func (w *JobWorker) Stop() {
@@ -270,9 +290,7 @@ func (w *JobWorker) Stop() {
 		return
 	}
 
-	go func() {
-		w.quitChan <- true
-	}()
+	go w.quitRoutine()
 }
 
 func (w *JobWorker) AddJob(job Job) error {

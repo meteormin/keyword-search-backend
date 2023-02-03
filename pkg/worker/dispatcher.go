@@ -1,11 +1,15 @@
 package worker
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/go-redis/redis/v9"
 	"log"
-	"strconv"
+	"time"
 )
 
+// Dispatcher dispatcher
+// manage workers
 type Dispatcher interface {
 	Dispatch(jobId string, closure func(j *Job) error) error
 	Run(names ...string)
@@ -15,27 +19,34 @@ type Dispatcher interface {
 	GetRedis() func() *redis.Client
 	AddWorker(option Option)
 	RemoveWorker(nam string)
-	Status(isConsole bool) *Status
+	Status(isConsole bool) *StatusInfo
+	BeforeJob(fn func(j *Job), workerNames ...string)
+	AfterJob(fn func(j *Job, err error), workerNames ...string)
 }
 
+// JobDispatcher implements Dispatcher
 type JobDispatcher struct {
 	workers []Worker
 	worker  Worker
 	Redis   func() *redis.Client
 }
 
+// Option JobWorker's option
 type Option struct {
 	Name        string
 	MaxJobCount int
 	BeforeJob   func(j *Job)
 	AfterJob    func(j *Job, err error)
+	Delay       time.Duration
 }
 
+// DispatcherOption dispatcher option
 type DispatcherOption struct {
 	WorkerOptions []Option
 	Redis         func() *redis.Client
 }
 
+// defaultWorkerOption default option setting
 var defaultWorkerOption = []Option{
 	{
 		Name:        DefaultWorker,
@@ -43,6 +54,7 @@ var defaultWorkerOption = []Option{
 	},
 }
 
+// NewDispatcher make dispatcher
 func NewDispatcher(opt DispatcherOption) Dispatcher {
 	workers := make([]Worker, 0)
 
@@ -57,6 +69,7 @@ func NewDispatcher(opt DispatcherOption) Dispatcher {
 			o.MaxJobCount,
 			o.BeforeJob,
 			o.AfterJob,
+			o.Delay,
 		}))
 	}
 
@@ -67,6 +80,7 @@ func NewDispatcher(opt DispatcherOption) Dispatcher {
 	}
 }
 
+// AddWorker add worker in runtime
 func (d *JobDispatcher) AddWorker(option Option) {
 	d.workers = append(d.workers, NewWorker(Config{
 		option.Name,
@@ -74,9 +88,11 @@ func (d *JobDispatcher) AddWorker(option Option) {
 		option.MaxJobCount,
 		option.BeforeJob,
 		option.AfterJob,
+		option.Delay,
 	}))
 }
 
+// RemoveWorker remove worker in runtime
 func (d *JobDispatcher) RemoveWorker(name string) {
 	var rmIndex *int = nil
 	for i, worker := range d.workers {
@@ -90,14 +106,17 @@ func (d *JobDispatcher) RemoveWorker(name string) {
 	}
 }
 
+// GetRedis redis client make function
 func (d *JobDispatcher) GetRedis() func() *redis.Client {
 	return d.Redis
 }
 
+// GetWorkers get this dispatcher's workers
 func (d *JobDispatcher) GetWorkers() []Worker {
 	return d.workers
 }
 
+// SelectWorker select worker by worker name
 func (d *JobDispatcher) SelectWorker(name string) Dispatcher {
 	if name == "" {
 		for _, w := range d.workers {
@@ -117,22 +136,41 @@ func (d *JobDispatcher) SelectWorker(name string) Dispatcher {
 	return d
 }
 
-func (d *JobDispatcher) BeforeJob(fn func(j *Job)) {
-	if d.worker == nil {
-		d.SelectWorker(DefaultWorker)
+// BeforeJob 해당 Job 수행 전 실행할 클로저 설정
+func (d *JobDispatcher) BeforeJob(fn func(j *Job), workerNames ...string) {
+	if len(workerNames) == 0 {
+		for _, w := range d.workers {
+			w.BeforeJob(fn)
+		}
+	} else {
+		for _, w := range d.workers {
+			for _, name := range workerNames {
+				if w.GetName() == name {
+					w.BeforeJob(fn)
+				}
+			}
+		}
 	}
-
-	d.worker.BeforeJob(fn)
 }
 
-func (d *JobDispatcher) AfterJob(fn func(j *Job, err error)) {
-	if d.worker == nil {
-		d.SelectWorker(DefaultWorker)
+// AfterJob 해당 Job 수행 후 실행할 클로저 설정, error가 발생할 수도 있기 때문에 error로 함께 넘겨 받는다.
+func (d *JobDispatcher) AfterJob(fn func(j *Job, err error), workerNames ...string) {
+	if len(workerNames) == 0 {
+		for _, w := range d.workers {
+			w.AfterJob(fn)
+		}
+	} else {
+		for _, w := range d.workers {
+			for _, name := range workerNames {
+				if w.GetName() == name {
+					w.AfterJob(fn)
+				}
+			}
+		}
 	}
-
-	d.worker.AfterJob(fn)
 }
 
+// Dispatch job을 생성하고 worker에 등록하여 수행할 준비를 한다.
 func (d *JobDispatcher) Dispatch(jobId string, closure func(j *Job) error) error {
 	if d.worker == nil {
 		for _, w := range d.workers {
@@ -142,7 +180,7 @@ func (d *JobDispatcher) Dispatch(jobId string, closure func(j *Job) error) error
 		}
 	}
 
-	err := d.worker.AddJob(newJob(jobId, closure))
+	err := d.worker.AddJob(newJob(d.worker.GetName(), jobId, closure))
 	if err != nil {
 		return err
 	}
@@ -150,6 +188,8 @@ func (d *JobDispatcher) Dispatch(jobId string, closure func(j *Job) error) error
 	return nil
 }
 
+// Run dispatcher의 worker들을 가동 시켜 대기열 루틴을 돌 수 있게 실행,
+// 특정 워커들만 수행하고 싶을 경우 workerNames 파라미터를 이용
 func (d *JobDispatcher) Run(workerNames ...string) {
 	workers := make([]Worker, 0)
 
@@ -170,6 +210,8 @@ func (d *JobDispatcher) Run(workerNames ...string) {
 	}
 }
 
+// Stop 모든 worker의 작업을 종료한다.
+// 일부만 종료하고 싶을 경우 workerNames 파라미터를 이용
 func (d *JobDispatcher) Stop(workerNames ...string) {
 	workers := make([]Worker, 0)
 
@@ -190,35 +232,51 @@ func (d *JobDispatcher) Stop(workerNames ...string) {
 	}
 }
 
-type Status struct {
-	Workers     []map[string]string `json:"workers"`
-	WorkerCount int                 `json:"worker_count"`
+type StatusWorkerInfo struct {
+	Name        string `json:"name"`
+	IsRunning   bool   `json:"is_running"`
+	JobCount    int    `json:"job_count"`
+	MaxJobCount int    `json:"max_job_count"`
 }
 
-func (d *JobDispatcher) Status(isConsole bool) *Status {
+type StatusInfo struct {
+	Workers     []StatusWorkerInfo `json:"workers"`
+	WorkerCount int                `json:"worker_count"`
+}
 
-	workers := make([]map[string]string, 0)
+// Status 현재 worker들의 상태를 조회한다.
+// if isConsole is 'true' then print console log
+// if isConsole is 'false' then return StatusInfo Struct
+func (d *JobDispatcher) Status(isConsole bool) *StatusInfo {
+
+	workers := make([]StatusWorkerInfo, 0)
 	for _, w := range d.workers {
-		workerInfo := map[string]string{
-			"name":          w.GetName(),
-			"is_running":    strconv.FormatBool(w.IsRunning()),
-			"job_count":     strconv.Itoa(w.JobCount()),
-			"max_job_count": strconv.Itoa(w.MaxJobCount()),
+		workerInfo := StatusWorkerInfo{
+			Name:        w.GetName(),
+			IsRunning:   w.IsRunning(),
+			JobCount:    w.JobCount(),
+			MaxJobCount: w.MaxJobCount(),
 		}
 
 		workers = append(workers, workerInfo)
 	}
 
 	if isConsole {
+		log.Println("[Dispatcher's Workers Status]")
+
 		for _, w := range workers {
-			log.Printf("[worker name]: %s", w["name"])
-			log.Printf("[worker is running]: %s", w["is_running"])
-			log.Printf("[worker's job count]: %s", w["job_count"])
-			log.Printf("[worker's max job count]:  %s", w["max_job_count"])
+			prefix := fmt.Sprintf("[worker: %s]", w.Name)
+			marshal, err := json.Marshal(w)
+			if err != nil {
+				log.Printf("%s %v", prefix, err)
+			} else {
+				log.Printf("%s %s", prefix, string(marshal))
+			}
+
 		}
 	}
 
-	return &Status{
+	return &StatusInfo{
 		Workers:     workers,
 		WorkerCount: len(workers),
 	}
