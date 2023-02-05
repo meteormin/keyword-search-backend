@@ -111,7 +111,7 @@ func RecordHistory(dispatcher worker.Dispatcher, db *gorm.DB) {
 }
 
 func AddMetaOnDispatch(dispatcher worker.Dispatcher, db *gorm.DB, meta map[WriteableField]interface{}) {
-	var jobMeta map[string]interface{}
+	jobMeta := make(map[string]interface{})
 
 	for key, val := range meta {
 		jobMeta[string(key)] = val
