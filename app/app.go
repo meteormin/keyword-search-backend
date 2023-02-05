@@ -29,11 +29,11 @@ type RegisterContainer func(container IOContainer.Container)
 type Application interface {
 	IOContainer.Container
 	IsProduction() bool
-	register(fn Register)
 	Middleware(fn MiddlewareRegister)
 	Route(prefix string, fn RouterGroup, name ...string)
 	Status()
 	Run()
+	Register(fn Register)
 	RegisterContainer(fn RegisterContainer)
 	RegisterFiber(fn RegisterFiber)
 }
@@ -74,6 +74,10 @@ func New(configs ...*configure.Configs) Application {
 	}
 }
 
+func (a *app) Register(fn Register) {
+	fn(a)
+}
+
 // RegisterFiber
 // fiber application을 클로저를 통해 제어
 func (a *app) RegisterFiber(fn RegisterFiber) {
@@ -106,14 +110,10 @@ func (a *app) DB() *gorm.DB {
 	return a.db
 }
 
-func (a *app) register(fn Register) {
-	fn(a)
-}
-
 // Middleware
 // add middleware from closure
 func (a *app) Middleware(fn MiddlewareRegister) {
-	a.register(func(this Application) {
+	a.Register(func(this Application) {
 		if _, ok := this.(*app); ok {
 			fn(this.(*app).fiber, this)
 		}
@@ -124,7 +124,7 @@ func (a *app) Middleware(fn MiddlewareRegister) {
 // Route
 // register route group
 func (a *app) Route(prefix string, fn RouterGroup, name ...string) {
-	a.register(func(this Application) {
+	a.Register(func(this Application) {
 		if _, ok := this.(*app); ok {
 			r := NewRouter(this.(*app).fiber, prefix, name...)
 			fn(r, a)

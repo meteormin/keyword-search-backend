@@ -38,7 +38,7 @@ func TestCheckPermission(t *testing.T) {
 					return string(v) == method
 				})
 
-				if len(filtered) != 0 {
+				if filtered.Count() != 0 {
 					pass = true
 				}
 			}

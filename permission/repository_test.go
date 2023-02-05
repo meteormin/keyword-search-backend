@@ -1,7 +1,6 @@
 package permission_test
 
 import (
-	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/permission"
 	gormLogger "gorm.io/gorm/logger"
@@ -11,7 +10,7 @@ import (
 
 func TestRepositoryStruct(t *testing.T) {
 	var groupId uint = 1
-	db := database.DB(config.DB{
+	db := database.DB(database.Config{
 		Host:        "localhost",
 		Dbname:      "go_fiber",
 		Username:    "",

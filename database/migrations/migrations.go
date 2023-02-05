@@ -21,6 +21,7 @@ func Migrate(db *gorm.DB) {
 		&entity.Search{},
 		&entity.BookMark{},
 		&entity.Tag{},
+		&entity.JobHistory{},
 	)
 
 	if err != nil {

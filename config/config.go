@@ -24,22 +24,22 @@ const (
 )
 
 type Configs struct {
-	AppEnv       Env
-	AppPort      int
-	Locale       string
-	TimeZone     string
-	App          fiber.Config
-	Logger       loggerMiddleware.Config
-	CustomLogger logger.Config
-	Database     database.Config
-	Path         Path
-	Auth         Auth
-	Cors         fCors.Config
-	Csrf         fCsrf.Config
-	Permission   []permission.Config
-	CreateAdmin  CreateAdminConfig
-	RedisConfig  *redis.Options
-	QueueConfig  worker.DispatcherOption
+	AppEnv         Env
+	AppPort        int
+	Locale         string
+	TimeZone       string
+	App            fiber.Config
+	Logger         loggerMiddleware.Config
+	CustomLogger   logger.Config
+	Database       database.Config
+	Path           Path
+	Auth           Auth
+	Cors           fCors.Config
+	Csrf           fCsrf.Config
+	Permission     []permission.Config
+	CreateAdmin    CreateAdminConfig
+	RedisConfig    *redis.Options
+	JobQueueConfig worker.DispatcherOption
 }
 
 var cfg *Configs
@@ -54,22 +54,22 @@ func GetConfigs() *Configs {
 
 	if cfg == nil {
 		cfg = &Configs{
-			AppEnv:       Env(os.Getenv("APP_ENV")),
-			AppPort:      port,
-			Locale:       os.Getenv("LOCALE"),
-			TimeZone:     os.Getenv("TIME_ZONE"),
-			App:          app(),
-			Logger:       flogger(),
-			CustomLogger: loggerConfig(),
-			Database:     databaseConfig(),
-			Path:         getPath(),
-			Auth:         auth(),
-			Cors:         cors(),
-			Csrf:         csrf(),
-			Permission:   permissionConfig(),
-			CreateAdmin:  createAdminConfig(),
-			RedisConfig:  redisConfig(),
-			QueueConfig:  queueConfig(),
+			AppEnv:         Env(os.Getenv("APP_ENV")),
+			AppPort:        port,
+			Locale:         os.Getenv("LOCALE"),
+			TimeZone:       os.Getenv("TIME_ZONE"),
+			App:            app(),
+			Logger:         flogger(),
+			CustomLogger:   loggerConfig(),
+			Database:       databaseConfig(),
+			Path:           getPath(),
+			Auth:           auth(),
+			Cors:           cors(),
+			Csrf:           csrf(),
+			Permission:     permissionConfig(),
+			CreateAdmin:    createAdminConfig(),
+			RedisConfig:    redisConfig(),
+			JobQueueConfig: jobQueueConfig(),
 		}
 	}
 

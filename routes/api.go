@@ -1,10 +1,12 @@
 package routes
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/app"
 	"github.com/miniyus/keyword-search-backend/auth"
 	configure "github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/api_auth"
+	"github.com/miniyus/keyword-search-backend/internal/api_jobs"
 	"github.com/miniyus/keyword-search-backend/internal/group_detail"
 	"github.com/miniyus/keyword-search-backend/internal/groups"
 	"github.com/miniyus/keyword-search-backend/internal/host_search"
@@ -13,6 +15,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/short_url"
 	"github.com/miniyus/keyword-search-backend/internal/test_api"
 	"github.com/miniyus/keyword-search-backend/internal/users"
+	"github.com/miniyus/keyword-search-backend/job_queue"
 	"github.com/miniyus/keyword-search-backend/permission"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
@@ -35,17 +38,14 @@ func Api(apiRouter app.Router, a app.Application) {
 	var db *gorm.DB
 	a.Resolve(&db)
 
+	var jDispatcher worker.Dispatcher
+	a.Resolve(&jDispatcher)
+
 	privateKey := rsGen.PrivatePemDecode(path.Join(cfg.Path.DataPath, "secret/private.pem"))
 	tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
 
 	permissions := permission.NewPermissionsFromConfig(cfg.Permission)
 	permissionCollection := permission.NewPermissionCollection(permissions...)
-
-	opts := cfg.QueueConfig
-	opts.Redis = utils.RedisClientMaker(cfg.RedisConfig)
-
-	jDispatcher := worker.NewDispatcher(opts)
-	jDispatcher.Run()
 
 	authMiddlewareParam := auth.MiddlewaresParameter{
 		Cfg: cfg.Auth.Jwt,
@@ -61,6 +61,11 @@ func Api(apiRouter app.Router, a app.Application) {
 	}
 
 	apiRouter.Route(
+		test_api.Prefix,
+		test_api.Register(jDispatcher, zapLogger),
+	).Name("api.test_api")
+
+	apiRouter.Route(
 		api_auth.Prefix,
 		api_auth.Register(
 			api_auth.New(
@@ -72,28 +77,52 @@ func Api(apiRouter app.Router, a app.Application) {
 		),
 	).Name("api.auth")
 
+	// 해당 라인 이후로는 auth middleware가 공통으로 적용된다.
+	apiRouter.Middleware(auth.Middlewares(authMiddlewareParam, permission.HasPermission(hasPermParam))...)
+	// job 메타 데이터에 user_id 추가
+	apiRouter.Middleware(func(ctx *fiber.Ctx) error {
+		meta := make(map[job_queue.WriteableField]interface{})
+		user, err := auth.GetAuthUser(ctx)
+		if err != nil {
+			return err
+		}
+
+		meta[job_queue.UserId] = user.Id
+
+		job_queue.AddMetaOnDispatch(jDispatcher, db, meta)
+
+		return ctx.Next()
+	})
+
+	apiRouter.Route(
+		api_jobs.Prefix,
+		api_jobs.Register(
+			api_jobs.New(
+				utils.RedisClientMaker(cfg.RedisConfig),
+				jDispatcher,
+				zapLogger,
+			),
+		),
+	)
+
 	apiRouter.Route(
 		groups.Prefix,
 		groups.Register(groups.New(db, zapLogger)),
-		auth.Middlewares(authMiddlewareParam, permission.HasPermission(hasPermParam))...,
 	).Name("api.groups")
 
 	apiRouter.Route(
 		users.Prefix,
 		users.Register(users.New(db, zapLogger)),
-		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.users")
 
 	apiRouter.Route(
 		hosts.Prefix,
 		hosts.Register(hosts.New(db, zapLogger)),
-		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.hosts")
 
 	apiRouter.Route(
 		search.Prefix,
 		search.Register(search.New(db, zapLogger)),
-		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.search")
 
 	hostSearchHandler := host_search.New(db, zapLogger, jDispatcher)
@@ -101,7 +130,6 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route(
 		host_search.Prefix,
 		host_search.Register(hostSearchHandler, hasPermParam),
-		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.hosts.search")
 
 	apiRouter.Route(
@@ -111,11 +139,6 @@ func Api(apiRouter app.Router, a app.Application) {
 			utils.RedisClientMaker(cfg.RedisConfig),
 			zapLogger,
 		)),
-		auth.Middlewares(authMiddlewareParam)...,
 	).Name("api.short_url")
 
-	apiRouter.Route(
-		test_api.Prefix,
-		test_api.Register(jDispatcher, zapLogger),
-	).Name("api.test_api")
 }

@@ -84,7 +84,7 @@ func FilterFunc(parameter FilterParameter) func(user *auth.User, perm permission
 				return v.GroupId == perm.GroupId
 			})
 
-			if len(filtered) == 0 {
+			if filtered.Count() == 0 {
 				return false
 			}
 

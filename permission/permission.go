@@ -81,13 +81,13 @@ func (p *CollectionStruct) RemoveByName(name string) bool {
 		return v.Name == name
 	})
 
-	if len(filtered) == 0 {
+	if len(filtered.Items()) == 0 {
 		return false
 	}
 
 	var rmIndex int
 	for i, perm := range p.items {
-		if perm.Name == filtered[0].Name {
+		if perm.Name == filtered.Items()[0].Name {
 			rmIndex = i
 		}
 	}
@@ -102,12 +102,12 @@ func (p *CollectionStruct) Get(name string) (*Permission, error) {
 		return v.Name == name
 	})
 
-	if len(filtered) == 0 {
+	if filtered.Count() == 0 {
 		return nil, fmt.Errorf("can't found %s Permission", name)
 
 	}
 
-	return &filtered[0], nil
+	return &filtered.Items()[0], nil
 }
 
 func ToPermissionEntity(perm Permission) entity.Permission {
@@ -134,7 +134,7 @@ func EntityToPermission(permission entity.Permission) Permission {
 		})
 
 		methods := make([]Method, 0)
-		utils.NewCollection(filtered).For(func(f entity.Action, k int) {
+		filtered.For(func(f entity.Action, k int) {
 			methods = append(methods, Method(f.Method))
 		})
 

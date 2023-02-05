@@ -71,7 +71,7 @@ func HasPermission(parameter HasPermissionParameter, permissions ...Permission) 
 			return false
 		})
 
-		pass = checkPermissionFromCtx(userHasPerm, c)
+		pass = checkPermissionFromCtx(userHasPerm.Items(), c)
 
 		if pass {
 			return c.Next()
@@ -100,7 +100,7 @@ func checkPermissionFromCtx(hasPerm []Permission, c *fiber.Ctx) bool {
 					return string(v) == method
 				})
 
-				if len(filtered) != 0 {
+				if len(filtered.Items()) != 0 {
 					pass = true
 				}
 			}

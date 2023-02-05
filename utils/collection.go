@@ -1,15 +1,18 @@
 package utils
 
-import "github.com/miniyus/keyword-search-backend/pkg/slice"
+import (
+	"github.com/miniyus/keyword-search-backend/pkg/slice"
+)
 
 type Collection[T interface{}] interface {
 	Items() []T
+	Count() int
 	Add(item T)
-	Map(fn func(v T, i int) T) []T
-	Filter(fn func(v T, i int) bool) []T
-	Except(fn func(v T, i int) bool) []T
+	Map(fn func(v T, i int) T) Collection[T]
+	Filter(fn func(v T, i int) bool) Collection[T]
+	Except(fn func(v T, i int) bool) Collection[T]
 	Chunk(chunkSize int, fn func(v []T, i int)) [][]T
-	For(fn func(v T, i int)) []T
+	For(fn func(v T, i int))
 	Remove(index int)
 	Concat(items []T)
 }
@@ -28,28 +31,35 @@ func (b *BaseCollection[T]) Items() []T {
 	return b.items
 }
 
+func (b *BaseCollection[T]) Count() int {
+	return len(b.items)
+}
+
 func (b *BaseCollection[T]) Add(item T) {
 	b.items = slice.Add(b.items, item)
 }
 
-func (b *BaseCollection[T]) Map(fn func(v T, i int) T) []T {
-	return slice.Map(b.items, fn)
+func (b *BaseCollection[T]) Map(fn func(v T, i int) T) Collection[T] {
+	items := slice.Map(b.items, fn)
+	return NewCollection(items)
 }
 
-func (b *BaseCollection[T]) Filter(fn func(v T, i int) bool) []T {
-	return slice.Filter(b.items, fn)
+func (b *BaseCollection[T]) Filter(fn func(v T, i int) bool) Collection[T] {
+	filtered := slice.Filter(b.items, fn)
+	return NewCollection(filtered)
 }
 
-func (b *BaseCollection[T]) Except(fn func(v T, i int) bool) []T {
-	return slice.Except(b.items, fn)
+func (b *BaseCollection[T]) Except(fn func(v T, i int) bool) Collection[T] {
+	excepts := slice.Except(b.items, fn)
+	return NewCollection(excepts)
 }
 
 func (b *BaseCollection[T]) Chunk(chunkSize int, fn func(v []T, i int)) [][]T {
 	return slice.Chunk(b.items, chunkSize, fn)
 }
 
-func (b *BaseCollection[T]) For(fn func(v T, i int)) []T {
-	return slice.For(b.items, fn)
+func (b *BaseCollection[T]) For(fn func(v T, i int)) {
+	slice.For(b.items, fn)
 }
 
 func (b *BaseCollection[T]) Remove(index int) {

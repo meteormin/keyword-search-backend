@@ -8,6 +8,21 @@ import (
 	"time"
 )
 
+type Logger interface {
+	Info(args ...interface{})
+	Infof(template string, args ...interface{})
+	Infoln(args ...interface{})
+	Error(args ...interface{})
+	Errorf(template string, args ...interface{})
+	Errorln(args ...interface{})
+	Debug(args ...interface{})
+	Debugf(template string, args ...interface{})
+	Debugln(args ...interface{})
+	Warn(args ...interface{})
+	Warnf(template string, args ...interface{})
+	Warnln(args ...interface{})
+}
+
 // Dispatcher dispatcher
 // manage workers
 type Dispatcher interface {
@@ -20,24 +35,27 @@ type Dispatcher interface {
 	AddWorker(option Option)
 	RemoveWorker(nam string)
 	Status() *StatusInfo
-	BeforeJob(fn func(j *Job), workerNames ...string)
-	AfterJob(fn func(j *Job, err error), workerNames ...string)
+	BeforeJob(fn func(j *Job) error, workerNames ...string)
+	AfterJob(fn func(j *Job, err error) error, workerNames ...string)
+	OnDispatch(fn func(j *Job) error, workerNames ...string)
 }
 
 // JobDispatcher implements Dispatcher
 type JobDispatcher struct {
 	workers []Worker
 	worker  Worker
-	Redis   func() *redis.Client
+	redis   func() *redis.Client
+	logger  Logger
 }
 
 // Option JobWorker's option
 type Option struct {
 	Name        string
 	MaxJobCount int
-	BeforeJob   func(j *Job)
-	AfterJob    func(j *Job, err error)
+	BeforeJob   func(j *Job) error
+	AfterJob    func(j *Job, err error) error
 	Delay       time.Duration
+	Logger      Logger
 }
 
 // DispatcherOption dispatcher option
@@ -70,13 +88,14 @@ func NewDispatcher(opt DispatcherOption) Dispatcher {
 			o.BeforeJob,
 			o.AfterJob,
 			o.Delay,
+			o.Logger,
 		}))
 	}
 
 	return &JobDispatcher{
 		workers: workers,
 		worker:  nil,
-		Redis:   opt.Redis,
+		redis:   opt.Redis,
 	}
 }
 
@@ -84,11 +103,12 @@ func NewDispatcher(opt DispatcherOption) Dispatcher {
 func (d *JobDispatcher) AddWorker(option Option) {
 	d.workers = append(d.workers, NewWorker(Config{
 		option.Name,
-		d.Redis,
+		d.redis,
 		option.MaxJobCount,
 		option.BeforeJob,
 		option.AfterJob,
 		option.Delay,
+		option.Logger,
 	}))
 }
 
@@ -108,7 +128,7 @@ func (d *JobDispatcher) RemoveWorker(name string) {
 
 // GetRedis redis client make function
 func (d *JobDispatcher) GetRedis() func() *redis.Client {
-	return d.Redis
+	return d.redis
 }
 
 // GetWorkers get this dispatcher's workers
@@ -137,7 +157,7 @@ func (d *JobDispatcher) SelectWorker(name string) Dispatcher {
 }
 
 // BeforeJob 해당 Job 수행 전 실행할 클로저 설정
-func (d *JobDispatcher) BeforeJob(fn func(j *Job), workerNames ...string) {
+func (d *JobDispatcher) BeforeJob(fn func(j *Job) error, workerNames ...string) {
 	if len(workerNames) == 0 {
 		for _, w := range d.workers {
 			w.BeforeJob(fn)
@@ -154,7 +174,7 @@ func (d *JobDispatcher) BeforeJob(fn func(j *Job), workerNames ...string) {
 }
 
 // AfterJob 해당 Job 수행 후 실행할 클로저 설정, error가 발생할 수도 있기 때문에 error로 함께 넘겨 받는다.
-func (d *JobDispatcher) AfterJob(fn func(j *Job, err error), workerNames ...string) {
+func (d *JobDispatcher) AfterJob(fn func(j *Job, err error) error, workerNames ...string) {
 	if len(workerNames) == 0 {
 		for _, w := range d.workers {
 			w.AfterJob(fn)
@@ -167,6 +187,26 @@ func (d *JobDispatcher) AfterJob(fn func(j *Job, err error), workerNames ...stri
 				}
 			}
 		}
+	}
+}
+
+func (d *JobDispatcher) OnDispatch(fn func(j *Job) error, workerNames ...string) {
+	var workers []Worker
+
+	if len(workerNames) == 0 {
+		workers = d.workers
+	} else {
+		for _, w := range d.workers {
+			for _, wn := range workerNames {
+				if wn == w.GetName() {
+					workers = append(workers, w)
+				}
+			}
+		}
+	}
+
+	for _, w := range workers {
+		w.OnAddJon(fn)
 	}
 }
 

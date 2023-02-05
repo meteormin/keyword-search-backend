@@ -294,6 +294,47 @@ definitions:
       total_count:
         type: integer
     type: object
+  github_com_miniyus_keyword-search-backend_pkg_worker.Job:
+    properties:
+      created_at:
+        type: string
+      job_id:
+        type: string
+      meta:
+        additionalProperties: true
+        type: object
+      status:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus'
+      updated_at:
+        type: string
+      uuid:
+        type: string
+      worker_name:
+        type: string
+    type: object
+  github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus:
+    enum:
+    - success
+    - fail
+    - wait
+    - progress
+    type: string
+    x-enum-varnames:
+    - SUCCESS
+    - FAIL
+    - WAIT
+    - PROGRESS
+  github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo:
+    properties:
+      is_running:
+        type: boolean
+      job_count:
+        type: integer
+      max_job_count:
+        type: integer
+      name:
+        type: string
+    type: object
   gorm.DeletedAt:
     properties:
       time:
@@ -357,6 +398,40 @@ definitions:
         type: integer
       token:
         type: string
+    type: object
+  internal_api_jobs.GetJob:
+    properties:
+      created_at:
+        type: string
+      job_id:
+        type: string
+      meta:
+        additionalProperties: true
+        type: object
+      status:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus'
+      updated_at:
+        type: string
+      uuid:
+        type: string
+      worker_name:
+        type: string
+    type: object
+  internal_api_jobs.GetJobs:
+    properties:
+      api_jobs:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.Job'
+        type: array
+    type: object
+  internal_api_jobs.GetStatus:
+    properties:
+      worker_count:
+        type: integer
+      workers:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo'
+        type: array
     type: object
   internal_groups.CreateAction:
     properties:
@@ -1598,6 +1673,98 @@ paths:
       summary: test api
       tags:
       - Test
+  /api/worker/{worker}/api_jobs:
+    get:
+      consumes:
+      - application/json
+      description: get api_jobs
+      parameters:
+      - description: worker name
+        in: path
+        name: worker
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api_jobs.GetJobs'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get api_jobs
+      tags:
+      - Jobs
+  /api/worker/{worker}/api_jobs/{job}:
+    get:
+      consumes:
+      - application/json
+      description: get job
+      parameters:
+      - description: worker name
+        in: path
+        name: worker
+        required: true
+        type: string
+      - description: job id
+        in: path
+        name: job
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api_jobs.GetJob'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get job
+      tags:
+      - Jobs
+  /api/worker/status:
+    get:
+      consumes:
+      - application/json
+      description: api_jobs status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api_jobs.GetStatus'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api_error.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: api_jobs status
+      tags:
+      - Jobs
   /health-check:
     get:
       consumes:

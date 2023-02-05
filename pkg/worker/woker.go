@@ -16,20 +16,23 @@ type JobStatus string
 var ctx = context.Background()
 
 const (
-	SUCCESS JobStatus = "success"
-	FAIL    JobStatus = "fail"
-	WAIT    JobStatus = "wait"
+	SUCCESS  JobStatus = "success"
+	FAIL     JobStatus = "fail"
+	WAIT     JobStatus = "wait"
+	PROGRESS JobStatus = "progress"
 )
+
 const DefaultWorker = "default"
 
 type Job struct {
-	UUID       uuid.UUID            `json:"uuid"`
-	WorkerName string               `json:"worker_name"`
-	JobId      string               `json:"job_id"`
-	Status     JobStatus            `json:"status"`
-	Closure    func(job *Job) error `json:"-"`
-	CreatedAt  time.Time            `json:"created_at"`
-	UpdatedAt  time.Time            `json:"updated_at"`
+	UUID       uuid.UUID              `json:"uuid"`
+	WorkerName string                 `json:"worker_name"`
+	JobId      string                 `json:"job_id"`
+	Status     JobStatus              `json:"status"`
+	Closure    func(job *Job) error   `json:"-"`
+	CreatedAt  time.Time              `json:"created_at"`
+	UpdatedAt  time.Time              `json:"updated_at"`
+	Meta       map[string]interface{} `json:"meta"`
 }
 
 func (j *Job) Marshal() (string, error) {
@@ -56,6 +59,7 @@ func newJob(workerName string, jobId string, closure func(job *Job) error) Job {
 		JobId:      jobId,
 		Closure:    closure,
 		Status:     WAIT,
+		CreatedAt:  time.Now(),
 	}
 }
 
@@ -123,8 +127,9 @@ type Worker interface {
 	IsRunning() bool
 	MaxJobCount() int
 	JobCount() int
-	BeforeJob(fn func(j *Job))
-	AfterJob(fn func(j *Job, err error))
+	BeforeJob(fn func(j *Job) error)
+	AfterJob(fn func(j *Job, err error) error)
+	OnAddJon(fn func(j *Job) error)
 }
 
 type JobWorker struct {
@@ -135,19 +140,22 @@ type JobWorker struct {
 	redis       func() *redis.Client
 	maxJobCount int
 	isRunning   bool
-	beforeJob   func(j *Job)
-	afterJob    func(j *Job, err error)
+	beforeJob   func(j *Job) error
+	afterJob    func(j *Job, err error) error
+	onAddJob    func(j *Job) error
 	redisClient *redis.Client
 	delay       time.Duration
+	logger      Logger
 }
 
 type Config struct {
 	Name        string
 	Redis       func() *redis.Client
 	MaxJobCount int
-	BeforeJob   func(j *Job)
-	AfterJob    func(j *Job, err error)
+	BeforeJob   func(j *Job) error
+	AfterJob    func(j *Job, err error) error
 	Delay       time.Duration
+	Logger      Logger
 }
 
 func NewWorker(cfg Config) Worker {
@@ -162,6 +170,7 @@ func NewWorker(cfg Config) Worker {
 		afterJob:    cfg.AfterJob,
 		redisClient: cfg.Redis(),
 		delay:       cfg.Delay,
+		logger:      cfg.Logger,
 	}
 }
 
@@ -185,7 +194,7 @@ func (w *JobWorker) getJob(key string) (*Job, error) {
 	} else if err != nil {
 		return nil, err
 	} else {
-		var convJob *Job
+		convJob := &Job{}
 		err = convJob.UnMarshal(val)
 
 		if err != nil {
@@ -197,11 +206,21 @@ func (w *JobWorker) getJob(key string) (*Job, error) {
 }
 
 func (w *JobWorker) work(job *Job) {
-	job.CreatedAt = time.Now()
+	job.Status = PROGRESS
 
-	log.Printf("worker %s, job %s \n", w.Name, job.JobId)
+	log.Printf("worker %s, job %s", w.Name, job.JobId)
+	if w.logger != nil {
+		w.logger.Infof("job working... worker: %s, job: %s", w.Name, job.JobId)
+	}
+
 	if w.beforeJob != nil {
-		w.beforeJob(job)
+		bErr := w.beforeJob(job)
+		if bErr != nil {
+			log.Print(bErr)
+			if w.logger != nil {
+				w.logger.Error(bErr)
+			}
+		}
 	}
 
 	err := job.Closure(job)
@@ -214,15 +233,27 @@ func (w *JobWorker) work(job *Job) {
 	job.UpdatedAt = time.Now()
 
 	if w.afterJob != nil {
-		w.afterJob(job, err)
+		aErr := w.afterJob(job, err)
+		if aErr != nil {
+			log.Print(aErr)
+			if w.logger != nil {
+				w.logger.Error(aErr)
+			}
+		}
 	}
 
 	jsonJob, err := job.Marshal()
 	if err != nil {
 		log.Print(err)
+		if w.logger != nil {
+			w.logger.Error(err)
+		}
 	}
 
 	log.Printf("end job: %s", jsonJob)
+	if w.logger != nil {
+		w.logger.Infof("end job: %s", jsonJob)
+	}
 
 	time.Sleep(w.delay)
 }
@@ -245,12 +276,19 @@ func (w *JobWorker) routine() {
 			convJob, err := w.getJob(key)
 			if err != nil {
 				log.Println(err)
+				if w.logger != nil {
+					w.logger.Error(err)
+				}
+
 			}
 
 			if convJob != nil && convJob.Status != SUCCESS {
 				err = w.queue.Enqueue(job)
 				if err != nil {
 					log.Println(err)
+					if w.logger != nil {
+						w.logger.Error(err)
+					}
 				}
 				continue
 			}
@@ -259,6 +297,10 @@ func (w *JobWorker) routine() {
 			w.saveJob(key, job)
 		case <-w.quitChan:
 			log.Printf("worker %s stopping\n", w.Name)
+			if w.logger != nil {
+				w.logger.Infof("worker %s stopping\n", w.Name)
+			}
+
 			return
 		}
 	}
@@ -276,6 +318,9 @@ func (w *JobWorker) GetName() string {
 func (w *JobWorker) Run() {
 	if w.isRunning {
 		log.Printf("%s worker is running", w.Name)
+		if w.logger != nil {
+			w.logger.Infof("%s worker is running", w.Name)
+		}
 		return
 	}
 
@@ -287,6 +332,9 @@ func (w *JobWorker) Run() {
 func (w *JobWorker) Stop() {
 	if !w.isRunning {
 		log.Printf("%s worker is not running", w.Name)
+		if w.logger != nil {
+			w.logger.Infof("%s worker is not running", w.Name)
+		}
 		return
 	}
 
@@ -294,10 +342,22 @@ func (w *JobWorker) Stop() {
 }
 
 func (w *JobWorker) AddJob(job Job) error {
+	if w.onAddJob != nil {
+		err := w.onAddJob(&job)
+		if err != nil {
+			log.Print(err)
+			if w.logger != nil {
+				w.logger.Error(err)
+			}
+			return err
+		}
+	}
+
 	err := w.queue.Enqueue(job)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -313,10 +373,14 @@ func (w *JobWorker) JobCount() int {
 	return w.queue.Count()
 }
 
-func (w *JobWorker) BeforeJob(fn func(j *Job)) {
+func (w *JobWorker) OnAddJon(fn func(j *Job) error) {
+	w.onAddJob = fn
+}
+
+func (w *JobWorker) BeforeJob(fn func(j *Job) error) {
 	w.beforeJob = fn
 }
 
-func (w *JobWorker) AfterJob(fn func(j *Job, err error)) {
+func (w *JobWorker) AfterJob(fn func(j *Job, err error) error) {
 	w.afterJob = fn
 }

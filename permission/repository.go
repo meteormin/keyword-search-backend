@@ -34,7 +34,7 @@ func (r *RepositoryStruct) Save(permission []entity.Permission) ([]entity.Permis
 			actions = append(actions, nil)
 		}
 		return v
-	})
+	}).Items()
 
 	rs := r.db.Clauses(clause.OnConflict{
 		Columns: []clause.Column{
@@ -75,12 +75,12 @@ func (r *RepositoryStruct) Save(permission []entity.Permission) ([]entity.Permis
 		permActions := utils.NewCollection(createActions).Filter(func(action entity.Action, j int) bool {
 			return action.PermissionId == perm.ID
 		})
-		perm.Actions = permActions
+		perm.Actions = permActions.Items()
 
 		return perm
 	})
 
-	return created, nil
+	return created.Items(), nil
 }
 
 func (r *RepositoryStruct) Get(groupId uint) ([]entity.Permission, error) {

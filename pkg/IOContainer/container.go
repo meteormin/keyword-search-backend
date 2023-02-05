@@ -18,7 +18,6 @@ type Container interface {
 // Container 구현체
 type ContainerStruct struct {
 	instances map[reflect.Type]interface{}
-	bindings  map[reflect.Type]interface{}
 }
 
 // NewContainer
@@ -31,15 +30,16 @@ func NewContainer() Container {
 
 // Singleton
 // 특정 객체를 singleton 패턴으로 컨테이너에 저장하는 메서드
-// 클로저를 받을 수도 있다.
 func (w *ContainerStruct) Singleton(instance interface{}) {
-	reflectInstanceType := reflect.TypeOf(instance)
-	if reflectInstanceType.Kind() == reflect.Func {
-		instance = w.call(instance)
-		reflectInstanceType = reflect.TypeOf(instance)
+	reflectResolver := reflect.TypeOf(instance)
+	if reflectResolver.Kind() == reflect.Func {
+		reflectKey := w.call(instance)
+		reflectKeyType := reflect.TypeOf(reflectKey)
+		w.instances[reflectKeyType] = instance
+		return
 	}
 
-	w.instances[reflectInstanceType] = instance
+	panic("Can not Singleton...")
 }
 
 // Instances

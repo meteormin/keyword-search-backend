@@ -58,29 +58,40 @@ func TestJobDispatcher(t *testing.T) {
 		t.Error(err)
 	}
 
+	dispatcher.OnDispatch(func(j *worker.Job) error {
+		marshal, err := j.Marshal()
+		if err != nil {
+			return err
+		}
+		log.Printf("test onDispatcher job %s", marshal)
+		return nil
+	})
+
 	// BeforeJob 메서드는 작업에 등록돈 클로저가 수행되기 전
 	// 필요한 사전 작업을 등록할 수 있다.
 	// 해당 메서드는 worker를 기준으로 일괄 반영된다.
-	dispatcher.BeforeJob(func(j *worker.Job) {
+	dispatcher.BeforeJob(func(j *worker.Job) error {
 		marshal, err := j.Marshal()
 		if err != nil {
-			log.Print(err)
+			return err
 		}
 
 		log.Printf("test before job %s", marshal)
 		redisClient.LPush(context.Background(), j.WorkerName, marshal)
+		return nil
 	}, "default") // 특정 워커만 지정할 수 도 있다. 파라미터가 비어 있으면 모든 워커에 반영된다.
 
 	// AfterJob 메서드는 작업이 종료된 후 부가적인 추가 작업을 등록하여 사용할 수 있다.
 	// 해당 메서드는 worker를 기준으로 일괄 반영된다.
-	dispatcher.AfterJob(func(j *worker.Job, err error) {
+	dispatcher.AfterJob(func(j *worker.Job, err error) error {
 		marshal, jErr := j.Marshal()
 		if jErr != nil {
-			log.Print(jErr)
+			return jErr
 		}
 
 		log.Printf("test after job %s %v", marshal, err)
 		redisClient.LPush(context.Background(), j.WorkerName, marshal)
+		return nil
 	})
 
 	err = dispatcher.Dispatch("t3", func(job *worker.Job) error {
@@ -130,4 +141,14 @@ func TestJobDispatcher(t *testing.T) {
 	if loopCount > 4 {
 		t.Error("over limit loop counts...")
 	}
+}
+
+func TestJob_UnMarshal(t *testing.T) {
+	jsonStr := "{\"uuid\":\"dbb0353e-1474-4edb-bc58-49f64a82949b\",\"worker_name\":\"default\",\"job_id\":\"test\",\"status\":\"success\",\"created_at\":\"2023-02-04T11:35:02.793728793Z\",\"updated_at\":\"2023-02-04T11:35:05.799017503Z\"}"
+	job := &worker.Job{}
+	err := job.UnMarshal(jsonStr)
+	if err != nil {
+		t.Error(err)
+	}
+	log.Print(job)
 }

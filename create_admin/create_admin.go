@@ -2,7 +2,6 @@ package create_admin
 
 import (
 	"errors"
-	"github.com/miniyus/keyword-search-backend/app"
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/entity"
@@ -28,16 +27,11 @@ func existsAdmin(db *gorm.DB) bool {
 	return true
 }
 
-func CreateAdmin(app app.Application) {
-	var db *gorm.DB
-	app.Resolve(&db)
+func CreateAdmin(db *gorm.DB, configs *config.Configs) {
 	if existsAdmin(db) {
 		log.Println("Skip create admin: already exists admin account")
 		return
 	}
-
-	var configs *config.Configs
-	app.Resolve(&configs)
 
 	permCollection := permission.NewPermissionCollection(permission.NewPermissionsFromConfig(configs.Permission)...)
 
