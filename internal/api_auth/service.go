@@ -6,7 +6,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/auth"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/internal/users"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	"github.com/miniyus/keyword-search-backend/utils"
 	"time"
@@ -17,22 +16,19 @@ type Service interface {
 	SignUp(signUp *SignUp) (*SignUpResponse, error)
 	ResetPassword(pk uint, passwordStruct *ResetPasswordStruct) (*entity.User, error)
 	RevokeToken(pk uint, token string) (bool, error)
-	logger.HasLogger
 }
 
 type ServiceStruct struct {
 	repo           auth.Repository
 	userRepo       users.Repository
 	tokenGenerator jwt.Generator
-	logger.HasLoggerStruct
 }
 
 func NewService(repo auth.Repository, userRepo users.Repository, generator jwt.Generator) Service {
 	return &ServiceStruct{
-		repo:            repo,
-		userRepo:        userRepo,
-		tokenGenerator:  generator,
-		HasLoggerStruct: logger.HasLoggerStruct{Logger: userRepo.GetLogger()},
+		repo:           repo,
+		userRepo:       userRepo,
+		tokenGenerator: generator,
 	}
 }
 

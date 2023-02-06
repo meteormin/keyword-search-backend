@@ -6,9 +6,26 @@ import (
 	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/api_error"
+	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/database"
+	logger "github.com/miniyus/keyword-search-backend/log"
 	jobWorker "github.com/miniyus/keyword-search-backend/pkg/worker"
 	"github.com/miniyus/keyword-search-backend/utils"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
+
+func Config() config.Configs {
+	return config.GetConfigs()
+}
+
+func Log() *zap.SugaredLogger {
+	return logger.GetLogger()
+}
+
+func DB() *gorm.DB {
+	return database.GetDB()
+}
 
 func HandleValidate(c *fiber.Ctx, data interface{}) *api_error.ValidationErrorResponse {
 	err := c.BodyParser(data)

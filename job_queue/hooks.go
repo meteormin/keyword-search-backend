@@ -3,6 +3,7 @@ package job_queue
 import (
 	"errors"
 	"fmt"
+	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"gorm.io/gorm"
@@ -40,6 +41,9 @@ func parseMeta(jh entity.JobHistory, m map[string]interface{}) entity.JobHistory
 				if v, ok := val.(uint); ok {
 					jh.UserId = &v
 				}
+				break
+			default:
+				break
 			}
 		}
 	}
@@ -51,6 +55,10 @@ func createJobHistory(db *gorm.DB, j *worker.Job) error {
 	log.Print("create job history")
 	if j == nil {
 		return errors.New("job is nil")
+	}
+
+	if db == nil {
+		db = database.GetDB()
 	}
 
 	jh := convJobHistory(j, nil)
@@ -67,6 +75,10 @@ func createJobHistory(db *gorm.DB, j *worker.Job) error {
 func updateJobHistory(db *gorm.DB, j *worker.Job, err error) error {
 	if j == nil {
 		return errors.New("job is nil")
+	}
+
+	if db == nil {
+		db = database.GetDB()
 	}
 
 	jh := convJobHistory(j, err)

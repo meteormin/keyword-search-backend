@@ -3,9 +3,7 @@ package search
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/utils"
-	"log"
 	"strconv"
 )
 
@@ -19,20 +17,15 @@ type Service interface {
 	Update(pk uint, userId uint, search *UpdateSearch) (*Response, error)
 	Patch(pk uint, userId uint, search *PatchSearch) (*Response, error)
 	Delete(pk uint, userId uint) (bool, error)
-	logger.HasLogger
 }
 
 type ServiceStruct struct {
 	repo Repository
-	logger.HasLoggerStruct
 }
 
 func NewService(repo Repository) Service {
 	return &ServiceStruct{
 		repo: repo,
-		HasLoggerStruct: logger.HasLoggerStruct{
-			Logger: repo.GetLogger(),
-		},
 	}
 }
 
@@ -178,7 +171,7 @@ func (s *ServiceStruct) BatchCreate(hostId uint, search []*CreateSearch) ([]Resp
 		resSlice = append(resSlice, *res)
 		updateSlice = append(updateSlice, r)
 	}
-	log.Print(updateSlice)
+
 	rs, err = s.repo.BatchCreate(updateSlice)
 
 	if err != nil {

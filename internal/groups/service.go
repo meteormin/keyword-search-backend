@@ -3,7 +3,6 @@ package groups
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/utils"
 )
 
@@ -18,15 +17,11 @@ type Service interface {
 
 type ServiceStruct struct {
 	repo Repository
-	logger.HasLoggerStruct
 }
 
 func NewService(repo Repository) Service {
 	return &ServiceStruct{
 		repo: repo,
-		HasLoggerStruct: logger.HasLoggerStruct{
-			Logger: repo.GetLogger(),
-		},
 	}
 }
 

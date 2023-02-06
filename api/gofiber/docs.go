@@ -1504,7 +1504,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "api_jobs status",
+                "description": "jobs status",
                 "consumes": [
                     "application/json"
                 ],
@@ -1514,12 +1514,12 @@ const docTemplate = `{
                 "tags": [
                     "Jobs"
                 ],
-                "summary": "api_jobs status",
+                "summary": "jobs status",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_api_jobs.GetStatus"
+                            "$ref": "#/definitions/internal_jobs.GetStatus"
                         }
                     },
                     "403": {
@@ -1537,14 +1537,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/worker/{worker}/api_jobs": {
+        "/api/worker/{worker}/jobs": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "get api_jobs",
+                "description": "get jobs",
                 "consumes": [
                     "application/json"
                 ],
@@ -1554,7 +1554,7 @@ const docTemplate = `{
                 "tags": [
                     "Jobs"
                 ],
-                "summary": "get api_jobs",
+                "summary": "get jobs",
                 "parameters": [
                     {
                         "type": "string",
@@ -1568,7 +1568,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_api_jobs.GetJobs"
+                            "$ref": "#/definitions/internal_jobs.GetJobs"
                         }
                     },
                     "403": {
@@ -1586,7 +1586,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/worker/{worker}/api_jobs/{job}": {
+        "/api/worker/{worker}/jobs/{job}": {
             "get": {
                 "security": [
                     {
@@ -1624,7 +1624,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_api_jobs.GetJob"
+                            "$ref": "#/definitions/internal_jobs.GetJob"
                         }
                     },
                     "403": {
@@ -2269,58 +2269,6 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_api_jobs.GetJob": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "job_id": {
-                    "type": "string"
-                },
-                "meta": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "status": {
-                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "uuid": {
-                    "type": "string"
-                },
-                "worker_name": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_api_jobs.GetJobs": {
-            "type": "object",
-            "properties": {
-                "api_jobs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.Job"
-                    }
-                }
-            }
-        },
-        "internal_api_jobs.GetStatus": {
-            "type": "object",
-            "properties": {
-                "worker_count": {
-                    "type": "integer"
-                },
-                "workers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo"
-                    }
-                }
-            }
-        },
         "internal_groups.CreateAction": {
             "type": "object",
             "required": [
@@ -2585,6 +2533,58 @@ const docTemplate = `{
                 },
                 "subject": {
                     "type": "string"
+                }
+            }
+        },
+        "internal_jobs.GetJob": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "job_id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                },
+                "worker_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_jobs.GetJobs": {
+            "type": "object",
+            "properties": {
+                "jobs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.Job"
+                    }
+                }
+            }
+        },
+        "internal_jobs.GetStatus": {
+            "type": "object",
+            "properties": {
+                "worker_count": {
+                    "type": "integer"
+                },
+                "workers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo"
+                    }
                 }
             }
         },

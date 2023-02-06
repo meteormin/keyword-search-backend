@@ -2,18 +2,34 @@ package app
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/api_error"
-	configure "github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/pkg/IOContainer"
-	"gorm.io/gorm"
 	"log"
 	"reflect"
 	"strconv"
 )
 
+type Env string
+
+const (
+	PRD   Env = "production"
+	DEV   Env = "development"
+	LOCAL Env = "local"
+)
+
 type Config struct {
+	Env         Env
+	Port        int
+	Locale      string
+	TimeZone    string
 	FiberConfig fiber.Config
+}
+
+var defaultConfig = Config{
+	Env:         LOCAL,
+	Port:        8000,
+	Locale:      "",
+	TimeZone:    "Asia/Seoul",
+	FiberConfig: fiber.Config{},
 }
 
 type Register func(app Application)
@@ -24,8 +40,6 @@ type RegisterFiber func(fiber *fiber.App)
 
 type MiddlewareRegister func(fiber *fiber.App, app Application)
 
-type RegisterContainer func(container IOContainer.Container)
-
 type Application interface {
 	IOContainer.Container
 	IsProduction() bool
@@ -34,42 +48,34 @@ type Application interface {
 	Status()
 	Run()
 	Register(fn Register)
-	RegisterContainer(fn RegisterContainer)
 	RegisterFiber(fn RegisterFiber)
 }
 
 type app struct {
 	IOContainer.Container
 	fiber  *fiber.App
-	config *configure.Configs
-	db     *gorm.DB
+	config Config
 	isRun  bool
 }
 
 // New
 // fiber app wrapper
-func New(configs ...*configure.Configs) Application {
-	var config *configure.Configs
+func New(cfgs ...Config) Application {
+	var fiberConfig fiber.Config
+	var cfg Config
 
-	if len(configs) == 0 {
-		config = configure.GetConfigs()
+	if len(cfgs) == 0 {
+		cfg = defaultConfig
+		fiberConfig = cfg.FiberConfig
 	} else {
-		config = configs[0]
-	}
-
-	fiberConfig := config.App
-	dbConfig := config.Database
-
-	fiberConfig.ErrorHandler = api_error.OverrideDefaultErrorHandler(config)
-	if fiber.IsChild() {
-		dbConfig.AutoMigrate = false
+		cfg = cfgs[0]
+		fiberConfig = cfg.FiberConfig
 	}
 
 	return &app{
 		Container: IOContainer.NewContainer(),
+		config:    cfg,
 		fiber:     fiber.New(fiberConfig),
-		config:    config,
-		db:        database.DB(dbConfig),
 		isRun:     false,
 	}
 }
@@ -86,28 +92,6 @@ func (a *app) RegisterFiber(fn RegisterFiber) {
 	}
 
 	fn(a.fiber)
-}
-
-// RegisterContainer
-// 컨테이너 구조체를 클로저를 통해 container 제어를 할 수 있는 함수
-func (a *app) RegisterContainer(fn RegisterContainer) {
-	if fn == nil {
-		return
-	}
-
-	fn(a.Container)
-}
-
-// Config
-// get configuration
-func (a *app) Config() *configure.Configs {
-	return a.config
-}
-
-// DB
-// get database connection
-func (a *app) DB() *gorm.DB {
-	return a.db
 }
 
 // Middleware
@@ -138,14 +122,14 @@ func (a *app) Route(prefix string, fn RouterGroup, name ...string) {
 // 컨테이너가 가지고 있는 정보 콘솔 로그로 보여준다.
 func (a *app) Status() {
 	if a.IsProduction() {
-		log.Printf("'AppEnv' is %s", configure.PRD)
+		log.Printf("'AppEnv' is %s", PRD)
 		return
 	}
 
 	log.Println("[Container Info]")
-	log.Printf("ENV: %s", a.Config().AppEnv)
-	log.Printf("Locale: %s", a.Config().Locale)
-	log.Printf("Time Zone: %s", a.Config().TimeZone)
+	log.Printf("ENV: %s", a.config.Env)
+	log.Printf("Locale: %s", a.config.Locale)
+	log.Printf("Time Zone: %s", a.config.TimeZone)
 
 	log.Println("[Fiber App Info]")
 	log.Printf("Handlers Count: %d", a.fiber.HandlersCount())
@@ -167,7 +151,7 @@ func (a *app) Run() {
 		return
 	}
 
-	port := a.config.AppPort
+	port := a.config.Port
 	err := a.fiber.Listen(":" + strconv.Itoa(port))
 
 	if err != nil {
@@ -178,7 +162,7 @@ func (a *app) Run() {
 }
 
 func (a *app) IsProduction() bool {
-	return a.config.AppEnv == configure.PRD
+	return a.config.Env == PRD
 }
 
 func (a *app) Instances() map[reflect.Type]interface{} {

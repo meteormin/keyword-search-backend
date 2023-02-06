@@ -5,6 +5,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	jwtWare "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/miniyus/keyword-search-backend/database"
+	cLog "github.com/miniyus/keyword-search-backend/log"
 	"github.com/miniyus/keyword-search-backend/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -58,17 +60,12 @@ func AccessLogMiddleware(logger ...*zap.SugaredLogger) fiber.Handler {
 	var zLogger *zap.SugaredLogger
 	if len(logger) != 0 {
 		zLogger = logger[0]
+	} else {
+		zLogger = cLog.GetLogger()
 	}
 
 	return func(c *fiber.Ctx) error {
 		var err error
-
-		if zLogger == nil {
-			zLogger, err = utils.GetContext[*zap.SugaredLogger](c, utils.LoggerKey)
-			if err != nil {
-				return err
-			}
-		}
 
 		start := time.Now()
 		err = c.Next()
@@ -140,8 +137,9 @@ func GetUserFromJWT() fiber.Handler {
 			ExpiresIn: &expiresIn,
 		}
 
-		c.Locals(utils.AuthUserKey, currentUser)
-		return c.Next()
+		addContext := utils.AddContext(utils.AuthUserKey, currentUser)
+
+		return addContext(c)
 	}
 }
 
@@ -190,23 +188,18 @@ func jwtError() fiber.ErrorHandler {
 
 // CheckExpired
 // jwt 만료 기간 체크 미들웨어
-func CheckExpired(database ...*gorm.DB) fiber.Handler {
+func CheckExpired(gormDB ...*gorm.DB) fiber.Handler {
 	var db *gorm.DB
-	if len(database) != 0 {
-		db = database[0]
+	if len(gormDB) != 0 {
+		db = gormDB[0]
+	} else {
+		db = database.GetDB()
 	}
 
 	return func(c *fiber.Ctx) error {
-		user, err := utils.GetContext[*User](c, utils.AuthUserKey)
+		user, err := GetAuthUser(c)
 		if err != nil {
 			return err
-		}
-		if db == nil {
-			db, err = utils.GetContext[*gorm.DB](c, utils.DBKey)
-
-			if err != nil {
-				return err
-			}
 		}
 
 		tokenRepository := NewRepository(db)

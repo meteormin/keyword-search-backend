@@ -399,40 +399,6 @@ definitions:
       token:
         type: string
     type: object
-  internal_api_jobs.GetJob:
-    properties:
-      created_at:
-        type: string
-      job_id:
-        type: string
-      meta:
-        additionalProperties: true
-        type: object
-      status:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus'
-      updated_at:
-        type: string
-      uuid:
-        type: string
-      worker_name:
-        type: string
-    type: object
-  internal_api_jobs.GetJobs:
-    properties:
-      api_jobs:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.Job'
-        type: array
-    type: object
-  internal_api_jobs.GetStatus:
-    properties:
-      worker_count:
-        type: integer
-      workers:
-        items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo'
-        type: array
-    type: object
   internal_groups.CreateAction:
     properties:
       method:
@@ -609,6 +575,40 @@ definitions:
     - path
     - publish
     - subject
+    type: object
+  internal_jobs.GetJob:
+    properties:
+      created_at:
+        type: string
+      job_id:
+        type: string
+      meta:
+        additionalProperties: true
+        type: object
+      status:
+        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus'
+      updated_at:
+        type: string
+      uuid:
+        type: string
+      worker_name:
+        type: string
+    type: object
+  internal_jobs.GetJobs:
+    properties:
+      jobs:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.Job'
+        type: array
+    type: object
+  internal_jobs.GetStatus:
+    properties:
+      worker_count:
+        type: integer
+      workers:
+        items:
+          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo'
+        type: array
     type: object
   internal_search.CreateSearch:
     properties:
@@ -1673,11 +1673,11 @@ paths:
       summary: test api
       tags:
       - Test
-  /api/worker/{worker}/api_jobs:
+  /api/worker/{worker}/jobs:
     get:
       consumes:
       - application/json
-      description: get api_jobs
+      description: get jobs
       parameters:
       - description: worker name
         in: path
@@ -1690,7 +1690,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_jobs.GetJobs'
+            $ref: '#/definitions/internal_jobs.GetJobs'
         "403":
           description: Forbidden
           schema:
@@ -1701,10 +1701,10 @@ paths:
             $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: get api_jobs
+      summary: get jobs
       tags:
       - Jobs
-  /api/worker/{worker}/api_jobs/{job}:
+  /api/worker/{worker}/jobs/{job}:
     get:
       consumes:
       - application/json
@@ -1726,7 +1726,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_jobs.GetJob'
+            $ref: '#/definitions/internal_jobs.GetJob'
         "403":
           description: Forbidden
           schema:
@@ -1744,14 +1744,14 @@ paths:
     get:
       consumes:
       - application/json
-      description: api_jobs status
+      description: jobs status
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_api_jobs.GetStatus'
+            $ref: '#/definitions/internal_jobs.GetStatus'
         "403":
           description: Forbidden
           schema:
@@ -1762,7 +1762,7 @@ paths:
             $ref: '#/definitions/api_error.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: api_jobs status
+      summary: jobs status
       tags:
       - Jobs
   /health-check:

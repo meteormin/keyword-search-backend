@@ -6,8 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	configure "github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/database"
-	"github.com/miniyus/keyword-search-backend/internal/api/search"
-	logger "github.com/miniyus/keyword-search-backend/logger"
+	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/utils"
 	"log"
 	"os"
@@ -32,22 +31,9 @@ func main() {
 	}
 
 	config := configure.GetConfigs()
-	db := database.DB(config.Database)
-	loggerConfig := config.CustomLogger
-	zLog := logger.New(logger.Config{
-		TimeFormat: loggerConfig.TimeFormat,
-		FilePath:   loggerConfig.FilePath,
-		Filename:   loggerConfig.Filename,
-		MaxAge:     loggerConfig.MaxAge,
-		MaxBackups: loggerConfig.MaxBackups,
-		MaxSize:    loggerConfig.MaxSize,
-		Compress:   loggerConfig.Compress,
-		TimeKey:    loggerConfig.TimeKey,
-		TimeZone:   loggerConfig.TimeZone,
-		LogLevel:   loggerConfig.LogLevel,
-	})
+	db := database.New(config.Database["default"])
 
-	repo := search.NewRepository(db, zLog)
+	repo := search.NewRepository(db)
 	service := search.NewService(repo)
 
 	batchPath := path.Join(config.Path.DataPath, "/batch")

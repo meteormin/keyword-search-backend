@@ -7,7 +7,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal"
 	"github.com/miniyus/keyword-search-backend/internal/search"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"github.com/miniyus/keyword-search-backend/utils"
 	"strconv"
@@ -17,22 +16,17 @@ type Handler interface {
 	GetByHostId(c *fiber.Ctx) error
 	GetDescriptionsByHostId(c *fiber.Ctx) error
 	BatchCreate(c *fiber.Ctx) error
-	logger.HasLogger
 }
 
 type HandlerStruct struct {
 	service    search.Service
 	dispatcher worker.Dispatcher
-	logger.HasLoggerStruct
 }
 
 func NewHandler(s search.Service, dispatcher worker.Dispatcher) Handler {
 	return &HandlerStruct{
 		service:    s,
 		dispatcher: dispatcher,
-		HasLoggerStruct: logger.HasLoggerStruct{
-			Logger: s.GetLogger(),
-		},
 	}
 }
 

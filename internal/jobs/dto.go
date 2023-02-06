@@ -1,9 +1,9 @@
-package api_jobs
+package jobs
 
 import "github.com/miniyus/keyword-search-backend/pkg/worker"
 
 type GetJobs struct {
-	Jobs []worker.Job `json:"api_jobs"`
+	Jobs []worker.Job `json:"jobs"`
 }
 
 type GetJob struct {

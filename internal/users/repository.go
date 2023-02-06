@@ -3,8 +3,6 @@ package users
 import (
 	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/logger"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -16,16 +14,14 @@ type Repository interface {
 	Delete(pk uint) (bool, error)
 	FindByUsername(username string) (*entity.User, error)
 	FindByEntity(user entity.User) (*entity.User, error)
-	logger.HasLogger
 }
 
 type RepositoryStruct struct {
 	db *gorm.DB
-	logger.HasLoggerStruct
 }
 
-func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
-	return &RepositoryStruct{db, logger.HasLoggerStruct{Logger: log}}
+func NewRepository(db *gorm.DB) Repository {
+	return &RepositoryStruct{db}
 }
 
 func (repo *RepositoryStruct) Create(user entity.User) (*entity.User, error) {

@@ -5,7 +5,6 @@ import (
 	_ "github.com/miniyus/keyword-search-backend/api_error"
 	"github.com/miniyus/keyword-search-backend/auth"
 	"github.com/miniyus/keyword-search-backend/internal"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/utils"
 	"strconv"
 )
@@ -17,20 +16,15 @@ type Handler interface {
 	Update(c *fiber.Ctx) error
 	Patch(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
-	logger.HasLogger
 }
 
 type HandlerStruct struct {
 	service Service
-	logger.HasLoggerStruct
 }
 
 func NewHandler(s Service) Handler {
 	return &HandlerStruct{
 		service: s,
-		HasLoggerStruct: logger.HasLoggerStruct{
-			Logger: s.GetLogger(),
-		},
 	}
 }
 

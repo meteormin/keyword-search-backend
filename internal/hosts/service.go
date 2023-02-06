@@ -3,7 +3,6 @@ package hosts
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/utils"
 )
 
@@ -16,18 +15,15 @@ type Service interface {
 	Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error)
 	Patch(pk uint, userId uint, host *PatchHost) (*HostResponse, error)
 	Delete(pk uint, userId uint) (bool, error)
-	logger.HasLogger
 }
 
 type ServiceStruct struct {
 	repo Repository
-	logger.HasLoggerStruct
 }
 
 func NewService(repo Repository) Service {
 	return &ServiceStruct{
-		repo:            repo,
-		HasLoggerStruct: logger.HasLoggerStruct{Logger: repo.GetLogger()},
+		repo: repo,
 	}
 }
 

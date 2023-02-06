@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	flogger "github.com/gofiber/fiber/v2/middleware/logger"
@@ -13,8 +12,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/create_admin"
 	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/job_queue"
-	"github.com/miniyus/keyword-search-backend/logger"
-	"github.com/miniyus/keyword-search-backend/pkg/IOContainer"
+	"github.com/miniyus/keyword-search-backend/log"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"github.com/miniyus/keyword-search-backend/routes"
 	"github.com/miniyus/keyword-search-backend/utils"
@@ -38,9 +36,13 @@ import (
 // @description				   Bearer token type
 func main() {
 	cfg := config.GetConfigs()
-	a := app.New(cfg)
+	appConfig := cfg.App
+	appConfig.FiberConfig.ErrorHandler = api_error.OverrideDefaultErrorHandler(appConfig.Env)
+
+	a := app.New(appConfig)
+
 	// bindings in Container
-	a.RegisterContainer(bind(cfg))
+	a.Register(bind(&cfg))
 	// register middlewares
 	a.Middleware(middleware)
 	// register boot
@@ -59,15 +61,21 @@ func main() {
 
 // bind
 // container에 객체 주입
-func bind(configs *config.Configs) app.RegisterContainer {
-	return func(c IOContainer.Container) {
+func bind(configs *config.Configs) app.Register {
+	return func(a app.Application) {
 		cfg := configs
-		c.Singleton(func() *config.Configs {
+		a.Singleton(func() *config.Configs {
 			return cfg
 		})
 
-		db := database.DB(configs.Database)
-		c.Singleton(func() *gorm.DB {
+		dbConfig := configs.Database["default"]
+
+		if fiber.IsChild() {
+			dbConfig.AutoMigrate = false
+		}
+
+		db := database.New(dbConfig)
+		a.Singleton(func() *gorm.DB {
 			return db
 		})
 
@@ -75,9 +83,8 @@ func bind(configs *config.Configs) app.RegisterContainer {
 		opts.Redis = utils.RedisClientMaker(configs.RedisConfig)
 
 		opts.WorkerOptions = utils.NewCollection(opts.WorkerOptions).Map(func(v worker.Option, i int) worker.Option {
-			wLoggerCfg := configs.CustomLogger
-			wLoggerCfg.Filename = fmt.Sprintf("worker-%s.log", v.Name)
-			v.Logger = logger.New(wLoggerCfg)
+			wLoggerCfg := configs.CustomLogger["default_worker"]
+			v.Logger = log.New(wLoggerCfg)
 
 			return v
 		}).Items()
@@ -85,14 +92,14 @@ func bind(configs *config.Configs) app.RegisterContainer {
 		dispatcher := worker.NewDispatcher(opts)
 
 		var jDispatcher worker.Dispatcher
-		// bind를 이용했지만 singleton처럼 사용
-		c.Bind(&jDispatcher, func() worker.Dispatcher {
+		// Interface Singleton
+		a.Bind(&jDispatcher, func() worker.Dispatcher {
 			return dispatcher
 		})
 
 		var zLogger *zap.SugaredLogger
-		c.Bind(&zLogger, func() *zap.SugaredLogger {
-			return logger.New(configs.CustomLogger)
+		a.Bind(&zLogger, func() *zap.SugaredLogger {
+			return log.New(configs.CustomLogger["default"])
 		})
 	}
 }
@@ -109,22 +116,13 @@ func middleware(fiberApp *fiber.App, application app.Application) {
 		EnableStackTrace: !application.IsProduction(),
 	}))
 
-	fiberApp.Use(api_error.ErrorHandler(cfg))
+	fiberApp.Use(api_error.ErrorHandler(cfg.App.Env))
 	fiberApp.Use(cors.New(cfg.Cors))
-
-	// Add Context Config
-	fiberApp.Use(utils.AddContext(utils.ConfigsKey, cfg))
-	// Add Context Logger
-	var zLogger *zap.SugaredLogger
-	application.Resolve(&zLogger)
-
-	fiberApp.Use(utils.AddContext(utils.LoggerKey, zLogger))
 }
 
 // boot
 // 등록 과정이 끝난 후 실행되는 로직이나 사전 작업
 func boot(a app.Application) {
-
 	var dispatcher worker.Dispatcher
 	a.Resolve(&dispatcher)
 
@@ -136,5 +134,6 @@ func boot(a app.Application) {
 
 	create_admin.CreateAdmin(db, configs)
 	job_queue.RecordHistory(dispatcher, db)
+
 	dispatcher.Run()
 }

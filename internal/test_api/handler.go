@@ -3,9 +3,9 @@ package test_api
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/app"
+	"github.com/miniyus/keyword-search-backend/log"
 	jobWorker "github.com/miniyus/keyword-search-backend/pkg/worker"
 	"github.com/miniyus/keyword-search-backend/utils"
-	"go.uber.org/zap"
 	"time"
 )
 
@@ -17,7 +17,8 @@ const Prefix = "/test"
 // @Tags Test
 // @Router /api/test [post]
 // @Success 200 {object} utils.StatusResponse
-func Register(dispatcher jobWorker.Dispatcher, logger *zap.SugaredLogger) app.SubRouter {
+func Register(dispatcher jobWorker.Dispatcher) app.SubRouter {
+	logger := log.GetLogger()
 	return func(router fiber.Router) {
 		router.Post("/", func(ctx *fiber.Ctx) error {
 			logger.Infof(ctx.Path())

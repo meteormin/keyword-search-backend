@@ -1,4 +1,4 @@
-package logger
+package log
 
 import (
 	"go.uber.org/zap/zapcore"
@@ -6,6 +6,7 @@ import (
 )
 
 type Config struct {
+	Name       string
 	TimeFormat string
 	FilePath   string
 	Filename   string
@@ -19,6 +20,7 @@ type Config struct {
 }
 
 var defaultConfig = Config{
+	Name:       "default",
 	TimeFormat: "2006-01-02 15:04:05",
 	FilePath:   "",
 	Filename:   "",

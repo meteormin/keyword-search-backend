@@ -2,7 +2,7 @@ package permission
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/auth"
+	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/utils"
 	"gorm.io/gorm"
@@ -12,7 +12,8 @@ import (
 type HasPermissionParameter struct {
 	DB           *gorm.DB
 	DefaultPerms Collection
-	FilterFunc   func(currentUser *auth.User, p Permission) bool
+	GroupId      uint
+	FilterFunc   func(ctx *fiber.Ctx, groupId uint, p Permission) bool
 }
 
 // HasPermission
@@ -21,19 +22,16 @@ func HasPermission(parameter HasPermissionParameter, permissions ...Permission) 
 	return func(c *fiber.Ctx) error {
 		pass := false
 
-		currentUser, err := utils.GetContext[*auth.User](c, utils.AuthUserKey)
-
-		if currentUser.Role == string(entity.Admin) {
-			return c.Next()
-		}
-
 		var permCollection Collection
 
 		db := parameter.DB
+		if db == nil {
+			db = database.GetDB()
+		}
 
 		repo := NewRepository(db)
 
-		get, err := repo.Get(*currentUser.GroupId)
+		get, err := repo.Get(parameter.GroupId)
 		if err == nil {
 			permCollection = NewPermissionCollection()
 			utils.NewCollection(get).For(func(v entity.Permission, i int) {
@@ -61,11 +59,11 @@ func HasPermission(parameter HasPermissionParameter, permissions ...Permission) 
 
 		userHasPerm := permCollection.Filter(func(p Permission, i int) bool {
 			if parameter.FilterFunc != nil {
-				return parameter.FilterFunc(currentUser, p)
+				return parameter.FilterFunc(c, parameter.GroupId, p)
 			}
 
-			if currentUser.GroupId != nil {
-				return currentUser.GroupId == &p.GroupId
+			if parameter.GroupId != 0 {
+				return parameter.GroupId == p.GroupId
 			}
 
 			return false

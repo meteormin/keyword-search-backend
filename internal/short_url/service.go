@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/keyword-search-backend/internal"
 	"github.com/miniyus/keyword-search-backend/internal/search"
-	"github.com/miniyus/keyword-search-backend/logger"
-	"go.uber.org/zap"
 	"path"
 	"strconv"
 	"strings"
@@ -18,22 +17,17 @@ var redisContext = context.Background()
 
 type Service interface {
 	FindRealUrl(code string, userId uint) (string, error)
-	logger.HasLogger
 }
 
 type ServiceStruct struct {
 	searchRepo search.Repository
 	redis      func() *redis.Client
-	logger.HasLoggerStruct
 }
 
-func NewService(repository search.Repository, redisClient func() *redis.Client, log *zap.SugaredLogger) Service {
+func NewService(repository search.Repository, redisClient func() *redis.Client) Service {
 	return &ServiceStruct{
 		searchRepo: repository,
 		redis:      redisClient,
-		HasLoggerStruct: logger.HasLoggerStruct{
-			Logger: log,
-		},
 	}
 }
 
@@ -44,7 +38,7 @@ func (s *ServiceStruct) hGet(r *redis.Client, rKey string, rField string) string
 	}
 
 	if err != nil {
-		s.Logger.Error(err)
+		internal.Log().Error(err)
 		return ""
 	}
 
@@ -102,7 +96,7 @@ func (s *ServiceStruct) FindRealUrl(code string, userId uint) (string, error) {
 
 	err = s.hSet(r, rKey, rField, realUrl)
 	if err != nil {
-		s.Logger.Error(err)
+		internal.Log().Error(err)
 		return realUrl, err
 	}
 

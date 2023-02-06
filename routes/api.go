@@ -1,27 +1,25 @@
 package routes
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/keyword-search-backend/app"
 	"github.com/miniyus/keyword-search-backend/auth"
 	configure "github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/internal/api_auth"
-	"github.com/miniyus/keyword-search-backend/internal/api_jobs"
 	"github.com/miniyus/keyword-search-backend/internal/group_detail"
 	"github.com/miniyus/keyword-search-backend/internal/groups"
 	"github.com/miniyus/keyword-search-backend/internal/host_search"
 	"github.com/miniyus/keyword-search-backend/internal/hosts"
+	"github.com/miniyus/keyword-search-backend/internal/jobs"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/internal/short_url"
 	"github.com/miniyus/keyword-search-backend/internal/test_api"
 	"github.com/miniyus/keyword-search-backend/internal/users"
-	"github.com/miniyus/keyword-search-backend/job_queue"
 	"github.com/miniyus/keyword-search-backend/permission"
 	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
 	"github.com/miniyus/keyword-search-backend/utils"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"path"
 )
@@ -32,11 +30,17 @@ func Api(apiRouter app.Router, a app.Application) {
 	var cfg *configure.Configs
 	a.Resolve(&cfg)
 
-	var zapLogger *zap.SugaredLogger
-	a.Resolve(&zapLogger)
+	if cfg == nil {
+		configs := configure.GetConfigs()
+		cfg = &configs
+	}
 
 	var db *gorm.DB
 	a.Resolve(&db)
+
+	if db == nil {
+		db = database.GetDB()
+	}
 
 	var jDispatcher worker.Dispatcher
 	a.Resolve(&jDispatcher)
@@ -55,14 +59,12 @@ func Api(apiRouter app.Router, a app.Application) {
 	hasPermParam := permission.HasPermissionParameter{
 		DB:           db,
 		DefaultPerms: permissionCollection,
-		FilterFunc: group_detail.FilterFunc(group_detail.FilterParameter{
-			DB: db,
-		}),
+		FilterFunc:   group_detail.FilterFunc,
 	}
 
 	apiRouter.Route(
 		test_api.Prefix,
-		test_api.Register(jDispatcher, zapLogger),
+		test_api.Register(jDispatcher),
 	).Name("api.test_api")
 
 	apiRouter.Route(
@@ -71,7 +73,6 @@ func Api(apiRouter app.Router, a app.Application) {
 			api_auth.New(
 				db,
 				tokenGenerator,
-				zapLogger,
 			),
 			authMiddlewareParam,
 		),
@@ -80,52 +81,39 @@ func Api(apiRouter app.Router, a app.Application) {
 	// 해당 라인 이후로는 auth middleware가 공통으로 적용된다.
 	apiRouter.Middleware(auth.Middlewares(authMiddlewareParam, permission.HasPermission(hasPermParam))...)
 	// job 메타 데이터에 user_id 추가
-	apiRouter.Middleware(func(ctx *fiber.Ctx) error {
-		meta := make(map[job_queue.WriteableField]interface{})
-		user, err := auth.GetAuthUser(ctx)
-		if err != nil {
-			return err
-		}
-
-		meta[job_queue.UserId] = user.Id
-
-		job_queue.AddMetaOnDispatch(jDispatcher, db, meta)
-
-		return ctx.Next()
-	})
+	apiRouter.Middleware(jobs.AddJobMeta(jDispatcher, db))
 
 	apiRouter.Route(
-		api_jobs.Prefix,
-		api_jobs.Register(
-			api_jobs.New(
+		jobs.Prefix,
+		jobs.Register(
+			jobs.New(
 				utils.RedisClientMaker(cfg.RedisConfig),
 				jDispatcher,
-				zapLogger,
 			),
 		),
 	)
 
 	apiRouter.Route(
 		groups.Prefix,
-		groups.Register(groups.New(db, zapLogger)),
+		groups.Register(groups.New(db)),
 	).Name("api.groups")
 
 	apiRouter.Route(
 		users.Prefix,
-		users.Register(users.New(db, zapLogger)),
+		users.Register(users.New(db)),
 	).Name("api.users")
 
 	apiRouter.Route(
 		hosts.Prefix,
-		hosts.Register(hosts.New(db, zapLogger)),
+		hosts.Register(hosts.New(db)),
 	).Name("api.hosts")
 
 	apiRouter.Route(
 		search.Prefix,
-		search.Register(search.New(db, zapLogger)),
+		search.Register(search.New(db)),
 	).Name("api.search")
 
-	hostSearchHandler := host_search.New(db, zapLogger, jDispatcher)
+	hostSearchHandler := host_search.New(db, jDispatcher)
 
 	apiRouter.Route(
 		host_search.Prefix,
@@ -137,7 +125,6 @@ func Api(apiRouter app.Router, a app.Application) {
 		short_url.Register(short_url.New(
 			db,
 			utils.RedisClientMaker(cfg.RedisConfig),
-			zapLogger,
 		)),
 	).Name("api.short_url")
 

@@ -8,14 +8,8 @@ import (
 
 type ContextKey string
 
-// context constants
-// ctx.Locals() 메서드에서 주로 사용됨
-const (
-	DBKey       ContextKey = "db"
-	ConfigsKey  ContextKey = "config"
-	LoggerKey   ContextKey = "logger"
-	AuthUserKey ContextKey = "authUser"
-)
+// AuthUserKey context constants
+const AuthUserKey ContextKey = "authUser"
 
 func AddContext(localsKey ContextKey, value interface{}) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {

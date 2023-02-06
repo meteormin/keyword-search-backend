@@ -1,4 +1,4 @@
-package api_jobs
+package jobs
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -21,8 +21,8 @@ func NewHandler(service Service) Handler {
 }
 
 // Status
-// @Summary api_jobs status
-// @Description api_jobs status
+// @Summary jobs status
+// @Description jobs status
 // @Tags Jobs
 // @Success 200 {object} GetStatus
 // @Failure 403 {object} api_error.ErrorResponse
@@ -36,8 +36,8 @@ func (h HandlerStruct) Status(ctx *fiber.Ctx) error {
 }
 
 // GetJobs
-// @Summary get api_jobs
-// @Description get api_jobs
+// @Summary get jobs
+// @Description get jobs
 // @Tags Jobs
 // @Param worker path string true "worker name"
 // @Success 200 {object} GetJobs
@@ -45,7 +45,7 @@ func (h HandlerStruct) Status(ctx *fiber.Ctx) error {
 // @Failure 404 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
-// @Router /api/worker/{worker}/api_jobs [get]
+// @Router /api/worker/{worker}/jobs [get]
 // @Security BearerAuth
 func (h HandlerStruct) GetJobs(ctx *fiber.Ctx) error {
 	params := ctx.AllParams()
@@ -71,7 +71,7 @@ func (h HandlerStruct) GetJobs(ctx *fiber.Ctx) error {
 // @Failure 404 {object} api_error.ErrorResponse
 // @Accept json
 // @Produce json
-// @Router /api/worker/{worker}/api_jobs/{job} [get]
+// @Router /api/worker/{worker}/jobs/{job} [get]
 // @Security BearerAuth
 func (h HandlerStruct) GetJob(ctx *fiber.Ctx) error {
 	params := ctx.AllParams()

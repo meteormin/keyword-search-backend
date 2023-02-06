@@ -3,9 +3,7 @@ package hosts
 import (
 	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/utils"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -19,18 +17,15 @@ type Repository interface {
 	Create(host entity.Host) (*entity.Host, error)
 	Update(pk uint, host entity.Host) (*entity.Host, error)
 	Delete(pk uint) (bool, error)
-	logger.HasLogger
 }
 
 type RepositoryStruct struct {
 	db *gorm.DB
-	logger.HasLoggerStruct
 }
 
-func NewRepository(db *gorm.DB, log *zap.SugaredLogger) Repository {
+func NewRepository(db *gorm.DB) Repository {
 	return &RepositoryStruct{
-		db:              db,
-		HasLoggerStruct: logger.HasLoggerStruct{Logger: log},
+		db: db,
 	}
 }
 

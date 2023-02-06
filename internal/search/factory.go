@@ -1,12 +1,11 @@
 package search
 
 import (
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
-func New(db *gorm.DB, logger *zap.SugaredLogger) Handler {
-	repo := NewRepository(db, logger)
+func New(db *gorm.DB) Handler {
+	repo := NewRepository(db)
 	service := NewService(repo)
 	return NewHandler(service)
 }

@@ -1,4 +1,4 @@
-package logger
+package log
 
 import (
 	"github.com/miniyus/keyword-search-backend/utils"
@@ -8,6 +8,22 @@ import (
 	"path"
 	"time"
 )
+
+const Default string = "default"
+
+var loggers map[string]*zap.SugaredLogger
+
+func GetLogger(loggerName ...string) *zap.SugaredLogger {
+	if loggers == nil {
+		return New()
+	}
+
+	if len(loggerName) == 0 {
+		return loggers[Default]
+	}
+
+	return loggers[loggerName[0]]
+}
 
 func New(config ...Config) *zap.SugaredLogger {
 	cfg := getDefaultConfig(config...)
@@ -44,18 +60,9 @@ func New(config ...Config) *zap.SugaredLogger {
 	encoderConfig.StacktraceKey = ""
 
 	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), ws, cfg.LogLevel)
-	logger := zap.New(core, zap.AddCaller())
-	return logger.Sugar()
-}
+	zapLogger := zap.New(core, zap.AddCaller())
+	logger := zapLogger.Sugar()
+	loggers[cfg.Name] = logger
 
-type HasLogger interface {
-	GetLogger() *zap.SugaredLogger
-}
-
-type HasLoggerStruct struct {
-	Logger *zap.SugaredLogger
-}
-
-func (hl HasLoggerStruct) GetLogger() *zap.SugaredLogger {
-	return hl.Logger
+	return logger
 }

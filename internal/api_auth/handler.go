@@ -6,7 +6,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/api_error"
 	"github.com/miniyus/keyword-search-backend/auth"
 	"github.com/miniyus/keyword-search-backend/internal"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/utils"
 )
 
@@ -16,18 +15,15 @@ type Handler interface {
 	Me(ctx *fiber.Ctx) error
 	ResetPassword(ctx *fiber.Ctx) error
 	RevokeToken(ctx *fiber.Ctx) error
-	logger.HasLogger
 }
 
 type HandlerStruct struct {
 	service Service
-	logger.HasLoggerStruct
 }
 
 func NewHandler(service Service) Handler {
 	return &HandlerStruct{
-		service:         service,
-		HasLoggerStruct: logger.HasLoggerStruct{Logger: service.GetLogger()},
+		service: service,
 	}
 }
 
@@ -122,7 +118,7 @@ func (h *HandlerStruct) SignIn(ctx *fiber.Ctx) error {
 func (h *HandlerStruct) Me(ctx *fiber.Ctx) error {
 	user, err := auth.GetAuthUser(ctx)
 	if err != nil {
-		h.GetLogger().Error(user)
+		internal.Log().Error(user)
 		return fiber.NewError(500, "Can't Load Context AuthUser")
 	}
 

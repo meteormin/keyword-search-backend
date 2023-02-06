@@ -1,32 +1,27 @@
-package api_jobs
+package jobs
 
 import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v9"
-	"github.com/miniyus/keyword-search-backend/logger"
 	"github.com/miniyus/keyword-search-backend/pkg/worker"
-	"go.uber.org/zap"
 )
 
 type Service interface {
 	GetJobs(workerName string) ([]worker.Job, error)
 	GetJob(workerName string, jobId string) (*worker.Job, error)
 	Status() *worker.StatusInfo
-	logger.HasLogger
 }
 
 type ServiceStruct struct {
 	redis      func() *redis.Client
 	dispatcher worker.Dispatcher
-	logger.HasLoggerStruct
 }
 
-func NewService(redis func() *redis.Client, dispatcher worker.Dispatcher, zapLogger *zap.SugaredLogger) Service {
+func NewService(redis func() *redis.Client, dispatcher worker.Dispatcher) Service {
 	return &ServiceStruct{
-		redis:           redis,
-		dispatcher:      dispatcher,
-		HasLoggerStruct: logger.HasLoggerStruct{Logger: zapLogger},
+		redis:      redis,
+		dispatcher: dispatcher,
 	}
 }
 
