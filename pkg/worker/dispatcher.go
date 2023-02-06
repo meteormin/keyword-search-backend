@@ -206,7 +206,7 @@ func (d *JobDispatcher) OnDispatch(fn func(j *Job) error, workerNames ...string)
 	}
 
 	for _, w := range workers {
-		w.OnAddJon(fn)
+		w.OnAddJob(fn)
 	}
 }
 

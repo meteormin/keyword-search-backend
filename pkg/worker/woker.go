@@ -129,7 +129,7 @@ type Worker interface {
 	JobCount() int
 	BeforeJob(fn func(j *Job) error)
 	AfterJob(fn func(j *Job, err error) error)
-	OnAddJon(fn func(j *Job) error)
+	OnAddJob(fn func(j *Job) error)
 }
 
 type JobWorker struct {
@@ -373,7 +373,7 @@ func (w *JobWorker) JobCount() int {
 	return w.queue.Count()
 }
 
-func (w *JobWorker) OnAddJon(fn func(j *Job) error) {
+func (w *JobWorker) OnAddJob(fn func(j *Job) error) {
 	w.onAddJob = fn
 }
 
