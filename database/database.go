@@ -29,7 +29,7 @@ type Config struct {
 	MaxLifeTime time.Duration
 }
 
-var connections map[string]*gorm.DB
+var connections = make(map[string]*gorm.DB)
 
 func GetDB(name ...string) *gorm.DB {
 	if len(name) == 0 {

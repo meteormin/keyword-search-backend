@@ -11,18 +11,18 @@ import (
 
 const Default string = "default"
 
-var loggers map[string]*zap.SugaredLogger
+var gLoggers = make(map[string]*zap.Logger)
 
 func GetLogger(loggerName ...string) *zap.SugaredLogger {
-	if loggers == nil {
+	if gLoggers == nil {
 		return New()
 	}
 
 	if len(loggerName) == 0 {
-		return loggers[Default]
+		return gLoggers[Default].Named(Default).Sugar()
 	}
 
-	return loggers[loggerName[0]]
+	return gLoggers[loggerName[0]].Named(loggerName[0]).Sugar()
 }
 
 func New(config ...Config) *zap.SugaredLogger {
@@ -41,7 +41,11 @@ func New(config ...Config) *zap.SugaredLogger {
 	ws := zapcore.AddSync(ll)
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.TimeKey = cfg.TimeKey
-
+	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	encoderConfig.LevelKey = "level"
+	encoderConfig.StacktraceKey = "stacktrace"
+	encoderConfig.CallerKey = "caller"
+	encoderConfig.MessageKey = "msg"
 	encoderConfig.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 		t = utils.TimeIn(t, cfg.TimeZone)
 		type appendTimeEncoder interface {
@@ -56,13 +60,10 @@ func New(config ...Config) *zap.SugaredLogger {
 		enc.AppendString(t.Format(cfg.TimeFormat))
 	}
 
-	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	encoderConfig.StacktraceKey = ""
-
 	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), ws, cfg.LogLevel)
 	zapLogger := zap.New(core, zap.AddCaller())
-	logger := zapLogger.Sugar()
-	loggers[cfg.Name] = logger
+	logger := zapLogger.Named(cfg.Name).Sugar()
+	gLoggers[cfg.Name] = zapLogger
 
 	return logger
 }

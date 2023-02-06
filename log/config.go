@@ -24,7 +24,7 @@ var defaultConfig = Config{
 	TimeFormat: "2006-01-02 15:04:05",
 	FilePath:   "",
 	Filename:   "",
-	MaxSize:    10,
+	MaxSize:    1024,
 	MaxBackups: 30,
 	MaxAge:     30,
 	Compress:   true,
@@ -70,14 +70,6 @@ func getDefaultConfig(config ...Config) Config {
 
 	if cfg.MaxBackups == 0 {
 		cfg.MaxBackups = defaultConfig.MaxBackups
-	}
-
-	if cfg.Filename == "" {
-		panic("filename field is required")
-	}
-
-	if cfg.FilePath == "" {
-		panic("filepath field is required")
 	}
 
 	return cfg
