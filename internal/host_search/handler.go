@@ -3,12 +3,12 @@ package host_search
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/miniyus/keyword-search-backend/api_error"
+	_ "github.com/miniyus/gofiber/api_error"
+	"github.com/miniyus/gofiber/pkg/worker"
+	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal"
 	"github.com/miniyus/keyword-search-backend/internal/search"
-	"github.com/miniyus/keyword-search-backend/pkg/worker"
-	"github.com/miniyus/keyword-search-backend/utils"
 	"strconv"
 )
 

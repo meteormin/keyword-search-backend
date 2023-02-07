@@ -2,7 +2,7 @@ package entity
 
 import (
 	"github.com/google/uuid"
-	"github.com/miniyus/keyword-search-backend/pkg/worker"
+	"github.com/miniyus/gofiber/pkg/worker"
 	"gorm.io/gorm"
 )
 

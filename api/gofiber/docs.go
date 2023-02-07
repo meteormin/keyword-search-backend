@@ -1641,29 +1641,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/health-check": {
-            "get": {
-                "description": "health check your server",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "HealthCheck"
-                ],
-                "summary": "health check your server",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/utils.StatusResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -2114,65 +2091,6 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_miniyus_keyword-search-backend_pkg_worker.Job": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "job_id": {
-                    "type": "string"
-                },
-                "meta": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "status": {
-                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "uuid": {
-                    "type": "string"
-                },
-                "worker_name": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus": {
-            "type": "string",
-            "enum": [
-                "success",
-                "fail",
-                "wait",
-                "progress"
-            ],
-            "x-enum-varnames": [
-                "SUCCESS",
-                "FAIL",
-                "WAIT",
-                "PROGRESS"
-            ]
-        },
-        "github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo": {
-            "type": "object",
-            "properties": {
-                "is_running": {
-                    "type": "boolean"
-                },
-                "job_count": {
-                    "type": "integer"
-                },
-                "max_job_count": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "gorm.DeletedAt": {
             "type": "object",
             "properties": {
@@ -2550,7 +2468,7 @@ const docTemplate = `{
                     "additionalProperties": true
                 },
                 "status": {
-                    "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus"
+                    "$ref": "#/definitions/worker.JobStatus"
                 },
                 "updated_at": {
                     "type": "string"
@@ -2569,7 +2487,7 @@ const docTemplate = `{
                 "jobs": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.Job"
+                        "$ref": "#/definitions/worker.Job"
                     }
                 }
             }
@@ -2583,7 +2501,7 @@ const docTemplate = `{
                 "workers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo"
+                        "$ref": "#/definitions/worker.StatusWorkerInfo"
                     }
                 }
             }
@@ -2745,6 +2663,65 @@ const docTemplate = `{
             "properties": {
                 "status": {
                     "type": "boolean"
+                }
+            }
+        },
+        "worker.Job": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "job_id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "status": {
+                    "$ref": "#/definitions/worker.JobStatus"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                },
+                "worker_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "worker.JobStatus": {
+            "type": "string",
+            "enum": [
+                "success",
+                "fail",
+                "wait",
+                "progress"
+            ],
+            "x-enum-varnames": [
+                "SUCCESS",
+                "FAIL",
+                "WAIT",
+                "PROGRESS"
+            ]
+        },
+        "worker.StatusWorkerInfo": {
+            "type": "object",
+            "properties": {
+                "is_running": {
+                    "type": "boolean"
+                },
+                "job_count": {
+                    "type": "integer"
+                },
+                "max_job_count": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         }

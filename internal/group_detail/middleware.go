@@ -3,12 +3,12 @@ package group_detail
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/auth"
-	"github.com/miniyus/keyword-search-backend/database"
+	"github.com/miniyus/gofiber/auth"
+	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/gofiber/permission"
+	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/internal"
-	"github.com/miniyus/keyword-search-backend/permission"
-	"github.com/miniyus/keyword-search-backend/utils"
 	"gorm.io/gorm"
 )
 

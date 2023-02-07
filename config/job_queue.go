@@ -1,6 +1,6 @@
 package config
 
-import "github.com/miniyus/keyword-search-backend/pkg/worker"
+import "github.com/miniyus/gofiber/pkg/worker"
 
 type WorkerName string
 

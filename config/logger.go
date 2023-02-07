@@ -2,7 +2,7 @@ package config
 
 import (
 	loggerMiddleware "github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/miniyus/keyword-search-backend/log"
+	"github.com/miniyus/gofiber/log"
 	"go.uber.org/zap/zapcore"
 	"os"
 )

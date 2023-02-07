@@ -2,7 +2,7 @@ package hosts
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/app"
+	"github.com/miniyus/gofiber/app"
 )
 
 const Prefix = "/hosts"

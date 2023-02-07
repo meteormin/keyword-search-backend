@@ -1,7 +1,7 @@
 package group_detail
 
 import (
-	"github.com/miniyus/keyword-search-backend/database"
+	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
 )

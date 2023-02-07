@@ -180,6 +180,16 @@ github.com/mattn/go-isatty v0.0.16 h1:bq3VjFmv/sOjHtdEhmkEV4x1AJtvUvOJ2PFAZ5+peK
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
 github.com/mattn/go-runewidth v0.0.14 h1:+xnbZSEeDbOIg5/mE6JF0w6n9duR1l3/WmbinWVwUuU=
 github.com/mattn/go-runewidth v0.0.14/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
+github.com/miniyus/gofiber v0.0.0-20230206084535-270b1de0762c h1:/G3zAPwhGyrL4Sw1Y2KD7P8Ra7zD716EF7XRSEiPQoM=
+github.com/miniyus/gofiber v0.0.0-20230206084535-270b1de0762c/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.0.0 h1:op89ApJb9zeYZ7AnfQu65E2CiGcD+jqOT75I/KidTZw=
+github.com/miniyus/gofiber v1.0.0/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.0.1 h1:O12Iq7azk2nZLnO/GSGSJjuJEYNdhf93xIDiM5JhTc0=
+github.com/miniyus/gofiber v1.0.1/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.0.2 h1:Z02LFRIDH/lNhfPNTURTqqGMWgTUQUPdMD+OxG6Vwuk=
+github.com/miniyus/gofiber v1.0.2/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.1.0 h1:LtUfJaohqC0gg+Iod5E0TylbFvQA+kUGsTxzl9V5n5Y=
+github.com/miniyus/gofiber v1.1.0/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e h1:aoZm08cpOy4WuID//EZDgcC4zIxODThtZNPirFr42+A=

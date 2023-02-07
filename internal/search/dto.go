@@ -1,8 +1,8 @@
 package search
 
 import (
+	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/utils"
 )
 
 type MultiCreateSearch struct {

@@ -1,8 +1,8 @@
 package users
 
 import (
-	"github.com/miniyus/keyword-search-backend/database"
-	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/gofiber/entity"
 	"gorm.io/gorm"
 )
 

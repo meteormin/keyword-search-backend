@@ -294,47 +294,6 @@ definitions:
       total_count:
         type: integer
     type: object
-  github_com_miniyus_keyword-search-backend_pkg_worker.Job:
-    properties:
-      created_at:
-        type: string
-      job_id:
-        type: string
-      meta:
-        additionalProperties: true
-        type: object
-      status:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus'
-      updated_at:
-        type: string
-      uuid:
-        type: string
-      worker_name:
-        type: string
-    type: object
-  github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus:
-    enum:
-    - success
-    - fail
-    - wait
-    - progress
-    type: string
-    x-enum-varnames:
-    - SUCCESS
-    - FAIL
-    - WAIT
-    - PROGRESS
-  github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo:
-    properties:
-      is_running:
-        type: boolean
-      job_count:
-        type: integer
-      max_job_count:
-        type: integer
-      name:
-        type: string
-    type: object
   gorm.DeletedAt:
     properties:
       time:
@@ -586,7 +545,7 @@ definitions:
         additionalProperties: true
         type: object
       status:
-        $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.JobStatus'
+        $ref: '#/definitions/worker.JobStatus'
       updated_at:
         type: string
       uuid:
@@ -598,7 +557,7 @@ definitions:
     properties:
       jobs:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.Job'
+          $ref: '#/definitions/worker.Job'
         type: array
     type: object
   internal_jobs.GetStatus:
@@ -607,7 +566,7 @@ definitions:
         type: integer
       workers:
         items:
-          $ref: '#/definitions/github_com_miniyus_keyword-search-backend_pkg_worker.StatusWorkerInfo'
+          $ref: '#/definitions/worker.StatusWorkerInfo'
         type: array
     type: object
   internal_search.CreateSearch:
@@ -719,6 +678,47 @@ definitions:
     properties:
       status:
         type: boolean
+    type: object
+  worker.Job:
+    properties:
+      created_at:
+        type: string
+      job_id:
+        type: string
+      meta:
+        additionalProperties: true
+        type: object
+      status:
+        $ref: '#/definitions/worker.JobStatus'
+      updated_at:
+        type: string
+      uuid:
+        type: string
+      worker_name:
+        type: string
+    type: object
+  worker.JobStatus:
+    enum:
+    - success
+    - fail
+    - wait
+    - progress
+    type: string
+    x-enum-varnames:
+    - SUCCESS
+    - FAIL
+    - WAIT
+    - PROGRESS
+  worker.StatusWorkerInfo:
+    properties:
+      is_running:
+        type: boolean
+      job_count:
+        type: integer
+      max_job_count:
+        type: integer
+      name:
+        type: string
     type: object
 host: localhost:9090
 info:
@@ -1765,21 +1765,6 @@ paths:
       summary: jobs status
       tags:
       - Jobs
-  /health-check:
-    get:
-      consumes:
-      - '*/*'
-      description: health check your server
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/utils.StatusResponse'
-      summary: health check your server
-      tags:
-      - HealthCheck
 schemes:
 - http
 securityDefinitions:

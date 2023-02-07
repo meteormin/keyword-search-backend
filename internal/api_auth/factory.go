@@ -1,9 +1,9 @@
 package api_auth
 
 import (
-	"github.com/miniyus/keyword-search-backend/auth"
+	"github.com/miniyus/gofiber/auth"
+	"github.com/miniyus/gofiber/pkg/jwt"
 	"github.com/miniyus/keyword-search-backend/internal/users"
-	"github.com/miniyus/keyword-search-backend/pkg/jwt"
 	"gorm.io/gorm"
 )
 

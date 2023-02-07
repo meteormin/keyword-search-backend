@@ -2,8 +2,8 @@ package host_search
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/app"
-	"github.com/miniyus/keyword-search-backend/permission"
+	"github.com/miniyus/gofiber/app"
+	"github.com/miniyus/gofiber/permission"
 )
 
 const Prefix = "/hosts/:id/search"

@@ -1,10 +1,14 @@
 package main
 
 import (
-	"github.com/miniyus/keyword-search-backend/app"
-	"github.com/miniyus/keyword-search-backend/create_admin"
+	"github.com/miniyus/gofiber/create_admin"
+	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/keyword-search-backend/config"
 )
 
 func main() {
-	create_admin.CreateAdmin(app.New())
+	cfg := config.GetConfigs()
+	db := database.New(cfg.Database["default"])
+
+	create_admin.CreateAdmin(db, &cfg)
 }

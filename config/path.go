@@ -1,6 +1,7 @@
 package config
 
 import (
+	mConfig "github.com/miniyus/gofiber/config"
 	"log"
 	"os"
 	"path"
@@ -12,7 +13,7 @@ type Path struct {
 	LogPath  string
 }
 
-func getPath() Path {
+func getPath() mConfig.Path {
 	getWd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("Failed getwd %v", err)
@@ -36,7 +37,7 @@ func getPath() Path {
 			log.Fatal(err)
 		}
 	}
-	return Path{
+	return mConfig.Path{
 		BasePath: getWd,
 		DataPath: dataPath,
 		LogPath:  logPath,

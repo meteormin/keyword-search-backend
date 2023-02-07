@@ -1,9 +1,9 @@
 package groups
 
 import (
-	"github.com/miniyus/keyword-search-backend/database"
+	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/utils"
 	"gorm.io/gorm"
 )
 

@@ -3,10 +3,10 @@ package api_auth
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/miniyus/keyword-search-backend/api_error"
-	"github.com/miniyus/keyword-search-backend/auth"
+	"github.com/miniyus/gofiber/api_error"
+	"github.com/miniyus/gofiber/auth"
+	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/internal"
-	"github.com/miniyus/keyword-search-backend/utils"
 )
 
 type Handler interface {

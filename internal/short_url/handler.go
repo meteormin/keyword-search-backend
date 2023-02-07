@@ -2,7 +2,7 @@ package short_url
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/auth"
+	"github.com/miniyus/gofiber/auth"
 )
 
 type Handler interface {

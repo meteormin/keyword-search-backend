@@ -2,8 +2,8 @@ package hosts
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/utils"
 )
 
 type Service interface {

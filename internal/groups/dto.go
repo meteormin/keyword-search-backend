@@ -1,9 +1,9 @@
 package groups
 
 import (
+	"github.com/miniyus/gofiber/permission"
+	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/permission"
-	"github.com/miniyus/keyword-search-backend/utils"
 )
 
 type CreateAction struct {

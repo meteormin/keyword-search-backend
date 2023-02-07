@@ -2,10 +2,10 @@ package test_api
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/app"
-	"github.com/miniyus/keyword-search-backend/log"
-	jobWorker "github.com/miniyus/keyword-search-backend/pkg/worker"
-	"github.com/miniyus/keyword-search-backend/utils"
+	"github.com/miniyus/gofiber/app"
+	"github.com/miniyus/gofiber/log"
+	jobWorker "github.com/miniyus/gofiber/pkg/worker"
+	"github.com/miniyus/gofiber/utils"
 	"time"
 )
 

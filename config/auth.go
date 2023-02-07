@@ -2,18 +2,14 @@ package config
 
 import (
 	jwtWare "github.com/gofiber/jwt/v3"
-	rsGen "github.com/miniyus/keyword-search-backend/pkg/rs256"
+	mConfig "github.com/miniyus/gofiber/config"
+	rsGen "github.com/miniyus/gofiber/pkg/rs256"
 	"log"
 	"os"
 	"path"
 )
 
-type Auth struct {
-	Jwt jwtWare.Config
-	Exp int
-}
-
-func auth() Auth {
+func auth() mConfig.Auth {
 	_, err := os.Stat(getPath().DataPath)
 	if err != nil {
 		log.Fatalf("data path is not exists... %v", err)
@@ -35,7 +31,7 @@ func auth() Auth {
 
 	priKey := rsGen.PrivatePemDecode(privateKey)
 
-	return Auth{
+	return mConfig.Auth{
 		Jwt: jwtWare.Config{
 			SigningMethod: "RS256",
 			SigningKey:    priKey.Public(),
