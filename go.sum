@@ -224,6 +224,8 @@ github.com/miniyus/gofiber v1.1.7 h1:E8JxnLStl/WZ8vCUl+pNWu7TYQObe7j0bekwq8oCnZE
 github.com/miniyus/gofiber v1.1.7/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
 github.com/miniyus/gofiber v1.1.9 h1:m30f8fkPQPkAH4wonbF3sR44GcJeKofKC476ciJi1/A=
 github.com/miniyus/gofiber v1.1.9/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.1.10 h1:zo2upd5IxGbMsAZNB2gvTLYzbAQMtvZqh2ij9xqiSxU=
+github.com/miniyus/gofiber v1.1.10/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/philhofer/fwd v1.1.1/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=
