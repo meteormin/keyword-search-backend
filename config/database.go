@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/miniyus/gofiber/database"
+	mEntity "github.com/miniyus/gofiber/entity"
 	"github.com/miniyus/keyword-search-backend/entity"
 	gormLogger "gorm.io/gorm/logger"
 	"os"
@@ -20,7 +21,7 @@ func databaseConfig() map[string]database.Config {
 
 	if autoMigrate {
 		autoMigrateEntities = []interface{}{
-			&entity.AccessToken{},
+			&mEntity.AccessToken{},
 			&entity.Action{},
 			&entity.Permission{},
 			&entity.Group{},
@@ -30,7 +31,7 @@ func databaseConfig() map[string]database.Config {
 			&entity.Search{},
 			&entity.BookMark{},
 			&entity.Tag{},
-			&entity.JobHistory{},
+			&mEntity.JobHistory{},
 		}
 	}
 

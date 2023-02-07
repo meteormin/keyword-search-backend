@@ -5,7 +5,6 @@ import (
 	"github.com/miniyus/gofiber/api_error"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gofiber/routes"
-	_ "github.com/miniyus/keyword-search-backend/api/gofiber"
 	"github.com/miniyus/keyword-search-backend/config"
 	ksRoutes "github.com/miniyus/keyword-search-backend/routes"
 )
@@ -36,6 +35,8 @@ func main() {
 		routes.Api(router, app)
 		ksRoutes.Api(router, app)
 	}, "api")
+
+	a.Route(ksRoutes.WebPrefix, ksRoutes.Web, "web")
 
 	// print status
 	a.Status()
