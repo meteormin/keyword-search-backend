@@ -130,7 +130,7 @@ func (s *ServiceStruct) Create(search *CreateSearch) (*Response, error) {
 		return nil, err
 	}
 	idString := strconv.Itoa(int(rs.ID))
-	code := utils.B64UrlEncode(idString)
+	code := utils.Base64UrlEncode(idString)
 	rs.ShortUrl = &code
 
 	rs, err = s.repo.Update(rs.ID, *rs)
@@ -165,7 +165,7 @@ func (s *ServiceStruct) BatchCreate(hostId uint, search []*CreateSearch) ([]Resp
 	updateSlice := make([]entity.Search, 0)
 	for _, r := range rs {
 		idString := strconv.Itoa(int(r.ID))
-		code := utils.B64UrlEncode(idString)
+		code := utils.Base64UrlEncode(idString)
 		r.ShortUrl = &code
 		res := ToSearchResponse(&r)
 		resSlice = append(resSlice, *res)

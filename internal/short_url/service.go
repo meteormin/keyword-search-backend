@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/keyword-search-backend/internal"
+	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"path"
 	"strconv"
@@ -38,7 +38,7 @@ func (s *ServiceStruct) hGet(r *redis.Client, rKey string, rField string) string
 	}
 
 	if err != nil {
-		internal.Log().Error(err)
+		log.GetLogger().Error(err)
 		return ""
 	}
 
@@ -96,7 +96,7 @@ func (s *ServiceStruct) FindRealUrl(code string, userId uint) (string, error) {
 
 	err = s.hSet(r, rKey, rField, realUrl)
 	if err != nil {
-		internal.Log().Error(err)
+		log.GetLogger().Error(err)
 		return realUrl, err
 	}
 

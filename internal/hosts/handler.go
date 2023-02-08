@@ -5,7 +5,6 @@ import (
 	_ "github.com/miniyus/gofiber/api_error"
 	"github.com/miniyus/gofiber/auth"
 	"github.com/miniyus/gofiber/utils"
-	"github.com/miniyus/keyword-search-backend/internal"
 	"strconv"
 )
 
@@ -50,7 +49,7 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := internal.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -93,7 +92,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := internal.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -147,7 +146,7 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	errRes := internal.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, dto)
 	if errRes != nil {
 		return errRes.Response()
 	}

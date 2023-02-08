@@ -20,6 +20,7 @@ func init() {
 		CreateAdmin:    createAdminConfig(),
 		RedisConfig:    redisConfig(),
 		JobQueueConfig: jobQueueConfig(),
+		Validation:     validationConfig(),
 	}
 }
 
