@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/gofiber"
 	"github.com/miniyus/gofiber/api_error"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gofiber/routes"
+	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/config"
 	ksRoutes "github.com/miniyus/keyword-search-backend/routes"
 )
@@ -29,6 +31,14 @@ func main() {
 	appConfig.FiberConfig.ErrorHandler = api_error.OverrideDefaultErrorHandler(appConfig.Env)
 
 	a := gofiber.New(cfg)
+
+	a.Register(func(app app.Application) {
+		var rClient *redis.Client
+		rClientMaker := utils.RedisClientMaker(cfg.RedisConfig)
+		app.Bind(&rClient, func() *redis.Client {
+			return rClientMaker()
+		})
+	})
 
 	// register routes
 	a.Route(routes.ApiPrefix, func(router app.Router, app app.Application) {

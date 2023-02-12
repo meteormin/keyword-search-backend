@@ -3,8 +3,8 @@ package entity
 import (
 	"context"
 	"fmt"
-	"github.com/miniyus/gofiber/utils"
-	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/go-redis/redis/v9"
+	"github.com/miniyus/gofiber/app"
 	"gorm.io/gorm"
 	"path"
 	"strconv"
@@ -23,8 +23,10 @@ type Search struct {
 }
 
 func (s *Search) AfterSave(tx *gorm.DB) (err error) {
-	rClientFn := utils.RedisClientMaker(config.GetConfigs().RedisConfig)
-	rClient := rClientFn()
+	a := app.App()
+
+	var rClient *redis.Client
+	a.Resolve(&rClient)
 
 	if s.ShortUrl != nil {
 		rKey := "short_url." + strconv.Itoa(int(s.Host.UserId))

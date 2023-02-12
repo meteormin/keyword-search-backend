@@ -3,10 +3,9 @@ package entity
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gofiber/pkg/worker"
-	"github.com/miniyus/gofiber/utils"
-	"github.com/miniyus/keyword-search-backend/config"
 	"gorm.io/gorm"
 	"path"
 	"strconv"
@@ -28,15 +27,15 @@ type Host struct {
 func (h *Host) AfterSave(tx *gorm.DB) (err error) {
 	a := app.App()
 
+	var rClient *redis.Client
+	a.Resolve(&rClient)
+
 	var dispatcher worker.Dispatcher
 	a.Resolve(&dispatcher)
 
-	rClientFn := utils.RedisClientMaker(config.GetConfigs().RedisConfig)
 	jobId := fmt.Sprintf("%s.%d.%d", "hosts", h.ID, h.UserId)
 
 	err = dispatcher.Dispatch(jobId, func(j *worker.Job) error {
-		rClient := rClientFn()
-
 		for _, s := range h.Search {
 			if s.ShortUrl != nil {
 				rKey := "short_url." + strconv.Itoa(int(h.UserId))
