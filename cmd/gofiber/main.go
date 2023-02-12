@@ -35,6 +35,7 @@ func main() {
 	a.Register(func(app app.Application) {
 		var rClient *redis.Client
 		rClientMaker := utils.RedisClientMaker(cfg.RedisConfig)
+
 		app.Bind(&rClient, func() *redis.Client {
 			return rClientMaker()
 		})
