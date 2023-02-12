@@ -2,7 +2,6 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
@@ -34,8 +33,7 @@ func NewRepository(db *gorm.DB) Repository {
 func (r *RepositoryStruct) Count(search entity.Search) (int64, error) {
 	var count int64 = 0
 
-	rs := r.db.Model(&search).Count(&count)
-	_, err := database.HandleResult(rs)
+	err := r.db.Model(&search).Count(&count).Error
 
 	return count, err
 }
@@ -45,10 +43,11 @@ func (r *RepositoryStruct) All(page utils.Page) ([]entity.Search, int64, error) 
 	count, err := r.Count(entity.Search{})
 
 	if count != 0 {
-		rs := r.db.Scopes(utils.Paginate(page)).Find(&search)
-		rs, err = database.HandleResult(rs)
+		err = r.db.Scopes(utils.Paginate(page)).Find(&search).Error
+	}
 
-		count = rs.RowsAffected
+	if err != nil {
+		return make([]entity.Search, 0), 0, err
 	}
 
 	return search, count, err
@@ -59,17 +58,16 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.S
 	var count int64
 
 	where := &entity.Search{HostId: hostId}
-	rs := r.db.Model(&entity.Search{}).Where(where).Count(&count)
-	_, err := database.HandleResult(rs)
-	if err != nil {
-		return search, count, err
-	}
+	err := r.db.Model(&entity.Search{}).Where(where).Count(&count).Error
 
 	if count != 0 {
 		scopes := utils.Paginate(page)
 
-		rs := r.db.Where(where).Scopes(scopes).Order("id desc").Find(&search)
-		_, err = database.HandleResult(rs)
+		err = r.db.Where(where).Scopes(scopes).Order("id desc").Find(&search).Error
+	}
+
+	if err != nil {
+		return make([]entity.Search, 0), 0, err
 	}
 
 	return search, count, err
@@ -80,17 +78,24 @@ func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page utils.Page)
 	var count int64
 
 	where := &entity.Search{HostId: hostId}
-	rs := r.db.Model(&entity.Search{}).Where(where).Count(&count)
-	_, err := database.HandleResult(rs)
+	err := r.db.Model(&entity.Search{}).Where(where).Count(&count).Error
+
 	if err != nil {
-		return search, count, err
+		return make([]entity.Search, 0), 0, err
 	}
 
 	if count != 0 {
 		scopes := utils.Paginate(page)
 
-		rs := r.db.Select("id", "description", "short_url").Where(where).Scopes(scopes).Order("id desc").Find(&search)
-		_, err = database.HandleResult(rs)
+		err = r.db.Select("id", "description", "short_url").
+			Where(where).
+			Scopes(scopes).
+			Order("id desc").
+			Find(&search).Error
+
+		if err != nil {
+			return make([]entity.Search, 0), 0, err
+		}
 	}
 
 	return search, count, err
@@ -98,47 +103,52 @@ func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page utils.Page)
 
 func (r *RepositoryStruct) Find(pk uint) (*entity.Search, error) {
 	var search entity.Search
-	rs := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).First(&search, pk)
-	_, err := database.HandleResult(rs)
+	err := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).First(&search, pk).Error
+
+	if err != nil {
+		return nil, err
+	}
+
 	if search.Host == nil {
 		return nil, fiber.ErrForbidden
 	}
 
-	return &search, err
+	return &search, nil
 }
 
 func (r *RepositoryStruct) Create(search entity.Search) (*entity.Search, error) {
-	rs := r.db.Create(&search)
-	_, err := database.HandleResult(rs)
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		return tx.Create(&search).Error
+	})
 
 	return &search, err
 }
 
 func (r *RepositoryStruct) BatchCreate(search []entity.Search) ([]entity.Search, error) {
-	rs := r.db.Clauses(clause.OnConflict{
-		Columns: []clause.Column{
-			{Name: "id"},
-		},
-		DoUpdates: clause.AssignmentColumns([]string{"short_url"}),
-	}).Create(&search)
-	_, err := database.HandleResult(rs)
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		return tx.Clauses(clause.OnConflict{
+			Columns: []clause.Column{
+				{Name: "id"},
+			},
+			DoUpdates: clause.AssignmentColumns([]string{"short_url"}),
+		}).Create(&search).Error
+	})
+
+	if err != nil {
+		return make([]entity.Search, 0), err
+	}
 
 	return search, err
 }
 
 func (r *RepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Search, error) {
 	var search entity.Search
-	rs := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).
+	err := r.db.Joins("Host", r.db.Where(&entity.Host{Publish: true})).
 		Where(&entity.Search{ShortUrl: &code}).
-		First(&search)
+		First(&search).Error
 
-	rs, err := database.HandleResult(rs)
 	if err != nil {
 		return nil, err
-	}
-
-	if rs.RowsAffected == 0 {
-		return nil, nil
 	}
 
 	if search.Host.UserId != userId {
@@ -157,20 +167,17 @@ func (r *RepositoryStruct) Update(pk uint, search entity.Search) (*entity.Search
 	if exists == nil {
 		return nil, gorm.ErrRecordNotFound
 	}
+	err = r.db.Transaction(func(tx *gorm.DB) error {
+		if search.ID == exists.ID {
+			return r.db.Save(&search).Error
+		} else {
+			search.ID = exists.ID
+			return r.db.Save(&search).Error
+		}
+	})
 
-	if search.ID == exists.ID {
-		result := r.db.Save(&search)
-		_, err = database.HandleResult(result)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		search.ID = exists.ID
-		result := r.db.Save(&search)
-		_, err = database.HandleResult(result)
-		if err != nil {
-			return nil, err
-		}
+	if err != nil {
+		return nil, err
 	}
 
 	return &search, nil
@@ -185,8 +192,9 @@ func (r *RepositoryStruct) Delete(pk uint) (bool, error) {
 		return false, nil
 	}
 
-	result := r.db.Delete(exists)
-	_, err = database.HandleResult(result)
+	err = r.db.Transaction(func(tx *gorm.DB) error {
+		return r.db.Delete(exists).Error
+	})
 
 	if err != nil {
 		return false, err

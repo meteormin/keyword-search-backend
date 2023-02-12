@@ -1,7 +1,6 @@
 package hosts
 
 import (
-	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
@@ -32,8 +31,7 @@ func NewRepository(db *gorm.DB) Repository {
 func (r *RepositoryStruct) Count(host entity.Host) (int64, error) {
 	var count int64 = 0
 
-	rs := r.db.Model(&host).Count(&count)
-	_, err := database.HandleResult(rs)
+	err := r.db.Model(&host).Count(&count).Error
 
 	return count, err
 }
@@ -43,8 +41,11 @@ func (r *RepositoryStruct) All(page utils.Page) ([]entity.Host, int64, error) {
 	count, err := r.Count(entity.Host{})
 
 	if count != 0 {
-		result := r.db.Scopes(utils.Paginate(page)).Find(&hosts)
-		_, err = database.HandleResult(result)
+		err = r.db.Scopes(utils.Paginate(page)).Find(&hosts).Error
+	}
+
+	if err != nil {
+		return make([]entity.Host, 0), 0, err
 	}
 
 	return hosts, count, err
@@ -54,26 +55,25 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 	var hosts []entity.Host
 	var cnt int64 = 0
 
-	result := r.db.Model(&entity.Host{}).Where(&entity.Host{UserId: userId}).Count(&cnt)
-	_, err := database.HandleResult(result)
+	err := r.db.Model(&entity.Host{}).Where(&entity.Host{UserId: userId}).Count(&cnt).Error
 
-	if cnt == 0 {
-		return make([]entity.Host, 0), cnt, err
+	if cnt != 0 {
+		err = r.db.Scopes(utils.Paginate(page)).
+			Where(&entity.Host{UserId: userId}).
+			Order("id desc").
+			Find(&hosts).Error
 	}
 
-	result = r.db.Scopes(utils.Paginate(page)).
-		Where(&entity.Host{UserId: userId}).
-		Order("id desc").
-		Find(&hosts)
-	_, err = database.HandleResult(result)
+	if err != nil {
+		return make([]entity.Host, 0), cnt, err
+	}
 
 	return hosts, cnt, err
 }
 
 func (r *RepositoryStruct) Find(pk uint) (*entity.Host, error) {
 	host := entity.Host{}
-	result := r.db.Preload("Search").First(&host, pk)
-	_, err := database.HandleResult(result)
+	err := r.db.Preload("Search").First(&host, pk).Error
 
 	if err != nil {
 		return nil, err
@@ -83,8 +83,9 @@ func (r *RepositoryStruct) Find(pk uint) (*entity.Host, error) {
 }
 
 func (r *RepositoryStruct) Create(host entity.Host) (*entity.Host, error) {
-	result := r.db.Create(&host)
-	_, err := database.HandleResult(result)
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		return r.db.Create(&host).Error
+	})
 
 	if err != nil {
 		return nil, err
@@ -103,21 +104,19 @@ func (r *RepositoryStruct) Update(pk uint, host entity.Host) (*entity.Host, erro
 		return nil, gorm.ErrRecordNotFound
 	}
 
-	if host.ID == exists.ID {
-		// patch
-		result := r.db.Save(&host)
-		_, err = database.HandleResult(result)
-		if err != nil {
-			return nil, err
+	err = r.db.Transaction(func(tx *gorm.DB) error {
+		if host.ID == exists.ID {
+			// patch
+			return r.db.Save(&host).Error
+		} else {
+			// put
+			host.ID = exists.ID
+			return r.db.Save(&host).Error
 		}
-	} else {
-		// put
-		host.ID = exists.ID
-		result := r.db.Save(&host)
-		_, err = database.HandleResult(result)
-		if err != nil {
-			return nil, err
-		}
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &host, nil
@@ -129,8 +128,10 @@ func (r *RepositoryStruct) Delete(pk uint) (bool, error) {
 		return false, err
 	}
 
-	result := r.db.Delete(exists)
-	_, err = database.HandleResult(result)
+	err = r.db.Transaction(func(tx *gorm.DB) error {
+		return r.db.Delete(exists).Error
+	})
+
 	if err != nil {
 		return false, err
 	}
@@ -143,9 +144,7 @@ func (r *RepositoryStruct) GetByGroupId(groupId uint, page utils.Page) ([]entity
 	var count int64
 	hosts := make([]entity.Host, 0)
 
-	rs := r.db.Preload("Users").Find(&group, groupId)
-	_, err := database.HandleResult(rs)
-	if err != nil {
+	if err := r.db.Preload("Users").Find(&group, groupId).Error; err != nil {
 		return hosts, 0, err
 	}
 
@@ -154,37 +153,32 @@ func (r *RepositoryStruct) GetByGroupId(groupId uint, page utils.Page) ([]entity
 		userIds = append(userIds, int(user.ID))
 	}
 
-	rs = r.db.Model(&entity.Host{}).Where("user_id IN ?", userIds).Count(&count)
-	_, err = database.HandleResult(rs)
-	if err != nil {
+	if err := r.db.Model(&entity.Host{}).Where("user_id IN ?", userIds).Count(&count).Error; err != nil {
 		return hosts, 0, err
 	}
 
-	rs = r.db.Scopes(utils.Paginate(page)).Where("user_id IN ?", userIds).Find(&hosts)
-	rs, err = database.HandleResult(rs)
-	if err != nil {
+	if err := r.db.Scopes(utils.Paginate(page)).Where("user_id IN ?", userIds).Find(&hosts).Error; err != nil {
 		return hosts, 0, err
 	}
 
-	return hosts, count, err
+	return hosts, count, nil
 }
 
 func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error) {
 	var hosts []entity.Host
 	var cnt int64 = 0
 
-	result := r.db.Model(&entity.Host{}).Where(&entity.Host{UserId: userId}).Count(&cnt)
-	_, err := database.HandleResult(result)
-
-	if cnt == 0 {
-		return make([]entity.Host, 0), cnt, err
+	err := r.db.Model(&entity.Host{}).Where(&entity.Host{UserId: userId}).Count(&cnt).Error
+	if cnt != 0 {
+		err = r.db.Select("id", "subject").Scopes(utils.Paginate(page)).
+			Where(&entity.Host{UserId: userId}).
+			Order("id desc").
+			Find(&hosts).Error
 	}
 
-	result = r.db.Select("id", "subject").Scopes(utils.Paginate(page)).
-		Where(&entity.Host{UserId: userId}).
-		Order("id desc").
-		Find(&hosts)
-	_, err = database.HandleResult(result)
+	if err != nil {
+		return make([]entity.Host, 0), cnt, err
+	}
 
 	return hosts, cnt, err
 }
@@ -193,9 +187,7 @@ func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) (
 	var group entity.Group
 	hosts := make([]entity.Host, 0)
 
-	rs := r.db.Preload("Users").Find(&group, groupId)
-	_, err := database.HandleResult(rs)
-	if err != nil {
+	if err := r.db.Preload("Users").Find(&group, groupId).Error; err != nil {
 		return hosts, 0, err
 	}
 
@@ -204,11 +196,14 @@ func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) (
 		userIds = append(userIds, int(user.ID))
 	}
 
-	rs = r.db.Select("id", "subject").Scopes(utils.Paginate(page)).Where("user_id IN ?", userIds).Find(&hosts)
-	rs, err = database.HandleResult(rs)
+	err := r.db.Select("id", "subject").
+		Scopes(utils.Paginate(page)).
+		Where("user_id IN ?", userIds).
+		Find(&hosts).Error
+
 	if err != nil {
 		return hosts, 0, err
 	}
 
-	return hosts, rs.RowsAffected, err
+	return hosts, int64(len(hosts)), err
 }
