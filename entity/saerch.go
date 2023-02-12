@@ -1,6 +1,15 @@
 package entity
 
-import "gorm.io/gorm"
+import (
+	"context"
+	"fmt"
+	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/keyword-search-backend/config"
+	"gorm.io/gorm"
+	"path"
+	"strconv"
+	"strings"
+)
 
 type Search struct {
 	gorm.Model
@@ -11,4 +20,40 @@ type Search struct {
 	Description string  `gorm:"column:description;type:varchar(50)" json:"description"`
 	Publish     bool    `gorm:"column:publish;type:bool" json:"publish"`
 	ShortUrl    *string `gorm:"column:short_url;type:varchar(255);uniqueIndex" json:"short_url"`
+}
+
+func (s *Search) AfterSave(tx *gorm.DB) (err error) {
+	rClientFn := utils.RedisClientMaker(config.GetConfigs().RedisConfig)
+	rClient := rClientFn()
+
+	if s.ShortUrl != nil {
+		rKey := "short_url." + strconv.Itoa(int(s.Host.UserId))
+		cached, err := rClient.HGet(
+			context.Background(),
+			rKey,
+			*s.ShortUrl,
+		).Result()
+
+		if cached != "" && err == nil {
+			sep := ":/"
+			splitString := strings.Split(s.Host.Host, sep)
+			hostPath := path.Join(splitString[1], s.Host.Path)
+			queryKey := s.QueryKey
+			queryString := s.Query
+
+			realUrl := fmt.Sprintf(
+				"%s:/%s?%s=%s",
+				splitString[0], hostPath, queryKey, queryString,
+			)
+
+			rClient.HSet(
+				context.Background(),
+				rKey,
+				*s.ShortUrl,
+				realUrl,
+			)
+		}
+	}
+
+	return err
 }
