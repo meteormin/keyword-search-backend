@@ -8,35 +8,38 @@ import (
 	"github.com/miniyus/gofiber/permission"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
-	"github.com/miniyus/keyword-search-backend/internal"
 	"gorm.io/gorm"
 )
 
-func HandleCreatedUser(u *entity.User, tx *gorm.DB) error {
-	repo := NewRepository(internal.DB())
+func HandleCreatedUser(u *entity.User, db *gorm.DB) error {
+	repo := NewRepository(db)
 
 	if u.GroupId == nil {
 		group := entity.Group{
 			Name: fmt.Sprintf("%s_group", u.Username),
 		}
 
-		rs := tx.Create(&group)
-		rs, err := database.HandleResult(rs)
+		err := db.Transaction(func(tx *gorm.DB) error {
+			return tx.Create(&group).Error
+		})
+
 		if err != nil {
 			return err
 		}
 
 		u.GroupId = &group.ID
-		rs = tx.Save(u)
-		rs, err = database.HandleResult(rs)
+		err = db.Transaction(func(tx *gorm.DB) error {
+			return tx.Save(u).Error
+		})
+
 		if err != nil {
 			return err
 		}
 	}
 
 	var findGroup entity.Group
-	rs := tx.Find(&findGroup, *u.GroupId)
-	rs, err := database.HandleResult(rs)
+	err := db.Find(&findGroup, *u.GroupId).Error
+
 	if err != nil {
 		return err
 	}
@@ -63,7 +66,7 @@ func HandleCreatedUser(u *entity.User, tx *gorm.DB) error {
 }
 
 func FilterFunc(ctx *fiber.Ctx, groupId uint, perm permission.Permission) bool {
-	repo := NewRepository(internal.DB())
+	repo := NewRepository(database.GetDB())
 
 	if groupId != 0 {
 		user, err := auth.GetAuthUser(ctx)

@@ -1,7 +1,6 @@
 package bookmarks
 
 import (
-	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
 )
@@ -19,11 +18,9 @@ type RepositoryStruct struct {
 }
 
 func (repo *RepositoryStruct) All() ([]entity.BookMark, error) {
-	var marks []entity.BookMark
+	marks := make([]entity.BookMark, 0)
 
-	result := repo.db.Find(&marks)
-	_, err := database.HandleResult(result)
-	if err != nil {
+	if err := repo.db.Find(&marks).Error; err != nil {
 		return nil, err
 	}
 
@@ -32,8 +29,8 @@ func (repo *RepositoryStruct) All() ([]entity.BookMark, error) {
 
 func (repo *RepositoryStruct) Find(pk uint) (*entity.BookMark, error) {
 	mark := &entity.BookMark{}
-	result := repo.db.Find(mark, pk)
-	_, err := database.HandleResult(result)
+	err := repo.db.Find(mark, pk).Error
+
 	if err != nil {
 		return nil, err
 	}
@@ -42,8 +39,10 @@ func (repo *RepositoryStruct) Find(pk uint) (*entity.BookMark, error) {
 }
 
 func (repo *RepositoryStruct) Create(mark *entity.BookMark) (*entity.BookMark, error) {
-	result := repo.db.Create(mark)
-	_, err := database.HandleResult(result)
+	err := repo.db.Transaction(func(tx *gorm.DB) error {
+		return tx.Create(mark).Error
+	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -58,10 +57,15 @@ func (repo *RepositoryStruct) Update(pk uint, mark *entity.BookMark) (*entity.Bo
 	}
 	mark.ID = exists.ID
 
-	result := repo.db.Save(mark)
-	_, err = database.HandleResult(result)
+	err = repo.db.Transaction(func(tx *gorm.DB) error {
+		return tx.Save(mark).Error
+	})
 
-	return mark, err
+	if err != nil {
+		return nil, err
+	}
+
+	return mark, nil
 }
 
 func (repo *RepositoryStruct) Delete(pk uint) (bool, error) {
@@ -70,8 +74,10 @@ func (repo *RepositoryStruct) Delete(pk uint) (bool, error) {
 		return false, err
 	}
 
-	result := repo.db.Delete(exists)
-	_, err = database.HandleResult(result)
+	err = repo.db.Transaction(func(tx *gorm.DB) error {
+		return tx.Delete(exists).Error
+	})
+
 	if err != nil {
 		return false, err
 	}

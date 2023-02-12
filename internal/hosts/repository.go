@@ -44,7 +44,7 @@ func (r *RepositoryStruct) All(page utils.Page) ([]entity.Host, int64, error) {
 		err = r.db.Scopes(utils.Paginate(page)).Find(&hosts).Error
 	}
 
-	if err != nil {
+	if err != nil || count == 0 {
 		return make([]entity.Host, 0), 0, err
 	}
 
@@ -64,7 +64,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 			Find(&hosts).Error
 	}
 
-	if err != nil {
+	if err != nil || cnt == 0 {
 		return make([]entity.Host, 0), cnt, err
 	}
 
@@ -84,7 +84,7 @@ func (r *RepositoryStruct) Find(pk uint) (*entity.Host, error) {
 
 func (r *RepositoryStruct) Create(host entity.Host) (*entity.Host, error) {
 	err := r.db.Transaction(func(tx *gorm.DB) error {
-		return r.db.Create(&host).Error
+		return tx.Create(&host).Error
 	})
 
 	if err != nil {
@@ -107,11 +107,11 @@ func (r *RepositoryStruct) Update(pk uint, host entity.Host) (*entity.Host, erro
 	err = r.db.Transaction(func(tx *gorm.DB) error {
 		if host.ID == exists.ID {
 			// patch
-			return r.db.Save(&host).Error
+			return tx.Save(&host).Error
 		} else {
 			// put
 			host.ID = exists.ID
-			return r.db.Save(&host).Error
+			return tx.Save(&host).Error
 		}
 	})
 
@@ -129,7 +129,7 @@ func (r *RepositoryStruct) Delete(pk uint) (bool, error) {
 	}
 
 	err = r.db.Transaction(func(tx *gorm.DB) error {
-		return r.db.Delete(exists).Error
+		return tx.Delete(exists).Error
 	})
 
 	if err != nil {
@@ -176,7 +176,7 @@ func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page utils.Page) ([]
 			Find(&hosts).Error
 	}
 
-	if err != nil {
+	if err != nil || cnt == 0 {
 		return make([]entity.Host, 0), cnt, err
 	}
 
