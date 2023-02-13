@@ -6,6 +6,7 @@ import (
 	"github.com/miniyus/gofiber/auth"
 	configure "github.com/miniyus/gofiber/config"
 	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/gofiber/jobs"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/pkg/jwt"
 	rsGen "github.com/miniyus/gofiber/pkg/rs256"
@@ -65,13 +66,13 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route(
 		hosts.Prefix,
 		hosts.Register(hosts.New(db)),
-		auth.Middleware(authMiddlewaresParameter),
+		auth.Middlewares(authMiddlewaresParameter)...,
 	).Name("api.hosts")
 
 	apiRouter.Route(
 		search.Prefix,
 		search.Register(search.New(db)),
-		auth.Middleware(authMiddlewaresParameter),
+		auth.Middlewares(authMiddlewaresParameter)...,
 	).Name("api.search")
 
 	hostSearchHandler := host_search.New(db, jDispatcher)
@@ -79,7 +80,7 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route(
 		host_search.Prefix,
 		host_search.Register(hostSearchHandler),
-		auth.Middleware(authMiddlewaresParameter),
+		auth.Middlewares(authMiddlewaresParameter, jobs.AddJobMeta(jDispatcher, db))...,
 	).Name("api.hosts.search")
 
 	apiRouter.Route(
@@ -88,7 +89,7 @@ func Api(apiRouter app.Router, a app.Application) {
 			db,
 			utils.RedisClientMaker(cfg.RedisConfig),
 		)),
-		auth.Middleware(authMiddlewaresParameter),
+		auth.Middlewares(authMiddlewaresParameter)...,
 	).Name("api.short_url")
 
 }
