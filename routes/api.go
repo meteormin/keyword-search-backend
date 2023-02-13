@@ -8,6 +8,7 @@ import (
 	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/jobs"
 	"github.com/miniyus/gofiber/log"
+	"github.com/miniyus/gofiber/permission"
 	"github.com/miniyus/gofiber/pkg/jwt"
 	rsGen "github.com/miniyus/gofiber/pkg/rs256"
 	"github.com/miniyus/gofiber/pkg/worker"
@@ -63,16 +64,22 @@ func Api(apiRouter app.Router, a app.Application) {
 		router.Post("/token", login_logs.Middleware(db), authHandler.SignIn).Name("auth.token")
 	}).Name("api.auth")
 
+	hasPermission := permission.HasPermission(permission.HasPermissionParameter{
+		DB:           db,
+		DefaultPerms: cfg.Permission,
+		FilterFunc:   nil,
+	})
+
 	apiRouter.Route(
 		hosts.Prefix,
 		hosts.Register(hosts.New(db)),
-		auth.Middlewares(authMiddlewaresParameter)...,
+		auth.Middlewares(authMiddlewaresParameter, hasPermission())...,
 	).Name("api.hosts")
 
 	apiRouter.Route(
 		search.Prefix,
 		search.Register(search.New(db)),
-		auth.Middlewares(authMiddlewaresParameter)...,
+		auth.Middlewares(authMiddlewaresParameter, hasPermission())...,
 	).Name("api.search")
 
 	hostSearchHandler := host_search.New(db, jDispatcher)
@@ -80,7 +87,11 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route(
 		host_search.Prefix,
 		host_search.Register(hostSearchHandler),
-		auth.Middlewares(authMiddlewaresParameter, jobs.AddJobMeta(jDispatcher, db))...,
+		auth.Middlewares(
+			authMiddlewaresParameter,
+			jobs.AddJobMeta(jDispatcher, db),
+			hasPermission(),
+		)...,
 	).Name("api.hosts.search")
 
 	apiRouter.Route(
@@ -89,7 +100,7 @@ func Api(apiRouter app.Router, a app.Application) {
 			db,
 			utils.RedisClientMaker(cfg.RedisConfig),
 		)),
-		auth.Middlewares(authMiddlewaresParameter)...,
+		auth.Middlewares(authMiddlewaresParameter, hasPermission())...,
 	).Name("api.short_url")
 
 }
