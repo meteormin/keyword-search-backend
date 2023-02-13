@@ -29,7 +29,14 @@ func (s *Search) AfterSave(tx *gorm.DB) (err error) {
 	a.Resolve(&rClient)
 
 	if s.ShortUrl != nil {
-		rKey := "short_url." + strconv.Itoa(int(s.Host.UserId))
+		var h Host
+
+		err = tx.First(&h, s.HostId).Error
+		if err != nil {
+			return err
+		}
+
+		rKey := "short_url." + strconv.Itoa(int(h.UserId))
 		cached, err := rClient.HGet(
 			context.Background(),
 			rKey,
@@ -38,8 +45,8 @@ func (s *Search) AfterSave(tx *gorm.DB) (err error) {
 
 		if cached != "" && err == nil {
 			sep := ":/"
-			splitString := strings.Split(s.Host.Host, sep)
-			hostPath := path.Join(splitString[1], s.Host.Path)
+			splitString := strings.Split(h.Host, sep)
+			hostPath := path.Join(splitString[1], h.Path)
 			queryKey := s.QueryKey
 			queryString := s.Query
 

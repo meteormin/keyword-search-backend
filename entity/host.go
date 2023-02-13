@@ -35,8 +35,14 @@ func (h *Host) AfterSave(tx *gorm.DB) (err error) {
 
 	jobId := fmt.Sprintf("%s.%d.%d", "hosts", h.ID, h.UserId)
 
+	var search []Search
+	err = tx.Where(&Search{HostId: h.ID}).Find(&search).Error
+	if err != nil {
+		return err
+	}
+
 	err = dispatcher.Dispatch(jobId, func(j *worker.Job) error {
-		for _, s := range h.Search {
+		for _, s := range search {
 			if s.ShortUrl != nil {
 				rKey := "short_url." + strconv.Itoa(int(h.UserId))
 				cached, err := rClient.HGet(

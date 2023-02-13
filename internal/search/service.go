@@ -129,6 +129,7 @@ func (s *ServiceStruct) Create(search *CreateSearch) (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	idString := strconv.Itoa(int(rs.ID))
 	code := utils.Base64UrlEncode(idString)
 	rs.ShortUrl = &code
