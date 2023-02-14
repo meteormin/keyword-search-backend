@@ -6,6 +6,7 @@ import (
 	"github.com/miniyus/gofiber/auth"
 	configure "github.com/miniyus/gofiber/config"
 	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/gofiber/job_queue"
 	"github.com/miniyus/gofiber/jobs"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/permission"
@@ -42,7 +43,11 @@ func Api(apiRouter app.Router, a app.Application) {
 	}
 
 	var jDispatcher worker.Dispatcher
-	a.Resolve(&jDispatcher)
+	jDispatcher = job_queue.GetDispatcher()
+
+	if jDispatcher == nil {
+		a.Resolve(&jDispatcher)
+	}
 
 	var zLogger *zap.SugaredLogger
 	a.Resolve(&zLogger)
@@ -89,7 +94,7 @@ func Api(apiRouter app.Router, a app.Application) {
 		host_search.Register(hostSearchHandler),
 		auth.Middlewares(
 			authMiddlewaresParameter,
-			jobs.AddJobMeta(jDispatcher, db),
+			jobs.AddJobMeta(),
 			hasPermission(),
 		)...,
 	).Name("api.hosts.search")

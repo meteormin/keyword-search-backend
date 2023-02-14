@@ -32,6 +32,7 @@ func databaseConfig() map[string]database.Config {
 			&entity.BookMark{},
 			&entity.Tag{},
 			&mEntity.JobHistory{},
+			&entity.LoginLog{},
 		}
 	}
 

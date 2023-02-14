@@ -169,9 +169,8 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	findJob := job_queue.FindJobFromQueueWorker(h.dispatcher)
 
-	foundJob, err := findJob(c, jobId, string(config.DefaultWorker))
+	foundJob, err := job_queue.FindJob(jobId, string(config.DefaultWorker))
 	if err != nil {
 		return err
 	}
