@@ -57,11 +57,6 @@ func Api(apiRouter app.Router, a app.Application) {
 		zLogger = log.GetLogger()
 	}
 
-	authMiddlewaresParameter := auth.MiddlewaresParameter{
-		Cfg:    cfg.Auth.Jwt,
-		Logger: zLogger,
-	}
-
 	apiRouter.Route("/auth", func(router fiber.Router) {
 		privateKey := rsGen.PrivatePemDecode(path.Join(cfg.Path.DataPath, "secret/private.pem"))
 		tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
@@ -79,13 +74,13 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route(
 		hosts.Prefix,
 		hosts.Register(hosts.New(db)),
-		auth.Middlewares(authMiddlewaresParameter, hasPermission())...,
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
 	).Name("api.hosts")
 
 	apiRouter.Route(
 		search.Prefix,
 		search.Register(search.New(db)),
-		auth.Middlewares(authMiddlewaresParameter, hasPermission())...,
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
 	).Name("api.search")
 
 	hostSearchHandler := host_search.New(db, jDispatcher)
@@ -93,11 +88,9 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route(
 		host_search.Prefix,
 		host_search.Register(hostSearchHandler),
-		auth.Middlewares(
-			authMiddlewaresParameter,
-			jobs.AddJobMeta(),
-			hasPermission(),
-		)...,
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(),
+		jobs.AddJobMeta(),
+		hasPermission(),
 	).Name("api.hosts.search")
 
 	apiRouter.Route(
@@ -106,7 +99,7 @@ func Api(apiRouter app.Router, a app.Application) {
 			db,
 			utils.RedisClientMaker(cfg.RedisConfig),
 		)),
-		auth.Middlewares(authMiddlewaresParameter, hasPermission())...,
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
 	).Name("api.short_url")
 
 }

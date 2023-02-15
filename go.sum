@@ -266,6 +266,10 @@ github.com/miniyus/gofiber v1.5.2 h1:pcTLbJVcfxBxaQsDVyAhzCILimSmO3KwD4rq2muNUhg
 github.com/miniyus/gofiber v1.5.2/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
 github.com/miniyus/gofiber v1.5.3 h1:jh7cvCGWyNaQ4jXK+AtChDvkS4R+vZ8y2++1kk3Z8+4=
 github.com/miniyus/gofiber v1.5.3/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.5.4 h1:ycNaVqORbrHEq+LTOO1x9yrAaDrvACk4E6PkYj7eUtM=
+github.com/miniyus/gofiber v1.5.4/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.5.5 h1:VsKZdKGEaoGmBHT3IJV/QV/bq+zFMbuHRuVuf99qHig=
+github.com/miniyus/gofiber v1.5.5/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/philhofer/fwd v1.1.1/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=
