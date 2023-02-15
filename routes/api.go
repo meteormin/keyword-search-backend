@@ -13,6 +13,7 @@ import (
 	"github.com/miniyus/gofiber/pkg/jwt"
 	rsGen "github.com/miniyus/gofiber/pkg/rs256"
 	"github.com/miniyus/gofiber/pkg/worker"
+	"github.com/miniyus/gofiber/users"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/internal/host_search"
 	"github.com/miniyus/keyword-search-backend/internal/hosts"
@@ -64,7 +65,7 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route("/auth", func(router fiber.Router) {
 		privateKey := rsGen.PrivatePemDecode(path.Join(cfg.Path.DataPath, "secret/private.pem"))
 		tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
-		authHandler := auth.New(db, tokenGenerator)
+		authHandler := auth.New(db, users.NewRepository(db), tokenGenerator)
 
 		router.Post("/token", login_logs.Middleware(db), authHandler.SignIn).Name("auth.token")
 	}).Name("api.auth")
