@@ -1,4 +1,4 @@
-package login_logs
+package loginlogs
 
 import (
 	"github.com/gofiber/fiber/v2"

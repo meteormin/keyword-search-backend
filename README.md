@@ -60,7 +60,7 @@ DB_AUTO_MIGRATE=true
       |-- repositroy: db, entity를 통해 데이터 CRUD 동작 수행
       |-- routes: 그룹화된 API 적용을 위한 서브 라우터
   |-- core: 공통 기능
-    |-- api_error: api error, error response 관련 기능
+    |-- apierrors: api error, error response 관련 기능
     |-- auth: 인증 관련 기능
     |-- container: go fiber앱을 감싸고 필요한 미들웨어 및 라우팅 등을 컨테이너를 통해서 제어 할 수 있게
     |-- context: fiber context Locals를 통해 가져올 항목들을 미리 정의

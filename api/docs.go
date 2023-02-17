@@ -66,7 +66,7 @@ const docTemplate = `{
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -109,7 +109,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     }
                 }
@@ -159,19 +159,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -214,19 +214,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -276,19 +276,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -329,19 +329,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -391,19 +391,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -460,13 +460,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -516,13 +516,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -579,13 +579,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -630,7 +630,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     }
                 }
@@ -680,19 +680,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -735,19 +735,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -797,19 +797,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -850,19 +850,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -912,19 +912,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ValidationErrorResponse"
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/api_error.ErrorResponse"
+                            "$ref": "#/definitions/apierrors.ErrorResponse"
                         }
                     }
                 }
@@ -1032,7 +1032,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api_error.ErrorResponse": {
+        "apierrors.ErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -1046,7 +1046,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api_error.ValidationErrorResponse": {
+        "apierrors.ValidationErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {

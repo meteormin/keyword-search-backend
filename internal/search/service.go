@@ -30,7 +30,7 @@ func NewService(repo Repository) Service {
 }
 
 func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[entity.Search], error) {
-	data, count, err := s.repo.All(page)
+	data, count, err := s.repo.AllWithPage(page)
 	if err != nil {
 		data = make([]entity.Search, 0)
 		return utils.Paginator[entity.Search]{

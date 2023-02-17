@@ -2,7 +2,7 @@ package hosts
 
 import (
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/miniyus/gofiber/api_error"
+	_ "github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/auth"
 	"github.com/miniyus/gofiber/utils"
 	"strconv"
@@ -32,7 +32,7 @@ func NewHandler(service Service) Handler {
 // @Tags Hosts
 // @Param request body CreateHost true "create host"
 // @Success 201 {object} HostResponse
-// @Failure 400 {object} api_error.ValidationErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts [post]
@@ -71,9 +71,9 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 // @Param id path int true "host pk"
 // @Param request body UpdateHost true "update host"
 // @Success 200 {object} HostResponse
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts/{id} [put]
@@ -126,9 +126,9 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 // @Param id path int true "host pk"
 // @Param request body PatchHost true "patch host"
 // @Success 200 {object} HostResponse
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts/{id} [patch]
@@ -170,9 +170,9 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 // @Tags Hosts
 // @Param id path int true "host pk"
 // @Success 200 {object} HostResponse
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts/{id} [get]
@@ -206,9 +206,9 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 // @Param page query int true "page number"
 // @Param page_size query int true "page size"
 // @Success 200 {object} HostSubjectsResponse
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts/subjects [get]
@@ -247,7 +247,7 @@ func (h *HandlerStruct) GetSubjects(c *fiber.Ctx) error {
 // @Param page query int true "page number"
 // @Param page_size query int true "page size"
 // @Success 200 {object} HostListResponse
-// @Failure 403 {object} api_error.ErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts [get]
@@ -281,9 +281,9 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 // @Tags Hosts
 // @param id path int true "host pk"
 // @Success 204 {object} utils.StatusResponse
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts/{id} [delete]

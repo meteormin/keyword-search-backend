@@ -3,8 +3,8 @@ package host_search
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/miniyus/gofiber/api_error"
-	"github.com/miniyus/gofiber/job_queue"
+	_ "github.com/miniyus/gofiber/apierrors"
+	"github.com/miniyus/gofiber/jobqueue"
 	"github.com/miniyus/gofiber/pkg/worker"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/config"
@@ -38,8 +38,8 @@ func NewHandler(s search.Service, dispatcher worker.Dispatcher) Handler {
 // @Param page query int true "page number"
 // @Param page_size query int true "page size"
 // @Success 200 {object} search.ResponseByHost
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts/{id}/search [get]
@@ -78,8 +78,8 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 // @Param page query int true "page number"
 // @Param page_size query int true "page size"
 // @Success 200 {object} search.DescriptionWithPage
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts/{id}/search/descriptions [get]
@@ -117,8 +117,8 @@ func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
 // @Param id path int true "host id"
 // @Param request body search.MultiCreateSearch true "multi create search"
 // @Success 200 {object} search.Response
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/hosts/{id}/search [post]
@@ -170,7 +170,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	foundJob, err := job_queue.FindJob(jobId, string(config.DefaultWorker))
+	foundJob, err := jobqueue.FindJob(jobId, string(config.DefaultWorker))
 	if err != nil {
 		return err
 	}

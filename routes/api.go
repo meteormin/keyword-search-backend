@@ -6,7 +6,7 @@ import (
 	"github.com/miniyus/gofiber/auth"
 	configure "github.com/miniyus/gofiber/config"
 	"github.com/miniyus/gofiber/database"
-	"github.com/miniyus/gofiber/job_queue"
+	"github.com/miniyus/gofiber/jobqueue"
 	"github.com/miniyus/gofiber/jobs"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/permission"
@@ -17,7 +17,7 @@ import (
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/internal/host_search"
 	"github.com/miniyus/keyword-search-backend/internal/hosts"
-	"github.com/miniyus/keyword-search-backend/internal/login_logs"
+	"github.com/miniyus/keyword-search-backend/internal/loginlogs"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/internal/short_url"
 	"go.uber.org/zap"
@@ -44,7 +44,7 @@ func Api(apiRouter app.Router, a app.Application) {
 	}
 
 	var jDispatcher worker.Dispatcher
-	jDispatcher = job_queue.GetDispatcher()
+	jDispatcher = jobqueue.GetDispatcher()
 
 	if jDispatcher == nil {
 		a.Resolve(&jDispatcher)
@@ -62,7 +62,7 @@ func Api(apiRouter app.Router, a app.Application) {
 		tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
 		authHandler := auth.New(db, users.NewRepository(db), tokenGenerator)
 
-		router.Post("/token", login_logs.Middleware(db), authHandler.SignIn).Name("auth.token")
+		router.Post("/token", authHandler.SignIn, loginlogs.Middleware(db)).Name("auth.token")
 	}).Name("api.auth")
 
 	hasPermission := permission.HasPermission(permission.HasPermissionParameter{
@@ -74,7 +74,7 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route(
 		hosts.Prefix,
 		hosts.Register(hosts.New(db)),
-		auth.JwtMiddleware(cfg.Auth.Jwt), auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
 	).Name("api.hosts")
 
 	apiRouter.Route(

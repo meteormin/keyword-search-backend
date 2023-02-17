@@ -2,7 +2,7 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/miniyus/gofiber/api_error"
+	_ "github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/auth"
 	"github.com/miniyus/gofiber/utils"
 	"strconv"
@@ -33,7 +33,7 @@ func NewHandler(s Service) Handler {
 // @Tags Search
 // @param request body CreateSearch true "create search"
 // @Success 201 {object} Response
-// @Failure 400 {object} api_error.ValidationErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/search [post]
@@ -66,9 +66,9 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 // @Param page query int true "page number"
 // @Param page_size query int true "page size"
 // @Success 200 {object} ResponseAll
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/search/all [get]
@@ -97,9 +97,9 @@ func (h *HandlerStruct) All(c *fiber.Ctx) error {
 // @Tags Search
 // @Param id path int true "search pk"
 // @Success 200 {object} Response
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/search/{id} [get]
@@ -131,9 +131,9 @@ func (h *HandlerStruct) Get(c *fiber.Ctx) error {
 // @Param id path int true "search pk"
 // @param request body UpdateSearch true "update search"
 // @Success 200 {object} Response
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/search/{id} [put]
@@ -180,9 +180,9 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 // @Param id path int true "search pk"
 // @param request body PatchSearch true "update search"
 // @Success 200 {object} Response
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/search/{id} [patch]
@@ -228,9 +228,9 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 // @Tags Search
 // @Param id path int true "search pk"
 // @Success 204 {object} utils.StatusResponse
-// @Failure 400 {object} api_error.ValidationErrorResponse
-// @Failure 403 {object} api_error.ErrorResponse
-// @Failure 404 {object} api_error.ErrorResponse
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
 // @Accept json
 // @Produce json
 // @Router /api/search/{id} [delete]

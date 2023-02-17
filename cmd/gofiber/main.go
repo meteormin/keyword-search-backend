@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/gofiber"
-	"github.com/miniyus/gofiber/api_error"
+	"github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gofiber/routes"
 	"github.com/miniyus/gofiber/utils"
@@ -28,7 +28,7 @@ import (
 func main() {
 	cfg := config.GetConfigs()
 	appConfig := cfg.App
-	appConfig.FiberConfig.ErrorHandler = api_error.OverrideDefaultErrorHandler(appConfig.Env)
+	appConfig.FiberConfig.ErrorHandler = apierrors.OverrideDefaultErrorHandler(appConfig.Env)
 
 	a := gofiber.New(cfg)
 

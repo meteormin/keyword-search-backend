@@ -28,7 +28,7 @@ func NewService(repo Repository) Service {
 }
 
 func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[entity.Host], error) {
-	hosts, count, err := s.repo.All(page)
+	hosts, count, err := s.repo.AllWithPage(page)
 	if err != nil {
 		hosts = make([]entity.Host, 0)
 		return utils.Paginator[entity.Host]{

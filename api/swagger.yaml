@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  api_error.ErrorResponse:
+  apierrors.ErrorResponse:
     properties:
       code:
         type: integer
@@ -9,7 +9,7 @@ definitions:
       status:
         type: string
     type: object
-  api_error.ValidationErrorResponse:
+  apierrors.ValidationErrorResponse:
     properties:
       code:
         type: integer
@@ -522,7 +522,7 @@ paths:
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get all hosts
@@ -549,7 +549,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
       security:
       - BearerAuth: []
       summary: create host
@@ -576,15 +576,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Delete host
@@ -610,15 +610,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: patch host
@@ -650,15 +650,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: patch host
@@ -690,15 +690,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: update host
@@ -735,11 +735,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get by host id
@@ -771,11 +771,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: batch create search by host id
@@ -812,11 +812,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get by host id
@@ -848,15 +848,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get subjects by group id
@@ -884,7 +884,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
@@ -911,15 +911,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -945,15 +945,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -985,15 +985,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1025,15 +1025,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: get search
@@ -1065,15 +1065,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api_error.ValidationErrorResponse'
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/api_error.ErrorResponse'
+            $ref: '#/definitions/apierrors.ErrorResponse'
       security:
       - BearerAuth: []
       summary: create search
