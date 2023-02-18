@@ -22,179 +22,6 @@ definitions:
       status:
         type: string
     type: object
-  entity.Action:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      id:
-        type: integer
-      method:
-        type: string
-      permission_id:
-        type: integer
-      resource:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  entity.BookMark:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
-      id:
-        type: integer
-      publish:
-        type: boolean
-      subject:
-        type: string
-      updatedAt:
-        type: string
-      url:
-        type: string
-      user:
-        $ref: '#/definitions/entity.User'
-      user_id:
-        type: integer
-    type: object
-  entity.Group:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      id:
-        type: integer
-      name:
-        type: string
-      permissions:
-        items:
-          $ref: '#/definitions/entity.Permission'
-        type: array
-      updatedAt:
-        type: string
-      users:
-        items:
-          $ref: '#/definitions/entity.User'
-        type: array
-    type: object
-  entity.Host:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
-      host:
-        type: string
-      id:
-        type: integer
-      path:
-        type: string
-      publish:
-        type: boolean
-      search:
-        items:
-          $ref: '#/definitions/entity.Search'
-        type: array
-      subject:
-        type: string
-      updatedAt:
-        type: string
-      user:
-        $ref: '#/definitions/entity.User'
-      user_id:
-        type: integer
-    type: object
-  entity.Permission:
-    properties:
-      actions:
-        items:
-          $ref: '#/definitions/entity.Action'
-        type: array
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      group:
-        $ref: '#/definitions/entity.Group'
-      group_id:
-        type: integer
-      id:
-        type: integer
-      permission:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  entity.Search:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
-      host:
-        $ref: '#/definitions/entity.Host'
-      host_id:
-        type: integer
-      id:
-        type: integer
-      publish:
-        type: boolean
-      query:
-        type: string
-      query_key:
-        type: string
-      short_url:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  entity.User:
-    properties:
-      bookmarks:
-        items:
-          $ref: '#/definitions/entity.BookMark'
-        type: array
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      email:
-        type: string
-      email_verified_at:
-        type: string
-      group:
-        $ref: '#/definitions/entity.Group'
-      group_id:
-        type: integer
-      hosts:
-        items:
-          $ref: '#/definitions/entity.Host'
-        type: array
-      id:
-        type: integer
-      role:
-        $ref: '#/definitions/entity.UserRole'
-      updatedAt:
-        type: string
-      username:
-        type: string
-    type: object
-  entity.UserRole:
-    enum:
-    - admin
-    type: string
-    x-enum-varnames:
-    - Admin
   github_com_miniyus_keyword-search-backend_internal_search.CreateSearch:
     properties:
       description:
@@ -276,14 +103,6 @@ definitions:
         type: integer
       total_count:
         type: integer
-    type: object
-  gorm.DeletedAt:
-    properties:
-      time:
-        type: string
-      valid:
-        description: Valid is true if Time is not NULL
-        type: boolean
     type: object
   internal_hosts.CreateHost:
     properties:
@@ -446,7 +265,7 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/entity.Search'
+          $ref: '#/definitions/internal_search.Response'
         type: array
       page:
         type: integer

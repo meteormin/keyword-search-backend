@@ -8,7 +8,7 @@ import (
 )
 
 type Service interface {
-	All(page utils.Page) (utils.Paginator[entity.Search], error)
+	All(page utils.Page) (utils.Paginator[Response], error)
 	GetByHostId(hostId uint, page utils.Page) (utils.Paginator[Response], error)
 	GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator[Description], error)
 	Find(pk uint, userId uint) (*Response, error)
@@ -29,21 +29,25 @@ func NewService(repo Repository) Service {
 	}
 }
 
-func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[entity.Search], error) {
+func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[Response], error) {
 	data, count, err := s.repo.AllWithPage(page)
+	res := make([]Response, 0)
 	if err != nil {
-		data = make([]entity.Search, 0)
-		return utils.Paginator[entity.Search]{
+		return utils.Paginator[Response]{
 			Page:       page,
 			TotalCount: 0,
-			Data:       data,
+			Data:       res,
 		}, err
 	}
 
-	return utils.Paginator[entity.Search]{
+	for _, ent := range data {
+		res = append(res, *ToSearchResponse(&ent))
+	}
+
+	return utils.Paginator[Response]{
 		Page:       page,
 		TotalCount: count,
-		Data:       data,
+		Data:       res,
 	}, err
 }
 

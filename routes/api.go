@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gofiber/auth"
 	configure "github.com/miniyus/gofiber/config"
@@ -10,19 +9,14 @@ import (
 	"github.com/miniyus/gofiber/jobs"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/permission"
-	"github.com/miniyus/gofiber/pkg/jwt"
-	rsGen "github.com/miniyus/gofiber/pkg/rs256"
 	"github.com/miniyus/gofiber/pkg/worker"
-	"github.com/miniyus/gofiber/users"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/internal/host_search"
 	"github.com/miniyus/keyword-search-backend/internal/hosts"
-	"github.com/miniyus/keyword-search-backend/internal/loginlogs"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/internal/short_url"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"path"
 )
 
 const ApiPrefix = "/api"
@@ -56,14 +50,6 @@ func Api(apiRouter app.Router, a app.Application) {
 	if zLogger == nil {
 		zLogger = log.GetLogger()
 	}
-
-	apiRouter.Route("/auth", func(router fiber.Router) {
-		privateKey := rsGen.PrivatePemDecode(path.Join(cfg.Path.DataPath, "secret/private.pem"))
-		tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
-		authHandler := auth.New(db, users.NewRepository(db), tokenGenerator)
-
-		router.Post("/token", authHandler.SignIn, loginlogs.Middleware(db)).Name("auth.token")
-	}).Name("api.auth")
 
 	hasPermission := permission.HasPermission(permission.HasPermissionParameter{
 		DB:           db,

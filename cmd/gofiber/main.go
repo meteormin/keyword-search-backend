@@ -2,12 +2,15 @@ package main
 
 import (
 	"github.com/go-redis/redis/v9"
+	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber"
 	"github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/app"
+	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/routes"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/loginlogs"
 	ksRoutes "github.com/miniyus/keyword-search-backend/routes"
 )
 
@@ -41,13 +44,23 @@ func main() {
 		})
 	})
 
+	a.Middleware(func(fiber *fiber.App, app app.Application) {
+		fiber.Use(loginlogs.Middleware(database.GetDB(), "post", "/api/auth/token"))
+	})
+
 	// register routes
 	a.Route(routes.ApiPrefix, func(router app.Router, app app.Application) {
 		routes.Api(router, app)
 		ksRoutes.Api(router, app)
 	}, "api")
 
-	a.Route(ksRoutes.WebPrefix, ksRoutes.Web, "web")
+	a.Route("/", func(router app.Router, app app.Application) {
+		routes.External(router, app)
+	}, "external")
+
+	a.Route(ksRoutes.WebPrefix, func(router app.Router, app app.Application) {
+		ksRoutes.Web(router, app)
+	}, "web")
 
 	// print status
 	a.Status()

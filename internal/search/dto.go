@@ -61,8 +61,8 @@ type DescriptionWithPage struct {
 }
 
 type ResponseAll struct {
-	utils.Paginator[entity.Search]
-	Data []entity.Search `json:"data"`
+	utils.Paginator[Response]
+	Data []Response `json:"data"`
 }
 
 func ToSearchResponse(search *entity.Search) *Response {
