@@ -14,6 +14,17 @@ type CreateHost struct {
 	Publish     bool   `json:"publish" validate:"required,boolean"`
 }
 
+func (ch CreateHost) ToEntity() entity.Host {
+	return entity.Host{
+		UserId:      ch.UserId,
+		Host:        ch.Host,
+		Subject:     ch.Subject,
+		Description: ch.Description,
+		Path:        ch.Path,
+		Publish:     ch.Publish,
+	}
+}
+
 type UpdateHost struct {
 	Host        string `json:"host" validate:"required"`
 	Subject     string `json:"subject" validate:"required"`
@@ -22,12 +33,47 @@ type UpdateHost struct {
 	Publish     bool   `json:"publish" validate:"required,boolean"`
 }
 
+func (uh UpdateHost) ToEntity() entity.Host {
+	return entity.Host{
+		Subject:     uh.Subject,
+		Description: uh.Description,
+		Path:        uh.Path,
+		Publish:     uh.Publish,
+	}
+}
+
 type PatchHost struct {
 	Host        *string `json:"host,omitempty" validate:"omitempty,url"`
 	Subject     *string `json:"subject,omitempty" validate:"omitempty"`
 	Description *string `json:"description,omitempty" validate:"omitempty"`
 	Path        *string `json:"path,omitempty" validate:"omitempty,dir"`
 	Publish     *bool   `json:"publish,omitempty" validate:"omitempty,boolean"`
+}
+
+func (ph PatchHost) ToEntity() entity.Host {
+	var ent entity.Host
+
+	if ph.Host != nil {
+		ent.Host = *ph.Host
+	}
+
+	if ph.Subject != nil {
+		ent.Subject = *ph.Subject
+	}
+
+	if ph.Description != nil {
+		ent.Description = *ph.Description
+	}
+
+	if ph.Path != nil {
+		ent.Path = *ph.Path
+	}
+
+	if ph.Publish != nil {
+		ent.Publish = *ph.Publish
+	}
+
+	return ent
 }
 
 type HostResponse struct {
@@ -60,8 +106,8 @@ type HostSubjectsResponse struct {
 	Data []Subjects `json:"data"`
 }
 
-func ToHostResponse(host *entity.Host) *HostResponse {
-	return &HostResponse{
+func (hr HostResponse) FromEntity(host entity.Host) HostResponse {
+	return HostResponse{
 		Id:          host.ID,
 		Host:        host.Host,
 		Path:        host.Path,

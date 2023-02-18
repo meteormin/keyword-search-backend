@@ -33,6 +33,31 @@ type PatchSearch struct {
 	Publish     *bool   `json:"publish,omitempty" validate:"omitempty,required,boolean"`
 }
 
+func (ps PatchSearch) ToEntity() entity.Search {
+	var ent entity.Search
+	if ps.HostId != 0 {
+		ent.HostId = ps.HostId
+	}
+
+	if ps.Query != nil {
+		ent.Query = *ps.Query
+	}
+
+	if ps.QueryKey != nil {
+		ent.QueryKey = *ps.QueryKey
+	}
+
+	if ps.Publish != nil {
+		ent.Publish = *ps.Publish
+	}
+
+	if ps.Description != nil {
+		ent.Description = *ps.Description
+	}
+
+	return ent
+}
+
 type Response struct {
 	Id          uint    `json:"id"`
 	ShortUrl    *string `json:"short_url"`
@@ -65,11 +90,11 @@ type ResponseAll struct {
 	Data []Response `json:"data"`
 }
 
-func ToSearchResponse(search *entity.Search) *Response {
+func (r Response) FromEntity(search entity.Search) Response {
 	createdAt := utils.TimeIn(search.CreatedAt, "Asia/Seoul")
 	updatedAt := utils.TimeIn(search.UpdatedAt, "Asia/Seoul")
 
-	dto := &Response{
+	return Response{
 		Id:          search.ID,
 		ShortUrl:    search.ShortUrl,
 		Publish:     search.Publish,
@@ -79,6 +104,4 @@ func ToSearchResponse(search *entity.Search) *Response {
 		CreatedAt:   createdAt.Format(utils.DefaultDateLayout),
 		UpdatedAt:   updatedAt.Format(utils.DefaultDateLayout),
 	}
-
-	return dto
 }

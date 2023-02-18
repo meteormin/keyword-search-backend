@@ -40,8 +40,9 @@ func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[Response], error) 
 		}, err
 	}
 
+	var sr Response
 	for _, ent := range data {
-		res = append(res, *ToSearchResponse(&ent))
+		res = append(res, sr.FromEntity(ent))
 	}
 
 	return utils.Paginator[Response]{
@@ -63,9 +64,9 @@ func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginat
 	}
 
 	searchRes := make([]Response, 0)
-	for _, s := range data {
-		response := ToSearchResponse(&s)
-		searchRes = append(searchRes, *response)
+	var sr Response
+	for _, search := range data {
+		searchRes = append(searchRes, sr.FromEntity(search))
 	}
 
 	return utils.Paginator[Response]{
@@ -87,11 +88,11 @@ func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) (u
 	}
 
 	searchRes := make([]Description, 0)
-	for _, s := range data {
+	for _, search := range data {
 		response := Description{
-			Id:          s.ID,
-			Description: s.Description,
-			ShortUrl:    *s.ShortUrl,
+			Id:          search.ID,
+			Description: search.Description,
+			ShortUrl:    *search.ShortUrl,
 		}
 
 		searchRes = append(searchRes, response)
@@ -114,9 +115,10 @@ func (s *ServiceStruct) Find(pk uint, userId uint) (*Response, error) {
 		return nil, fiber.ErrForbidden
 	}
 
-	searchRes := ToSearchResponse(search)
+	var sr Response
+	searchRes := sr.FromEntity(*search)
 
-	return searchRes, err
+	return &searchRes, err
 }
 
 func (s *ServiceStruct) Create(search *CreateSearch) (*Response, error) {
@@ -143,8 +145,10 @@ func (s *ServiceStruct) Create(search *CreateSearch) (*Response, error) {
 		return nil, err
 	}
 
-	searchRes := ToSearchResponse(rs)
-	return searchRes, err
+	var sr Response
+	searchRes := sr.FromEntity(*rs)
+
+	return &searchRes, err
 }
 
 func (s *ServiceStruct) BatchCreate(hostId uint, search []*CreateSearch) ([]Response, error) {
@@ -168,12 +172,13 @@ func (s *ServiceStruct) BatchCreate(hostId uint, search []*CreateSearch) ([]Resp
 	}
 
 	updateSlice := make([]entity.Search, 0)
+	var sr Response
 	for _, r := range rs {
 		idString := strconv.Itoa(int(r.ID))
 		code := utils.Base64UrlEncode(idString)
 		r.ShortUrl = &code
-		res := ToSearchResponse(&r)
-		resSlice = append(resSlice, *res)
+		res := sr.FromEntity(r)
+		resSlice = append(resSlice, res)
 		updateSlice = append(updateSlice, r)
 	}
 
@@ -213,7 +218,10 @@ func (s *ServiceStruct) Update(pk uint, userId uint, search *UpdateSearch) (*Res
 		return nil, err
 	}
 
-	return ToSearchResponse(updated), err
+	var sr Response
+	searchRes := sr.FromEntity(*updated)
+
+	return &searchRes, err
 }
 
 func (s *ServiceStruct) Patch(pk uint, userId uint, search *PatchSearch) (*Response, error) {
@@ -230,33 +238,17 @@ func (s *ServiceStruct) Patch(pk uint, userId uint, search *PatchSearch) (*Respo
 		return nil, fiber.ErrForbidden
 	}
 
-	ent := entity.Search{}
-	if search.HostId != 0 {
-		ent.HostId = search.HostId
-	}
-
-	if search.Query != nil {
-		ent.Query = *search.Query
-	}
-
-	if search.QueryKey != nil {
-		ent.QueryKey = *search.QueryKey
-	}
-
-	if search.Publish != nil {
-		ent.Publish = *search.Publish
-	}
-
-	if search.Description != nil {
-		ent.Description = *search.Description
-	}
+	ent := search.ToEntity()
 
 	updated, err := s.repo.Update(pk, ent)
 	if err != nil {
 		return nil, err
 	}
 
-	return ToSearchResponse(updated), err
+	var sr Response
+	searchRes := sr.FromEntity(*updated)
+
+	return &searchRes, err
 }
 
 func (s *ServiceStruct) Delete(pk uint, userId uint) (bool, error) {

@@ -59,8 +59,9 @@ func (s *ServiceStruct) GetByUserId(userId uint, page utils.Page) (utils.Paginat
 		}, err
 	}
 
+	var hr HostResponse
 	for _, e := range ent {
-		dto = append(dto, *ToHostResponse(&e))
+		dto = append(dto, hr.FromEntity(e))
 	}
 
 	if dto == nil {
@@ -129,25 +130,23 @@ func (s *ServiceStruct) Find(pk uint, userId uint) (*HostResponse, error) {
 		return nil, fiber.ErrForbidden
 	}
 
-	return ToHostResponse(ent), nil
+	var hr HostResponse
+	res := hr.FromEntity(*ent)
+
+	return &res, nil
 }
 
 func (s *ServiceStruct) Create(host *CreateHost) (*HostResponse, error) {
-	ent := entity.Host{
-		UserId:      host.UserId,
-		Host:        host.Host,
-		Subject:     host.Subject,
-		Description: host.Description,
-		Path:        host.Path,
-		Publish:     host.Publish,
-	}
+	ent := host.ToEntity()
 
 	created, err := s.repo.Create(ent)
 	if err != nil {
 		return nil, err
 	}
 
-	return ToHostResponse(created), err
+	var hr HostResponse
+	res := hr.FromEntity(*created)
+	return &res, nil
 }
 
 func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error) {
@@ -164,19 +163,17 @@ func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostRes
 		return nil, fiber.ErrForbidden
 	}
 
-	ent := entity.Host{
-		Subject:     host.Subject,
-		Description: host.Description,
-		Path:        host.Path,
-		Publish:     host.Publish,
-	}
+	ent := host.ToEntity()
 
 	updated, err := s.repo.Update(pk, ent)
 	if err != nil {
 		return nil, err
 	}
 
-	return ToHostResponse(updated), err
+	var hr HostResponse
+	res := hr.FromEntity(*updated)
+
+	return &res, nil
 }
 
 func (s *ServiceStruct) Patch(pk uint, userId uint, host *PatchHost) (*HostResponse, error) {
@@ -193,31 +190,17 @@ func (s *ServiceStruct) Patch(pk uint, userId uint, host *PatchHost) (*HostRespo
 		return nil, fiber.ErrForbidden
 	}
 
-	if host.Host != nil {
-		ent.Host = *host.Host
-	}
-	if host.Subject != nil {
-		ent.Subject = *host.Subject
-	}
+	toEntity := host.ToEntity()
 
-	if host.Description != nil {
-		ent.Description = *host.Description
-	}
-
-	if host.Path != nil {
-		ent.Path = *host.Path
-	}
-
-	if host.Publish != nil {
-		ent.Publish = *host.Publish
-	}
-
-	updated, err := s.repo.Update(pk, *ent)
+	updated, err := s.repo.Update(pk, toEntity)
 	if err != nil {
 		return nil, err
 	}
 
-	return ToHostResponse(updated), err
+	var hr HostResponse
+	res := hr.FromEntity(*updated)
+
+	return &res, nil
 }
 
 func (s *ServiceStruct) Delete(pk uint, userId uint) (bool, error) {
