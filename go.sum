@@ -300,6 +300,14 @@ github.com/miniyus/gofiber v1.7.11 h1:xjTZ9jRlaum7RVM/URB2pnp5l/hk+O1FOvE54drHWm
 github.com/miniyus/gofiber v1.7.11/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
 github.com/miniyus/gofiber v1.7.12 h1:3sfJ5H0L+s7jVQa1g/KiuiallzN90fGvShcNjKNykSQ=
 github.com/miniyus/gofiber v1.7.12/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.7.13 h1:QBfoeU58Jt/8ZfjzyRKD3CuPZWz/LtXjKqup2ZBotMM=
+github.com/miniyus/gofiber v1.7.13/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.7.14 h1:yKx6N8MHCi+1+OlQcdNGDH2Y3VpUE0ki8hFhRfT/jIk=
+github.com/miniyus/gofiber v1.7.14/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.7.15 h1:7WvRxE2jKzH23jjSqJA2FyvSaOIRpT05FzdNM3ARUP4=
+github.com/miniyus/gofiber v1.7.15/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
+github.com/miniyus/gofiber v1.7.16 h1:xBV0HS5gXzNrRHD+Zqhxm8+Q/yZHMyelz6t7FhB9BJ8=
+github.com/miniyus/gofiber v1.7.16/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/philhofer/fwd v1.1.1/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=

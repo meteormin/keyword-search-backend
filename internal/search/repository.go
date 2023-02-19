@@ -16,6 +16,7 @@ type Repository interface {
 	GetDescriptionsByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error)
 	BatchCreate(entities []entity.Search) ([]entity.Search, error)
 	FindByShortUrl(code string, userId uint) (*entity.Search, error)
+	Update(pk uint, ent entity.Search) (*entity.Search, error)
 }
 
 type RepositoryStruct struct {
@@ -146,4 +147,15 @@ func (r *RepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Sea
 	}
 
 	return &search, err
+}
+
+func (r *RepositoryStruct) Update(pk uint, ent entity.Search) (*entity.Search, error) {
+	find, err := r.Find(pk)
+	if err != nil {
+		return nil, err
+	}
+
+	ent.ID = find.ID
+
+	return r.Save(ent)
 }

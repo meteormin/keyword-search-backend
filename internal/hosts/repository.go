@@ -14,6 +14,7 @@ type Repository interface {
 	GetByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error)
 	GetSubjectsByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error)
 	GetSubjectsByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error)
+	Update(pk uint, ent entity.Host) (*entity.Host, error)
 }
 
 type RepositoryStruct struct {
@@ -136,4 +137,15 @@ func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) (
 	}
 
 	return hosts, int64(len(hosts)), err
+}
+
+func (r *RepositoryStruct) Update(pk uint, ent entity.Host) (*entity.Host, error) {
+	find, err := r.Find(pk)
+	if err != nil {
+		return nil, err
+	}
+
+	ent.ID = find.ID
+
+	return r.Save(ent)
 }

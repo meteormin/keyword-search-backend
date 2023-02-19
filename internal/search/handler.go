@@ -144,6 +144,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
 	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err

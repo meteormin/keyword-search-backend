@@ -164,6 +164,7 @@ func (s *ServiceStruct) Update(pk uint, userId uint, host *UpdateHost) (*HostRes
 	}
 
 	ent := host.ToEntity()
+	ent.UserId = userId
 
 	updated, err := s.repo.Update(pk, ent)
 	if err != nil {
@@ -191,6 +192,7 @@ func (s *ServiceStruct) Patch(pk uint, userId uint, host *PatchHost) (*HostRespo
 	}
 
 	toEntity := host.ToEntity()
+	toEntity.UserId = userId
 
 	updated, err := s.repo.Update(pk, toEntity)
 	if err != nil {

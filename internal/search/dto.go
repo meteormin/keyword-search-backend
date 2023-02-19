@@ -25,6 +25,16 @@ type UpdateSearch struct {
 	Publish     bool   `json:"publish" validate:"required,boolean"`
 }
 
+func (us UpdateSearch) ToEntity() entity.Search {
+	return entity.Search{
+		HostId:      us.HostId,
+		QueryKey:    us.QueryKey,
+		Query:       us.Query,
+		Description: us.Description,
+		Publish:     us.Publish,
+	}
+}
+
 type PatchSearch struct {
 	HostId      uint    `json:"host_id" validate:"required"`
 	QueryKey    *string `json:"query_key,omitempty"`

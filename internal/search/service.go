@@ -205,13 +205,7 @@ func (s *ServiceStruct) Update(pk uint, userId uint, search *UpdateSearch) (*Res
 		return nil, fiber.ErrForbidden
 	}
 
-	ent := entity.Search{
-		HostId:      search.HostId,
-		QueryKey:    search.QueryKey,
-		Query:       search.Query,
-		Description: search.Description,
-		Publish:     search.Publish,
-	}
+	ent := search.ToEntity()
 
 	updated, err := s.repo.Update(pk, ent)
 	if err != nil {
