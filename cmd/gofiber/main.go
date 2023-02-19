@@ -44,8 +44,8 @@ func main() {
 		})
 	})
 
-	a.Middleware(func(fiber *fiber.App, app app.Application) {
-		fiber.Use(loginlogs.Middleware(database.GetDB(), "post", "/api/auth/token"))
+	a.Middleware(func(fiberApp *fiber.App, app app.Application) {
+		fiberApp.Use(loginlogs.Middleware(database.GetDB(), fiber.MethodPost, "/api/auth/token"))
 	})
 
 	// register routes

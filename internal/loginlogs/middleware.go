@@ -6,7 +6,6 @@ import (
 	"github.com/miniyus/gofiber/pkg/gormhooks"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
-	"log"
 	"strings"
 	"time"
 )
@@ -21,7 +20,6 @@ func Middleware(db *gorm.DB, method string, path string) fiber.Handler {
 			return ctx.Next()
 		}
 
-		log.Print("loginlogs middleware")
 		repo := NewRepository(db)
 
 		at := mEntity.AccessToken{}
