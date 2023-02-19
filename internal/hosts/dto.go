@@ -29,7 +29,7 @@ type UpdateHost struct {
 	Host        string `json:"host" validate:"required"`
 	Subject     string `json:"subject" validate:"required"`
 	Description string `json:"description" validate:"required"`
-	Path        string `json:"path" validate:"required,dir"`
+	Path        string `json:"path" validate:"required"`
 	Publish     bool   `json:"publish" validate:"required,boolean"`
 }
 
@@ -46,7 +46,7 @@ type PatchHost struct {
 	Host        *string `json:"host,omitempty" validate:"omitempty,url"`
 	Subject     *string `json:"subject,omitempty" validate:"omitempty"`
 	Description *string `json:"description,omitempty" validate:"omitempty"`
-	Path        *string `json:"path,omitempty" validate:"omitempty,dir"`
+	Path        *string `json:"path,omitempty" validate:"omitempty"`
 	Publish     *bool   `json:"publish,omitempty" validate:"omitempty,boolean"`
 }
 

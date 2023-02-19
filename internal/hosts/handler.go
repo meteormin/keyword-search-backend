@@ -43,20 +43,16 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	dto := &CreateHost{}
-	err = c.BodyParser(dto)
-	if err != nil {
-		return fiber.ErrBadRequest
-	}
+	dto := CreateHost{}
 
-	errRes := utils.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, &dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
 
 	dto.UserId = user.Id
 
-	result, err := h.service.Create(dto)
+	result, err := h.service.Create(&dto)
 	if err != nil {
 		return err
 	}
@@ -79,7 +75,7 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 // @Router /api/hosts/{id} [put]
 // @Security BearerAuth
 func (h *HandlerStruct) Update(c *fiber.Ctx) error {
-	dto := &UpdateHost{}
+	dto := UpdateHost{}
 	params := c.AllParams()
 
 	pk, err := strconv.ParseUint(params["id"], 10, 64)
@@ -87,12 +83,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.BodyParser(dto)
-	if err != nil {
-		return fiber.ErrBadRequest
-	}
-
-	errRes := utils.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, &dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -111,7 +102,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return fiber.ErrForbidden
 	}
 
-	result, err := h.service.Update(uint(pk), user.Id, dto)
+	result, err := h.service.Update(uint(pk), user.Id, &dto)
 	if err != nil {
 		return err
 	}
@@ -139,14 +130,9 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	dto := &PatchHost{}
+	dto := PatchHost{}
 
-	err = c.BodyParser(dto)
-	if err != nil {
-		return fiber.ErrBadRequest
-	}
-
-	errRes := utils.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, &dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -156,7 +142,7 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 		return err
 	}
 
-	result, err := h.service.Patch(uint(pk), user.Id, dto)
+	result, err := h.service.Patch(uint(pk), user.Id, &dto)
 	if err != nil {
 		return err
 	}

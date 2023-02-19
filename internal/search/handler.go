@@ -149,13 +149,9 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return err
 	}
 
-	dto := &UpdateSearch{}
-	err = c.BodyParser(dto)
-	if err != nil {
-		return fiber.ErrBadRequest
-	}
+	dto := UpdateSearch{}
 
-	errRes := utils.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, &dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -165,7 +161,7 @@ func (h *HandlerStruct) Update(c *fiber.Ctx) error {
 		return fiber.ErrNotFound
 	}
 
-	updated, err := h.service.Update(uint(pk), user.Id, dto)
+	updated, err := h.service.Update(uint(pk), user.Id, &dto)
 	if err != nil {
 		return err
 	}
@@ -198,13 +194,9 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 		return err
 	}
 
-	dto := &PatchSearch{}
-	err = c.BodyParser(dto)
-	if err != nil {
-		return fiber.ErrBadRequest
-	}
+	dto := PatchSearch{}
 
-	errRes := utils.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, &dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
@@ -214,7 +206,7 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 		return fiber.ErrNotFound
 	}
 
-	patch, err := h.service.Patch(uint(pk), user.Id, dto)
+	patch, err := h.service.Patch(uint(pk), user.Id, &dto)
 	if err != nil {
 		return err
 	}

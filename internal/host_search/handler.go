@@ -130,13 +130,9 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	dto := &search.MultiCreateSearch{}
-	err = c.BodyParser(dto)
-	if err != nil {
-		return fiber.ErrBadRequest
-	}
+	dto := search.MultiCreateSearch{}
 
-	errRes := utils.HandleValidate(c, dto)
+	errRes := utils.HandleValidate(c, &dto)
 	if errRes != nil {
 		return errRes.Response()
 	}
