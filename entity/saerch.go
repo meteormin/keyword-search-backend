@@ -2,10 +2,10 @@ package entity
 
 import (
 	"context"
-	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gorm-extension/gormhooks"
 	"github.com/miniyus/keyword-search-backend/utils"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 	"strconv"
 )
