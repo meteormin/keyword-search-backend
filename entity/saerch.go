@@ -2,13 +2,12 @@ package entity
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/gofiber/app"
+	"github.com/miniyus/gorm-extension/gormhooks"
+	"github.com/miniyus/keyword-search-backend/internal/short_url"
 	"gorm.io/gorm"
-	"path"
 	"strconv"
-	"strings"
 )
 
 type Search struct {
@@ -22,8 +21,24 @@ type Search struct {
 	ShortUrl    *string `gorm:"column:short_url;type:varchar(255);uniqueIndex" json:"short_url"`
 }
 
+func (s *Search) Hooks() *gormhooks.Hooks[*Search] {
+	return gormhooks.GetHooks(s)
+}
+
 func (s *Search) AfterSave(tx *gorm.DB) (err error) {
-	a := app.App()
+	return s.Hooks().AfterSave(tx)
+}
+
+type SearchHookHandler struct {
+	app app.Application
+}
+
+func newSearchHookHandler(app app.Application) *SearchHookHandler {
+	return &SearchHookHandler{app: app}
+}
+
+func (sh *SearchHookHandler) AfterSave(s *Search, tx *gorm.DB) (err error) {
+	a := sh.app
 
 	var rClient *redis.Client
 	a.Resolve(&rClient)
@@ -44,17 +59,7 @@ func (s *Search) AfterSave(tx *gorm.DB) (err error) {
 		).Result()
 
 		if cached != "" && err == nil {
-			sep := ":/"
-			splitString := strings.Split(h.Host, sep)
-			hostPath := path.Join(splitString[1], h.Path)
-			queryKey := s.QueryKey
-			queryString := s.Query
-
-			realUrl := fmt.Sprintf(
-				"%s:/%s?%s=%s",
-				splitString[0], hostPath, queryKey, queryString,
-			)
-
+			realUrl := short_url.MakeRealUrl(h.Host, h.Path, s.QueryKey, s.Query)
 			rClient.HSet(
 				context.Background(),
 				rKey,

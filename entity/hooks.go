@@ -9,5 +9,10 @@ func RegisterHooks(a app.Application) {
 	gormhooks.Register(&Host{})
 	hostHandler := newHostHookHandler(a)
 	hostHooks := gormhooks.GetHooks(&Host{})
-	hostHooks.HandleAfterSave(hostHandler.HostAfterSave)
+	hostHooks.HandleAfterSave(hostHandler.AfterSave)
+
+	gormhooks.Register(&Search{})
+	searchHandler := newSearchHookHandler(a)
+	searchHooks := gormhooks.GetHooks(&Search{})
+	searchHooks.HandleAfterSave(searchHandler.AfterSave)
 }
