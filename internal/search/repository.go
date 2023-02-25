@@ -16,7 +16,7 @@ type Repository interface {
 	GetDescriptionsByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error)
 	BatchCreate(entities []entity.Search) ([]entity.Search, error)
 	FindByShortUrl(code string, userId uint) (*entity.Search, error)
-	Update(pk uint, ent entity.Search) (*entity.Search, error)
+	HasHost(hostId uint, userId uint) bool
 }
 
 type RepositoryStruct struct {
@@ -27,6 +27,16 @@ func NewRepository(db *gorm.DB) Repository {
 	return &RepositoryStruct{
 		gormrepo.NewGenericRepository(db, entity.Search{}),
 	}
+}
+
+func (r *RepositoryStruct) HasHost(hostId uint, userId uint) bool {
+	var host entity.Host
+	err := r.DB().Where(&entity.Host{UserId: userId}).First(&host, hostId).Error
+	if err != nil {
+		return false
+	}
+
+	return true
 }
 
 func (r *RepositoryStruct) Count(search entity.Search) (int64, error) {
@@ -147,15 +157,4 @@ func (r *RepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Sea
 	}
 
 	return &search, err
-}
-
-func (r *RepositoryStruct) Update(pk uint, ent entity.Search) (*entity.Search, error) {
-	find, err := r.Find(pk)
-	if err != nil {
-		return nil, err
-	}
-
-	ent.ID = find.ID
-
-	return r.Save(ent)
 }

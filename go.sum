@@ -314,6 +314,10 @@ github.com/miniyus/gofiber v1.7.16/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8
 github.com/miniyus/gofiber v1.7.17 h1:CZa8u87RELwQhA9/a0Vf7kDL+nDxog93KPFrGaD4LP4=
 github.com/miniyus/gofiber v1.7.20 h1:jUYltmRMZ9uzGUtCALT2gsAhFZuC0pgplMgOM0nkbqk=
 github.com/miniyus/gofiber v1.7.20/go.mod h1:2GMcGb/yQFTpCPWmv7RcoTNqFZ5XiUapDcyS53MMwo0=
+github.com/miniyus/gofiber v1.7.21 h1:wuZH0pwXo521bbVKDqgQsYrUycG7YmMIy/20sjCBU20=
+github.com/miniyus/gofiber v1.7.21/go.mod h1:2GMcGb/yQFTpCPWmv7RcoTNqFZ5XiUapDcyS53MMwo0=
+github.com/miniyus/gofiber v1.7.22 h1:rE5bmL9aia9m4oqrexNrsfIWHQk/YyDhVVTWKB/upz0=
+github.com/miniyus/gofiber v1.7.22/go.mod h1:2GMcGb/yQFTpCPWmv7RcoTNqFZ5XiUapDcyS53MMwo0=
 github.com/miniyus/gollection v1.0.0 h1:pAN6mFhDkUuDHIuIFtTZVYb+GXQ+slkpxwMt/txd+WI=
 github.com/miniyus/gollection v1.0.0/go.mod h1:3FlPgGHgpBzcPGPfzsVeMI6+sGVBnF7Ns/f9YHtrOmc=
 github.com/miniyus/gorm-extension v1.0.6 h1:msirmoAF1JqS0qzAjEwEW0emwaPpdRL2f3OOu93ijnc=

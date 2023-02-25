@@ -57,6 +57,7 @@ func (handler hostHookHandler) HostAfterSave(h *Host, tx *gorm.DB) (err error) {
 	}
 
 	err = dispatcher.Dispatch(jobId, func(j *worker.Job) error {
+		j.Meta["user_id"] = h.UserId
 		for _, s := range search {
 			if s.ShortUrl != nil {
 				rKey := "short_url." + strconv.Itoa(int(h.UserId))

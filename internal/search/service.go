@@ -10,11 +10,11 @@ import (
 
 type Service interface {
 	All(page pagination.Page) (pagination.Paginator[Response], error)
-	GetByHostId(hostId uint, page pagination.Page) (pagination.Paginator[Response], error)
-	GetDescriptionsByHostId(hostId uint, page pagination.Page) (pagination.Paginator[Description], error)
+	GetByHostId(hostId uint, userId uint, page pagination.Page) (pagination.Paginator[Response], error)
+	GetDescriptionsByHostId(hostId uint, userId uint, page pagination.Page) (pagination.Paginator[Description], error)
 	Find(pk uint, userId uint) (*Response, error)
-	Create(search *CreateSearch) (*Response, error)
-	BatchCreate(hostId uint, search []*CreateSearch) ([]Response, error)
+	Create(userId uint, search *CreateSearch) (*Response, error)
+	BatchCreate(hostId uint, userId uint, search []*CreateSearch) ([]Response, error)
 	Update(pk uint, userId uint, search *UpdateSearch) (*Response, error)
 	Patch(pk uint, userId uint, search *PatchSearch) (*Response, error)
 	Delete(pk uint, userId uint) (bool, error)
@@ -53,7 +53,15 @@ func (s *ServiceStruct) All(page pagination.Page) (pagination.Paginator[Response
 	}, err
 }
 
-func (s *ServiceStruct) GetByHostId(hostId uint, page pagination.Page) (pagination.Paginator[Response], error) {
+func (s *ServiceStruct) GetByHostId(hostId uint, userId uint, page pagination.Page) (pagination.Paginator[Response], error) {
+	if !s.repo.HasHost(hostId, userId) {
+		return pagination.Paginator[Response]{
+			Page:       page,
+			TotalCount: 0,
+			Data:       make([]Response, 0),
+		}, fiber.ErrForbidden
+	}
+
 	data, count, err := s.repo.GetByHostId(hostId, page)
 
 	if err != nil {
@@ -77,7 +85,15 @@ func (s *ServiceStruct) GetByHostId(hostId uint, page pagination.Page) (paginati
 	}, err
 }
 
-func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page pagination.Page) (pagination.Paginator[Description], error) {
+func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, userId uint, page pagination.Page) (pagination.Paginator[Description], error) {
+	if !s.repo.HasHost(hostId, userId) {
+		return pagination.Paginator[Description]{
+			Page:       page,
+			TotalCount: 0,
+			Data:       make([]Description, 0),
+		}, fiber.ErrForbidden
+	}
+
 	data, count, err := s.repo.GetByHostId(hostId, page)
 
 	if err != nil {
@@ -122,7 +138,11 @@ func (s *ServiceStruct) Find(pk uint, userId uint) (*Response, error) {
 	return &searchRes, err
 }
 
-func (s *ServiceStruct) Create(search *CreateSearch) (*Response, error) {
+func (s *ServiceStruct) Create(userId uint, search *CreateSearch) (*Response, error) {
+	if !s.repo.HasHost(search.HostId, userId) {
+		return nil, fiber.ErrForbidden
+	}
+
 	ent := entity.Search{
 		HostId:      search.HostId,
 		QueryKey:    search.QueryKey,
@@ -152,7 +172,11 @@ func (s *ServiceStruct) Create(search *CreateSearch) (*Response, error) {
 	return &searchRes, err
 }
 
-func (s *ServiceStruct) BatchCreate(hostId uint, search []*CreateSearch) ([]Response, error) {
+func (s *ServiceStruct) BatchCreate(hostId uint, userId uint, search []*CreateSearch) ([]Response, error) {
+	if !s.repo.HasHost(hostId, userId) {
+		return make([]Response, 0), fiber.ErrForbidden
+	}
+
 	entities := make([]entity.Search, 0)
 	for _, crateSearch := range search {
 		ent := entity.Search{

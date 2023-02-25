@@ -6,7 +6,6 @@ import (
 	configure "github.com/miniyus/gofiber/config"
 	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/jobqueue"
-	"github.com/miniyus/gofiber/jobs"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/permission"
 	"github.com/miniyus/gofiber/utils"
@@ -75,7 +74,6 @@ func Api(apiRouter app.Router, a app.Application) {
 		host_search.Prefix,
 		host_search.Register(hostSearchHandler),
 		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(),
-		jobs.AddJobMeta(),
 		hasPermission(),
 	).Name("api.hosts.search")
 

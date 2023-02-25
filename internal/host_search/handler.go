@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/gofiber/apierrors"
+	"github.com/miniyus/gofiber/auth"
 	"github.com/miniyus/gofiber/jobqueue"
 	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
@@ -58,7 +59,12 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 		return err
 	}
 
-	data, err := h.service.GetByHostId(uint(hostId), page)
+	user, err := auth.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
+	data, err := h.service.GetByHostId(uint(hostId), user.Id, page)
 	if err != nil {
 		return err
 	}
@@ -98,7 +104,12 @@ func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
 		return err
 	}
 
-	data, err := h.service.GetDescriptionsByHostId(uint(hostId), page)
+	user, err := auth.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
+	data, err := h.service.GetDescriptionsByHostId(uint(hostId), user.Id, page)
 	if err != nil {
 		return err
 	}
@@ -143,6 +154,11 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 		return err
 	}
 
+	user, err := auth.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
 	h.dispatcher.SelectWorker(string(config.DefaultWorker))
 
 	jobId := fmt.Sprintf("hosts.%s", strconv.Itoa(int(hostId)))
@@ -151,9 +167,11 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 	searchCollection.Chunk(100, func(v []*search.CreateSearch, i int) {
 
 		err = h.dispatcher.Dispatch(jobId, func(job *worker.Job) error {
-			create, err := h.service.BatchCreate(uint(hostId), dto.Search)
-			if err != nil {
-				return err
+			job.Meta["user_id"] = user.Id
+
+			create, batchCreateErr := h.service.BatchCreate(uint(hostId), user.Id, dto.Search)
+			if batchCreateErr != nil {
+				return batchCreateErr
 			}
 
 			if create != nil {
