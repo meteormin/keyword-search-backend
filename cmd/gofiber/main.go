@@ -9,6 +9,7 @@ import (
 	"github.com/miniyus/gofiber/routes"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/internal/loginlogs"
 	ksRoutes "github.com/miniyus/keyword-search-backend/routes"
 	"github.com/redis/go-redis/v9"
@@ -46,6 +47,10 @@ func main() {
 
 	a.Middleware(func(fiberApp *fiber.App, app app.Application) {
 		fiberApp.Use(loginlogs.Middleware(database.GetDB(), fiber.MethodPost, "/api/auth/token"))
+	})
+
+	a.Register(func(app app.Application) {
+		entity.RegisterHooks(app)
 	})
 
 	// register routes

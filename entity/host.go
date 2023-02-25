@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/miniyus/gofiber/app"
+	"github.com/miniyus/gorm-extension/gormhooks"
 	worker "github.com/miniyus/goworker"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
-	"path"
 	"strconv"
-	"strings"
 )
 
 type Host struct {
@@ -24,9 +24,24 @@ type Host struct {
 	Search      []*Search `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"search"`
 }
 
-func (h *Host) AfterSave(tx *gorm.DB) (err error) {
-	a := app.App()
+func (h *Host) Hooks() *gormhooks.Hooks[*Host] {
+	return gormhooks.GetHooks(h)
+}
 
+func (h *Host) AfterSave(tx *gorm.DB) (err error) {
+	return h.Hooks().AfterSave(tx)
+}
+
+type hostHookHandler struct {
+	app app.Application
+}
+
+func newHostHookHandler(a app.Application) *hostHookHandler {
+	return &hostHookHandler{app: a}
+}
+
+func (handler hostHookHandler) HostAfterSave(h *Host, tx *gorm.DB) (err error) {
+	a := handler.app
 	var rClient *redis.Client
 	a.Resolve(&rClient)
 
@@ -52,16 +67,10 @@ func (h *Host) AfterSave(tx *gorm.DB) (err error) {
 				).Result()
 
 				if cached != "" && err == nil {
-					sep := ":/"
-					splitString := strings.Split(h.Host, sep)
-					hostPath := path.Join(splitString[1], h.Path)
-					queryKey := s.QueryKey
-					queryString := s.Query
-
-					realUrl := fmt.Sprintf(
-						"%s:/%s?%s=%s",
-						splitString[0], hostPath, queryKey, queryString,
-					)
+					hostPath := utils.JoinHostPath(h.Host, h.Path)
+					realUrl := utils.AddQueryString(hostPath, map[string]interface{}{
+						s.QueryKey: s.Query,
+					})
 
 					rClient.HSet(
 						context.Background(),

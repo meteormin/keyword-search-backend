@@ -2,7 +2,7 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gorm-extension/gormrepo"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
@@ -11,9 +11,9 @@ import (
 
 type Repository interface {
 	gormrepo.GenericRepository[entity.Search]
-	AllWithPage(page utils.Page) ([]entity.Search, int64, error)
-	GetByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error)
-	GetDescriptionsByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error)
+	AllWithPage(page pagination.Page) ([]entity.Search, int64, error)
+	GetByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error)
+	GetDescriptionsByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error)
 	BatchCreate(entities []entity.Search) ([]entity.Search, error)
 	FindByShortUrl(code string, userId uint) (*entity.Search, error)
 	Update(pk uint, ent entity.Search) (*entity.Search, error)
@@ -37,12 +37,12 @@ func (r *RepositoryStruct) Count(search entity.Search) (int64, error) {
 	return count, err
 }
 
-func (r *RepositoryStruct) AllWithPage(page utils.Page) ([]entity.Search, int64, error) {
+func (r *RepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
 	count, err := r.Count(entity.Search{})
 
 	if count != 0 {
-		err = r.DB().Scopes(utils.Paginate(page)).Find(&search).Error
+		err = r.DB().Scopes(pagination.Paginate(page)).Find(&search).Error
 	}
 
 	if err != nil || count == 0 {
@@ -52,7 +52,7 @@ func (r *RepositoryStruct) AllWithPage(page utils.Page) ([]entity.Search, int64,
 	return search, count, err
 }
 
-func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error) {
+func (r *RepositoryStruct) GetByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
 	var count int64
 
@@ -60,7 +60,7 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.S
 	err := r.DB().Model(&entity.Search{}).Where(where).Count(&count).Error
 
 	if count != 0 {
-		scopes := utils.Paginate(page)
+		scopes := pagination.Paginate(page)
 
 		err = r.DB().Where(where).Scopes(scopes).Order("id desc").Find(&search).Error
 	}
@@ -72,7 +72,7 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, page utils.Page) ([]entity.S
 	return search, count, err
 }
 
-func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) ([]entity.Search, int64, error) {
+func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
 	var count int64
 
@@ -84,7 +84,7 @@ func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page utils.Page)
 	}
 
 	if count != 0 {
-		scopes := utils.Paginate(page)
+		scopes := pagination.Paginate(page)
 
 		err = r.DB().Select("id", "description", "short_url").
 			Where(where).

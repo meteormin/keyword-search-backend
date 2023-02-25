@@ -1,7 +1,7 @@
 package hosts
 
 import (
-	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/keyword-search-backend/entity"
 )
 
@@ -92,17 +92,17 @@ type Subjects struct {
 }
 
 type HostListResponse struct {
-	utils.Paginator[HostResponse]
+	pagination.Paginator[HostResponse]
 	Data []HostResponse `json:"data"`
 }
 
 type HostResponseAll struct {
-	utils.Paginator[entity.Host]
+	pagination.Paginator[entity.Host]
 	Data []entity.Host `json:"data"`
 }
 
 type HostSubjectsResponse struct {
-	utils.Paginator[Subjects]
+	pagination.Paginator[Subjects]
 	Data []Subjects `json:"data"`
 }
 

@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/auth"
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
 	"strconv"
 )
@@ -74,7 +75,7 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 // @Router /api/search/all [get]
 // @Security BearerAuth
 func (h *HandlerStruct) All(c *fiber.Ctx) error {
-	page, err := utils.GetPageFromCtx(c)
+	page, err := pagination.GetPageFromCtx(c)
 	if err != nil {
 		return err
 	}

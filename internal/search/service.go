@@ -2,15 +2,16 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"strconv"
 )
 
 type Service interface {
-	All(page utils.Page) (utils.Paginator[Response], error)
-	GetByHostId(hostId uint, page utils.Page) (utils.Paginator[Response], error)
-	GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator[Description], error)
+	All(page pagination.Page) (pagination.Paginator[Response], error)
+	GetByHostId(hostId uint, page pagination.Page) (pagination.Paginator[Response], error)
+	GetDescriptionsByHostId(hostId uint, page pagination.Page) (pagination.Paginator[Description], error)
 	Find(pk uint, userId uint) (*Response, error)
 	Create(search *CreateSearch) (*Response, error)
 	BatchCreate(hostId uint, search []*CreateSearch) ([]Response, error)
@@ -29,11 +30,11 @@ func NewService(repo Repository) Service {
 	}
 }
 
-func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[Response], error) {
+func (s *ServiceStruct) All(page pagination.Page) (pagination.Paginator[Response], error) {
 	data, count, err := s.repo.AllWithPage(page)
 	res := make([]Response, 0)
 	if err != nil {
-		return utils.Paginator[Response]{
+		return pagination.Paginator[Response]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       res,
@@ -45,18 +46,18 @@ func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[Response], error) 
 		res = append(res, sr.FromEntity(ent))
 	}
 
-	return utils.Paginator[Response]{
+	return pagination.Paginator[Response]{
 		Page:       page,
 		TotalCount: count,
 		Data:       res,
 	}, err
 }
 
-func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginator[Response], error) {
+func (s *ServiceStruct) GetByHostId(hostId uint, page pagination.Page) (pagination.Paginator[Response], error) {
 	data, count, err := s.repo.GetByHostId(hostId, page)
 
 	if err != nil {
-		return utils.Paginator[Response]{
+		return pagination.Paginator[Response]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       make([]Response, 0),
@@ -69,18 +70,18 @@ func (s *ServiceStruct) GetByHostId(hostId uint, page utils.Page) (utils.Paginat
 		searchRes = append(searchRes, sr.FromEntity(search))
 	}
 
-	return utils.Paginator[Response]{
+	return pagination.Paginator[Response]{
 		Page:       page,
 		TotalCount: count,
 		Data:       searchRes,
 	}, err
 }
 
-func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) (utils.Paginator[Description], error) {
+func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page pagination.Page) (pagination.Paginator[Description], error) {
 	data, count, err := s.repo.GetByHostId(hostId, page)
 
 	if err != nil {
-		return utils.Paginator[Description]{
+		return pagination.Paginator[Description]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       make([]Description, 0),
@@ -98,7 +99,7 @@ func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, page utils.Page) (u
 		searchRes = append(searchRes, response)
 	}
 
-	return utils.Paginator[Description]{
+	return pagination.Paginator[Description]{
 		Page:       page,
 		TotalCount: count,
 		Data:       searchRes,

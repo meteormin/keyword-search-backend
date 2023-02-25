@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/auth"
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
 	"strconv"
 )
@@ -209,7 +210,7 @@ func (h *HandlerStruct) GetSubjects(c *fiber.Ctx) error {
 		return fiber.ErrForbidden
 	}
 
-	page, err := utils.GetPageFromCtx(c)
+	page, err := pagination.GetPageFromCtx(c)
 	if err != nil {
 		return err
 	}
@@ -239,7 +240,7 @@ func (h *HandlerStruct) GetSubjects(c *fiber.Ctx) error {
 // @Router /api/hosts [get]
 // @Security BearerAuth
 func (h *HandlerStruct) All(c *fiber.Ctx) error {
-	page, err := utils.GetPageFromCtx(c)
+	page, err := pagination.GetPageFromCtx(c)
 	if err != nil {
 		return err
 	}

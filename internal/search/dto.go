@@ -1,6 +1,7 @@
 package search
 
 import (
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
 )
@@ -86,17 +87,17 @@ type Description struct {
 }
 
 type ResponseByHost struct {
-	utils.Paginator[Response]
+	pagination.Paginator[Response]
 	Data []Response `json:"data"`
 }
 
 type DescriptionWithPage struct {
-	utils.Paginator[Description]
+	pagination.Paginator[Description]
 	Data []Description `json:"data"`
 }
 
 type ResponseAll struct {
-	utils.Paginator[Response]
+	pagination.Paginator[Response]
 	Data []Response `json:"data"`
 }
 

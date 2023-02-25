@@ -2,14 +2,12 @@ package short_url
 
 import (
 	"context"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/keyword-search-backend/internal/search"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"github.com/redis/go-redis/v9"
-	"path"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -84,15 +82,15 @@ func (s *ServiceStruct) FindRealUrl(code string, userId uint) (string, error) {
 
 	host := searchEnt.Host.Host
 	hostPath := searchEnt.Host.Path
-
-	sep := ":/"
-	splitString := strings.Split(host, sep)
-	hostPath = path.Join(splitString[1], hostPath)
-
 	queryKey := searchEnt.QueryKey
 	queryString := searchEnt.Query
 
-	realUrl := fmt.Sprintf("%s:/%s?%s=%s", splitString[0], hostPath, queryKey, queryString)
+	hostPath = utils.JoinHostPath(host, hostPath)
+	m := map[string]interface{}{
+		queryKey: queryString,
+	}
+
+	realUrl := utils.AddQueryString(hostPath, m)
 
 	err = s.hSet(r, rKey, rField, realUrl)
 	if err != nil {

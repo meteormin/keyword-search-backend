@@ -1,7 +1,7 @@
 package hosts
 
 import (
-	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gorm-extension/gormrepo"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
@@ -9,11 +9,11 @@ import (
 
 type Repository interface {
 	gormrepo.GenericRepository[entity.Host]
-	AllWithPage(page utils.Page) ([]entity.Host, int64, error)
-	GetByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error)
-	GetByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error)
-	GetSubjectsByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error)
-	GetSubjectsByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error)
+	AllWithPage(page pagination.Page) ([]entity.Host, int64, error)
+	GetByUserId(userId uint, page pagination.Page) ([]entity.Host, int64, error)
+	GetByGroupId(groupId uint, page pagination.Page) ([]entity.Host, int64, error)
+	GetSubjectsByUserId(userId uint, page pagination.Page) ([]entity.Host, int64, error)
+	GetSubjectsByGroupId(groupId uint, page pagination.Page) ([]entity.Host, int64, error)
 	Update(pk uint, ent entity.Host) (*entity.Host, error)
 }
 
@@ -27,12 +27,12 @@ func NewRepository(db *gorm.DB) Repository {
 	}
 }
 
-func (r *RepositoryStruct) AllWithPage(page utils.Page) ([]entity.Host, int64, error) {
+func (r *RepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Host, int64, error) {
 	var hosts []entity.Host
 	count, err := r.Count(entity.Host{})
 
 	if count != 0 {
-		err = r.DB().Scopes(utils.Paginate(page)).Find(&hosts).Error
+		err = r.DB().Scopes(pagination.Paginate(page)).Find(&hosts).Error
 	}
 
 	if err != nil || count == 0 {
@@ -50,14 +50,14 @@ func (r *RepositoryStruct) Count(host entity.Host) (int64, error) {
 	return count, err
 }
 
-func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []entity.Host, count int64, e error) {
+func (r *RepositoryStruct) GetByUserId(userId uint, page pagination.Page) (host []entity.Host, count int64, e error) {
 	var hosts []entity.Host
 	var cnt int64 = 0
 
 	err := r.DB().Model(&entity.Host{}).Where(&entity.Host{UserId: userId}).Count(&cnt).Error
 
 	if cnt != 0 {
-		err = r.DB().Scopes(utils.Paginate(page)).
+		err = r.DB().Scopes(pagination.Paginate(page)).
 			Where(&entity.Host{UserId: userId}).
 			Order("id desc").
 			Find(&hosts).Error
@@ -70,7 +70,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page utils.Page) (host []ent
 	return hosts, cnt, err
 }
 
-func (r *RepositoryStruct) GetByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error) {
+func (r *RepositoryStruct) GetByGroupId(groupId uint, page pagination.Page) ([]entity.Host, int64, error) {
 	var group entity.Group
 	var count int64
 	hosts := make([]entity.Host, 0)
@@ -88,20 +88,20 @@ func (r *RepositoryStruct) GetByGroupId(groupId uint, page utils.Page) ([]entity
 		return hosts, 0, err
 	}
 
-	if err := r.DB().Scopes(utils.Paginate(page)).Where("user_id IN ?", userIds).Find(&hosts).Error; err != nil {
+	if err := r.DB().Scopes(pagination.Paginate(page)).Where("user_id IN ?", userIds).Find(&hosts).Error; err != nil {
 		return hosts, 0, err
 	}
 
 	return hosts, count, nil
 }
 
-func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page utils.Page) ([]entity.Host, int64, error) {
+func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page pagination.Page) ([]entity.Host, int64, error) {
 	var hosts []entity.Host
 	var cnt int64 = 0
 
 	err := r.DB().Model(&entity.Host{}).Where(&entity.Host{UserId: userId}).Count(&cnt).Error
 	if cnt != 0 {
-		err = r.DB().Select("id", "subject").Scopes(utils.Paginate(page)).
+		err = r.DB().Select("id", "subject").Scopes(pagination.Paginate(page)).
 			Where(&entity.Host{UserId: userId}).
 			Order("id desc").
 			Find(&hosts).Error
@@ -114,7 +114,7 @@ func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page utils.Page) ([]
 	return hosts, cnt, err
 }
 
-func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) ([]entity.Host, int64, error) {
+func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page pagination.Page) ([]entity.Host, int64, error) {
 	var group entity.Group
 	hosts := make([]entity.Host, 0)
 
@@ -128,7 +128,7 @@ func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) (
 	}
 
 	err := r.DB().Select("id", "subject").
-		Scopes(utils.Paginate(page)).
+		Scopes(pagination.Paginate(page)).
 		Where("user_id IN ?", userIds).
 		Find(&hosts).Error
 

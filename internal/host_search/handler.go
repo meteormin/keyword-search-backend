@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/jobqueue"
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/gollection"
 	worker "github.com/miniyus/goworker"
@@ -46,7 +47,7 @@ func NewHandler(s search.Service, dispatcher worker.Dispatcher) Handler {
 // @Router /api/hosts/{id}/search [get]
 // @Security BearerAuth
 func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
-	page, err := utils.GetPageFromCtx(c)
+	page, err := pagination.GetPageFromCtx(c)
 	if err != nil {
 		return err
 	}
@@ -63,7 +64,7 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(search.ResponseByHost{
-		Paginator: utils.Paginator[search.Response]{
+		Paginator: pagination.Paginator[search.Response]{
 			Page:       data.Page,
 			TotalCount: data.TotalCount,
 		},
@@ -86,7 +87,7 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 // @Router /api/hosts/{id}/search/descriptions [get]
 // @Security BearerAuth
 func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
-	page, err := utils.GetPageFromCtx(c)
+	page, err := pagination.GetPageFromCtx(c)
 	if err != nil {
 		return err
 	}
@@ -103,7 +104,7 @@ func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(search.DescriptionWithPage{
-		Paginator: utils.Paginator[search.Description]{
+		Paginator: pagination.Paginator[search.Description]{
 			Page:       data.Page,
 			TotalCount: data.TotalCount,
 		},

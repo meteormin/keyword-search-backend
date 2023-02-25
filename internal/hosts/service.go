@@ -2,14 +2,14 @@ package hosts
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/keyword-search-backend/entity"
 )
 
 type Service interface {
-	All(page utils.Page) (utils.Paginator[entity.Host], error)
-	GetByUserId(userId uint, page utils.Page) (utils.Paginator[HostResponse], error)
-	GetSubjectsByGroupId(groupId uint, page utils.Page) (utils.Paginator[Subjects], error)
+	All(page pagination.Page) (pagination.Paginator[entity.Host], error)
+	GetByUserId(userId uint, page pagination.Page) (pagination.Paginator[HostResponse], error)
+	GetSubjectsByGroupId(groupId uint, page pagination.Page) (pagination.Paginator[Subjects], error)
 	Find(pk uint, userId uint) (*HostResponse, error)
 	Create(host *CreateHost) (*HostResponse, error)
 	Update(pk uint, userId uint, host *UpdateHost) (*HostResponse, error)
@@ -27,32 +27,32 @@ func NewService(repo Repository) Service {
 	}
 }
 
-func (s *ServiceStruct) All(page utils.Page) (utils.Paginator[entity.Host], error) {
+func (s *ServiceStruct) All(page pagination.Page) (pagination.Paginator[entity.Host], error) {
 	hosts, count, err := s.repo.AllWithPage(page)
 	if err != nil {
 		hosts = make([]entity.Host, 0)
-		return utils.Paginator[entity.Host]{
+		return pagination.Paginator[entity.Host]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       hosts,
 		}, err
 	}
 
-	return utils.Paginator[entity.Host]{
+	return pagination.Paginator[entity.Host]{
 		Page:       page,
 		TotalCount: count,
 		Data:       hosts,
 	}, err
 }
 
-func (s *ServiceStruct) GetByUserId(userId uint, page utils.Page) (utils.Paginator[HostResponse], error) {
+func (s *ServiceStruct) GetByUserId(userId uint, page pagination.Page) (pagination.Paginator[HostResponse], error) {
 	ent, count, err := s.repo.GetByUserId(userId, page)
 
 	var dto []HostResponse
 
 	if err != nil {
 		dto = make([]HostResponse, 0)
-		return utils.Paginator[HostResponse]{
+		return pagination.Paginator[HostResponse]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       dto,
@@ -66,27 +66,27 @@ func (s *ServiceStruct) GetByUserId(userId uint, page utils.Page) (utils.Paginat
 
 	if dto == nil {
 		dto = make([]HostResponse, 0)
-		return utils.Paginator[HostResponse]{
+		return pagination.Paginator[HostResponse]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       dto,
 		}, err
 	}
 
-	return utils.Paginator[HostResponse]{
+	return pagination.Paginator[HostResponse]{
 		Page:       page,
 		TotalCount: count,
 		Data:       dto,
 	}, err
 }
 
-func (s *ServiceStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) (utils.Paginator[Subjects], error) {
+func (s *ServiceStruct) GetSubjectsByGroupId(groupId uint, page pagination.Page) (pagination.Paginator[Subjects], error) {
 	ent, count, err := s.repo.GetSubjectsByGroupId(groupId, page)
 
 	var dto []Subjects
 	if err != nil {
 		dto = make([]Subjects, 0)
-		return utils.Paginator[Subjects]{
+		return pagination.Paginator[Subjects]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       dto,
@@ -102,14 +102,14 @@ func (s *ServiceStruct) GetSubjectsByGroupId(groupId uint, page utils.Page) (uti
 
 	if dto == nil {
 		dto = make([]Subjects, 0)
-		return utils.Paginator[Subjects]{
+		return pagination.Paginator[Subjects]{
 			Page:       page,
 			TotalCount: 0,
 			Data:       dto,
 		}, err
 	}
 
-	return utils.Paginator[Subjects]{
+	return pagination.Paginator[Subjects]{
 		Page:       page,
 		TotalCount: count,
 		Data:       dto,
