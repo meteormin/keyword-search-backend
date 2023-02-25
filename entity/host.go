@@ -6,7 +6,7 @@ import (
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gorm-extension/gormhooks"
 	worker "github.com/miniyus/goworker"
-	"github.com/miniyus/keyword-search-backend/internal/short_url"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 	"strconv"
@@ -68,7 +68,7 @@ func (handler hostHookHandler) AfterSave(h *Host, tx *gorm.DB) (err error) {
 				).Result()
 
 				if cached != "" && err == nil {
-					realUrl := short_url.MakeRealUrl(h.Host, h.Path, s.QueryKey, s.Query)
+					realUrl := utils.MakeRealUrl(h.Host, h.Path, s.QueryKey, s.Query)
 
 					rClient.HSet(
 						context.Background(),

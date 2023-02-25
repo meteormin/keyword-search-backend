@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/keyword-search-backend/internal/search"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"github.com/redis/go-redis/v9"
 	"strconv"
 	"time"
@@ -84,7 +85,7 @@ func (s *ServiceStruct) FindRealUrl(code string, userId uint) (string, error) {
 	queryKey := searchEnt.QueryKey
 	queryString := searchEnt.Query
 
-	realUrl := MakeRealUrl(host, hostPath, queryKey, queryString)
+	realUrl := utils.MakeRealUrl(host, hostPath, queryKey, queryString)
 
 	err = s.hSet(r, rKey, rField, realUrl)
 	if err != nil {

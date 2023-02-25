@@ -5,7 +5,7 @@ import (
 	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gorm-extension/gormhooks"
-	"github.com/miniyus/keyword-search-backend/internal/short_url"
+	"github.com/miniyus/keyword-search-backend/utils"
 	"gorm.io/gorm"
 	"strconv"
 )
@@ -59,7 +59,7 @@ func (sh *SearchHookHandler) AfterSave(s *Search, tx *gorm.DB) (err error) {
 		).Result()
 
 		if cached != "" && err == nil {
-			realUrl := short_url.MakeRealUrl(h.Host, h.Path, s.QueryKey, s.Query)
+			realUrl := utils.MakeRealUrl(h.Host, h.Path, s.QueryKey, s.Query)
 			rClient.HSet(
 				context.Background(),
 				rKey,

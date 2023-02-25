@@ -25,3 +25,29 @@ func AddQueryString(host string, query map[string]interface{}) string {
 
 	return host + queryString
 }
+
+type realUrlMaker struct {
+	Host     string
+	Path     string
+	QueryKey string
+	Query    string
+}
+
+func (rm *realUrlMaker) makeRealUrl() string {
+	var realUrl string
+	host := JoinHostPath(rm.Host, rm.Path)
+
+	if rm.QueryKey == "" {
+		realUrl = fmt.Sprintf("%s/%s", host, rm.Query)
+	} else {
+		realUrl = AddQueryString(host, map[string]interface{}{
+			rm.QueryKey: rm.Query,
+		})
+	}
+
+	return realUrl
+}
+
+func MakeRealUrl(host string, path string, queryKey string, query string) string {
+	return (&realUrlMaker{Host: host, Path: path, QueryKey: queryKey, Query: query}).makeRealUrl()
+}
