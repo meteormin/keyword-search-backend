@@ -52,7 +52,12 @@ func (h *HandlerStruct) Create(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	created, err := h.service.Create(dto)
+	user, err := auth.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
+	created, err := h.service.Create(user.Id, dto)
 	if err != nil {
 		return err
 	}
