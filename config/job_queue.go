@@ -1,6 +1,6 @@
 package config
 
-import "github.com/miniyus/gofiber/pkg/worker"
+import worker "github.com/miniyus/goworker"
 
 type WorkerName string
 

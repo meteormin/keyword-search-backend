@@ -3,10 +3,10 @@ package short_url
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/keyword-search-backend/internal/search"
+	"github.com/redis/go-redis/v9"
 	"path"
 	"strconv"
 	"strings"

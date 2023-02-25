@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/gofiber/app"
-	"github.com/miniyus/gofiber/pkg/worker"
+	worker "github.com/miniyus/goworker"
 	"gorm.io/gorm"
 	"path"
 	"strconv"

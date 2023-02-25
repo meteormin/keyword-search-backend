@@ -5,8 +5,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/jobqueue"
-	"github.com/miniyus/gofiber/pkg/worker"
 	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/gollection"
+	worker "github.com/miniyus/goworker"
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"strconv"
@@ -145,7 +146,7 @@ func (h *HandlerStruct) BatchCreate(c *fiber.Ctx) error {
 
 	jobId := fmt.Sprintf("hosts.%s", strconv.Itoa(int(hostId)))
 
-	searchCollection := utils.NewCollection(dto.Search)
+	searchCollection := gollection.NewCollection(dto.Search)
 	searchCollection.Chunk(100, func(v []*search.CreateSearch, i int) {
 
 		err = h.dispatcher.Dispatch(jobId, func(job *worker.Job) error {

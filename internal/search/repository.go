@@ -2,8 +2,8 @@ package search
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/gofiber/pkg/gormrepo"
 	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/gorm-extension/gormrepo"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"

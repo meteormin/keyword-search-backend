@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber"
 	"github.com/miniyus/gofiber/apierrors"
@@ -12,6 +11,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/loginlogs"
 	ksRoutes "github.com/miniyus/keyword-search-backend/routes"
+	"github.com/redis/go-redis/v9"
 )
 
 // @title keyword-search-backend Swagger API Documentation

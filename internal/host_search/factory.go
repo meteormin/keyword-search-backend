@@ -1,7 +1,7 @@
 package host_search
 
 import (
-	"github.com/miniyus/gofiber/pkg/worker"
+	worker "github.com/miniyus/goworker"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"gorm.io/gorm"
 )

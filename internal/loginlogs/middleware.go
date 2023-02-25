@@ -3,7 +3,7 @@ package loginlogs
 import (
 	"github.com/gofiber/fiber/v2"
 	mEntity "github.com/miniyus/gofiber/entity"
-	"github.com/miniyus/gofiber/pkg/gormhooks"
+	"github.com/miniyus/gorm-extension/gormhooks"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
 	"strings"
