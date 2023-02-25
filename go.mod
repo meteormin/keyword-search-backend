@@ -55,9 +55,9 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
-	github.com/miniyus/gofiber v1.7.17 // indirect
+	github.com/miniyus/gofiber v1.7.19 // indirect
 	github.com/miniyus/gollection v1.0.0 // indirect
-	github.com/miniyus/gorm-extension v1.0.1 // indirect
+	github.com/miniyus/gorm-extension v1.0.6 // indirect
 	github.com/miniyus/goworker v1.0.0 // indirect
 	github.com/philhofer/fwd v1.1.2 // indirect
 	github.com/redis/go-redis/v9 v9.0.2 // indirect

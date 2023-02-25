@@ -312,11 +312,18 @@ github.com/miniyus/gofiber v1.7.15/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8
 github.com/miniyus/gofiber v1.7.16 h1:xBV0HS5gXzNrRHD+Zqhxm8+Q/yZHMyelz6t7FhB9BJ8=
 github.com/miniyus/gofiber v1.7.16/go.mod h1:h6iQ3bvSK9cda7TSEzC/e3wNbL0Busp03Y8po6R144g=
 github.com/miniyus/gofiber v1.7.17 h1:CZa8u87RELwQhA9/a0Vf7kDL+nDxog93KPFrGaD4LP4=
-github.com/miniyus/gofiber v1.7.17/go.mod h1:BC6LfuYsLtJY0Q0ReY797QjOSrpKtPyx/uuAqPJIbW4=
+github.com/miniyus/gofiber v1.7.17/go.mod h1:BC6LfuYsLtJY0Q0ReY797QjOSrpKtPyx/uuAqPJIbW4=9github.com/miniyus/gofiber v1.7.18 h1:WCP4SSgKJhBBSmneh4v0FAM0DoZCWi8iflamaXfAjmQ=
+github.com/miniyus/gofiber v1.7.18/go.mod h1:2qNZ97SeuYQVsKGHFZW52RWsbnLxi3AwqTX48gYk/q4=
+github.com/miniyus/gofiber v1.7.19 h1:5ghgiSToxvGM4RXd8iJySVg8TWwds7fnnZ5ELryQPcU=
+github.com/miniyus/gofiber v1.7.19/go.mod h1:2GMcGb/yQFTpCPWmv7RcoTNqFZ5XiUapDcyS53MMwo0=
 github.com/miniyus/gollection v1.0.0 h1:pAN6mFhDkUuDHIuIFtTZVYb+GXQ+slkpxwMt/txd+WI=
 github.com/miniyus/gollection v1.0.0/go.mod h1:3FlPgGHgpBzcPGPfzsVeMI6+sGVBnF7Ns/f9YHtrOmc=
 github.com/miniyus/gorm-extension v1.0.1 h1:9u16JMXlyP5YqM8bSwWWd56bXvN6bo276gHZXiKXWq0=
 github.com/miniyus/gorm-extension v1.0.1/go.mod h1:fxUNVjqmouDN8aYCu7tpnhIuD864wXpHxuKMyUgAoZU=
+github.com/miniyus/gorm-extension v1.0.4 h1:QpVxOFEqSX6uLeK6O8GC2inTZKYyPst9zCEhGupMb8o=
+github.com/miniyus/gorm-extension v1.0.4/go.mod h1:fxUNVjqmouDN8aYCu7tpnhIuD864wXpHxuKMyUgAoZU=
+github.com/miniyus/gorm-extension v1.0.6 h1:msirmoAF1JqS0qzAjEwEW0emwaPpdRL2f3OOu93ijnc=
+github.com/miniyus/gorm-extension v1.0.6/go.mod h1:fxUNVjqmouDN8aYCu7tpnhIuD864wXpHxuKMyUgAoZU=
 github.com/miniyus/goworker v1.0.0 h1:A9yqjzak08POVcXeSBdZqK6KQZM+y05zyS16jZ386Jk=
 github.com/miniyus/goworker v1.0.0/go.mod h1:2ltRgqs5IoxHBqKF2U57YpiyDNecf5sogcvBjOTo8Bg=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=

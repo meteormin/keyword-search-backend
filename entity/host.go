@@ -3,9 +3,9 @@ package entity
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis/v9"
 	"github.com/miniyus/gofiber/app"
 	worker "github.com/miniyus/goworker"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 	"path"
 	"strconv"
