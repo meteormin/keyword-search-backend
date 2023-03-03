@@ -9,10 +9,31 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+type Filter struct {
+	pagination.Page
+	Query    *string
+	QueryKey *string
+	Publish  *bool
+}
+
+func (f Filter) FillEntity(ent *entity.Search) {
+	if f.QueryKey != nil {
+		ent.QueryKey = *f.QueryKey
+	}
+
+	if f.Query != nil {
+		ent.Query = *f.Query
+	}
+
+	if f.Publish != nil {
+		ent.Publish = *f.Publish
+	}
+}
+
 type Repository interface {
 	gormrepo.GenericRepository[entity.Search]
 	AllWithPage(page pagination.Page) ([]entity.Search, int64, error)
-	GetByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error)
+	GetByHostId(hostId uint, filter Filter) ([]entity.Search, int64, error)
 	GetDescriptionsByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error)
 	BatchCreate(entities []entity.Search) ([]entity.Search, error)
 	FindByShortUrl(code string, userId uint) (*entity.Search, error)
@@ -62,15 +83,16 @@ func (r *RepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Search, i
 	return search, count, err
 }
 
-func (r *RepositoryStruct) GetByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error) {
+func (r *RepositoryStruct) GetByHostId(hostId uint, filter Filter) ([]entity.Search, int64, error) {
 	var search []entity.Search
 	var count int64
 
-	where := &entity.Search{HostId: hostId}
+	where := entity.Search{HostId: hostId}
+	filter.FillEntity(&where)
 	err := r.DB().Model(&entity.Search{}).Where(where).Count(&count).Error
 
 	if count != 0 {
-		scopes := pagination.Paginate(page)
+		scopes := pagination.Paginate(filter.Page)
 
 		err = r.DB().Where(where).Scopes(scopes).Order("id desc").Find(&search).Error
 	}

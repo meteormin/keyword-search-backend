@@ -208,9 +208,9 @@ func (h *HandlerStruct) Patch(c *fiber.Ctx) error {
 		return errRes.Response()
 	}
 
-	exists, err := h.service.Find(uint(pk), user.Id)
-	if exists == nil || exists.Id == 0 {
-		return fiber.ErrNotFound
+	_, err = h.service.Find(uint(pk), user.Id)
+	if err != nil {
+		return err
 	}
 
 	patch, err := h.service.Patch(uint(pk), user.Id, &dto)

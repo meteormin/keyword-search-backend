@@ -78,6 +78,8 @@ definitions:
         type: string
       description:
         type: string
+      host_id:
+        type: integer
       id:
         type: integer
       publish:
@@ -230,8 +232,6 @@ definitions:
     properties:
       description:
         type: string
-      host_id:
-        type: integer
       publish:
         type: boolean
       query:
@@ -239,7 +239,6 @@ definitions:
       query_key:
         type: string
     required:
-    - host_id
     - publish
     type: object
   internal_search.Response:
@@ -248,6 +247,8 @@ definitions:
         type: string
       description:
         type: string
+      host_id:
+        type: integer
       id:
         type: integer
       publish:
@@ -297,6 +298,13 @@ definitions:
     properties:
       url:
         type: string
+    type: object
+  pagination.Page:
+    properties:
+      page:
+        type: integer
+      page_size:
+        type: integer
     type: object
   utils.StatusResponse:
     properties:
@@ -534,16 +542,12 @@ paths:
         name: id
         required: true
         type: integer
-      - description: page number
-        in: query
-        name: page
-        required: true
-        type: integer
-      - description: page size
-        in: query
-        name: page_size
-        required: true
-        type: integer
+      - in: query
+        name: query
+        type: string
+      - in: query
+        name: query_key
+        type: string
       produces:
       - application/json
       responses:
@@ -611,16 +615,12 @@ paths:
         name: id
         required: true
         type: integer
-      - description: page number
-        in: query
-        name: page
-        required: true
-        type: integer
-      - description: page size
-        in: query
-        name: page_size
-        required: true
-        type: integer
+      - in: query
+        name: query
+        type: string
+      - in: query
+        name: query_key
+        type: string
       produces:
       - application/json
       responses:

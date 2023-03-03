@@ -10,8 +10,8 @@ import (
 
 type Service interface {
 	All(page pagination.Page) (pagination.Paginator[Response], error)
-	GetByHostId(hostId uint, userId uint, page pagination.Page) (pagination.Paginator[Response], error)
-	GetDescriptionsByHostId(hostId uint, userId uint, page pagination.Page) (pagination.Paginator[Description], error)
+	GetByHostId(hostId uint, userId uint, query Query) (pagination.Paginator[Response], error)
+	GetDescriptionsByHostId(hostId uint, userId uint, query Query) (pagination.Paginator[Description], error)
 	Find(pk uint, userId uint) (*Response, error)
 	Create(userId uint, search *CreateSearch) (*Response, error)
 	BatchCreate(hostId uint, userId uint, search []*CreateSearch) ([]Response, error)
@@ -53,20 +53,24 @@ func (s *ServiceStruct) All(page pagination.Page) (pagination.Paginator[Response
 	}, err
 }
 
-func (s *ServiceStruct) GetByHostId(hostId uint, userId uint, page pagination.Page) (pagination.Paginator[Response], error) {
+func (s *ServiceStruct) GetByHostId(hostId uint, userId uint, query Query) (pagination.Paginator[Response], error) {
 	if !s.repo.HasHost(hostId, userId) {
 		return pagination.Paginator[Response]{
-			Page:       page,
+			Page:       query.Page,
 			TotalCount: 0,
 			Data:       make([]Response, 0),
 		}, fiber.ErrForbidden
 	}
 
-	data, count, err := s.repo.GetByHostId(hostId, page)
+	data, count, err := s.repo.GetByHostId(hostId, Filter{
+		Page:     query.Page,
+		Query:    query.Query,
+		QueryKey: query.QueryKey,
+	})
 
 	if err != nil {
 		return pagination.Paginator[Response]{
-			Page:       page,
+			Page:       query.Page,
 			TotalCount: 0,
 			Data:       make([]Response, 0),
 		}, err
@@ -79,26 +83,30 @@ func (s *ServiceStruct) GetByHostId(hostId uint, userId uint, page pagination.Pa
 	}
 
 	return pagination.Paginator[Response]{
-		Page:       page,
+		Page:       query.Page,
 		TotalCount: count,
 		Data:       searchRes,
 	}, err
 }
 
-func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, userId uint, page pagination.Page) (pagination.Paginator[Description], error) {
+func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, userId uint, query Query) (pagination.Paginator[Description], error) {
 	if !s.repo.HasHost(hostId, userId) {
 		return pagination.Paginator[Description]{
-			Page:       page,
+			Page:       query.Page,
 			TotalCount: 0,
 			Data:       make([]Description, 0),
 		}, fiber.ErrForbidden
 	}
 
-	data, count, err := s.repo.GetByHostId(hostId, page)
+	data, count, err := s.repo.GetByHostId(hostId, Filter{
+		Page:     query.Page,
+		Query:    query.Query,
+		QueryKey: query.QueryKey,
+	})
 
 	if err != nil {
 		return pagination.Paginator[Description]{
-			Page:       page,
+			Page:       query.Page,
 			TotalCount: 0,
 			Data:       make([]Description, 0),
 		}, err
@@ -116,7 +124,7 @@ func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, userId uint, page p
 	}
 
 	return pagination.Paginator[Description]{
-		Page:       page,
+		Page:       query.Page,
 		TotalCount: count,
 		Data:       searchRes,
 	}, err

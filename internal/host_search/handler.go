@@ -38,8 +38,7 @@ func NewHandler(s search.Service, dispatcher worker.Dispatcher) Handler {
 // @description get by host id
 // @Tags Hosts
 // @Param id path int true "host id"
-// @Param page query int true "page number"
-// @Param page_size query int true "page size"
+// @Param filter query search.Query false "filter query"
 // @Success 200 {object} search.ResponseByHost
 // @Failure 400 {object} apierrors.ValidationErrorResponse
 // @Failure 403 {object} apierrors.ErrorResponse
@@ -48,11 +47,6 @@ func NewHandler(s search.Service, dispatcher worker.Dispatcher) Handler {
 // @Router /api/hosts/{id}/search [get]
 // @Security BearerAuth
 func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
-	page, err := pagination.GetPageFromCtx(c)
-	if err != nil {
-		return err
-	}
-
 	params := c.AllParams()
 	hostId, err := strconv.ParseUint(params["id"], 10, 64)
 	if err != nil {
@@ -64,7 +58,15 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 		return err
 	}
 
-	data, err := h.service.GetByHostId(uint(hostId), user.Id, page)
+	var queryFilter search.Query
+	err = c.QueryParser(&queryFilter)
+	if err != nil {
+		return err
+	}
+
+	page, err := pagination.GetPageFromCtx(c)
+	queryFilter.Page = page
+	data, err := h.service.GetByHostId(uint(hostId), user.Id, queryFilter)
 	if err != nil {
 		return err
 	}
@@ -83,8 +85,7 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 // @description get by host id
 // @Tags Hosts
 // @Param id path int true "host id"
-// @Param page query int true "page number"
-// @Param page_size query int true "page size"
+// @Param filter query search.Query false "filter query"
 // @Success 200 {object} search.DescriptionWithPage
 // @Failure 400 {object} apierrors.ValidationErrorResponse
 // @Failure 403 {object} apierrors.ErrorResponse
@@ -93,11 +94,6 @@ func (h *HandlerStruct) GetByHostId(c *fiber.Ctx) error {
 // @Router /api/hosts/{id}/search/descriptions [get]
 // @Security BearerAuth
 func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
-	page, err := pagination.GetPageFromCtx(c)
-	if err != nil {
-		return err
-	}
-
 	params := c.AllParams()
 	hostId, err := strconv.ParseUint(params["id"], 10, 64)
 	if err != nil {
@@ -109,7 +105,13 @@ func (h *HandlerStruct) GetDescriptionsByHostId(c *fiber.Ctx) error {
 		return err
 	}
 
-	data, err := h.service.GetDescriptionsByHostId(uint(hostId), user.Id, page)
+	var queryFilter search.Query
+	err = c.QueryParser(&queryFilter)
+	if err != nil {
+		return err
+	}
+
+	data, err := h.service.GetDescriptionsByHostId(uint(hostId), user.Id, queryFilter)
 	if err != nil {
 		return err
 	}

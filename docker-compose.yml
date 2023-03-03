@@ -11,7 +11,7 @@ services:
       - '8000:${APP_PORT:-8000}'
       - '2345:2345'
     networks:
-      - ks-backend
+      - ks
     depends_on:
       - redis
       - pgsql
@@ -26,7 +26,7 @@ services:
     ports:
       - '6060:6060'
     networks:
-      - ks-backend
+      - ks
   keyword-search-backend:
     container_name: keyword-search-fiber
     image: miniyus/keyword-search-backend
@@ -49,7 +49,7 @@ services:
     volumes:
       - './data:/home/gofiber/data'
     networks:
-      - ks-backend
+      - ks
     depends_on:
       - redis
       - pgsql
@@ -66,7 +66,7 @@ services:
     volumes:
       - 'go-pgsql:/var/lib/postgresql/data'
     networks:
-      - ks-backend
+      - ks
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
       retries: 3
@@ -79,15 +79,17 @@ services:
     volumes:
       - 'go-redis:/data'
     networks:
-      - ks-backend
+      - ks
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       retries: 3
       timeout: 5s
 
 networks:
-  ks-backend:
+  ks:
     driver: bridge
+    internal: true
+    external: true
 volumes:
   go-pgsql:
     driver: local

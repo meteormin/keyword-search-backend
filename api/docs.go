@@ -436,18 +436,14 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "page number",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
+                        "type": "string",
+                        "name": "query",
+                        "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "description": "page size",
-                        "name": "page_size",
-                        "in": "query",
-                        "required": true
+                        "type": "string",
+                        "name": "query_key",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -555,18 +551,14 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "page number",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
+                        "type": "string",
+                        "name": "query",
+                        "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "description": "page size",
-                        "name": "page_size",
-                        "in": "query",
-                        "required": true
+                        "type": "string",
+                        "name": "query_key",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1150,6 +1142,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "host_id": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -1374,15 +1369,11 @@ const docTemplate = `{
         "internal_search.PatchSearch": {
             "type": "object",
             "required": [
-                "host_id",
                 "publish"
             ],
             "properties": {
                 "description": {
                     "type": "string"
-                },
-                "host_id": {
-                    "type": "integer"
                 },
                 "publish": {
                     "type": "boolean"
@@ -1403,6 +1394,9 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
+                },
+                "host_id": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -1476,6 +1470,17 @@ const docTemplate = `{
             "properties": {
                 "url": {
                     "type": "string"
+                }
+            }
+        },
+        "pagination.Page": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
                 }
             }
         },

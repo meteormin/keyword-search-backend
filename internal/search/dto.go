@@ -37,7 +37,6 @@ func (us UpdateSearch) ToEntity() entity.Search {
 }
 
 type PatchSearch struct {
-	HostId      uint    `json:"host_id" validate:"required"`
 	QueryKey    *string `json:"query_key,omitempty"`
 	Query       *string `json:"query,omitempty"`
 	Description *string `json:"description,omitempty"`
@@ -46,9 +45,6 @@ type PatchSearch struct {
 
 func (ps PatchSearch) ToEntity() entity.Search {
 	var ent entity.Search
-	if ps.HostId != 0 {
-		ent.HostId = ps.HostId
-	}
 
 	if ps.Query != nil {
 		ent.Query = *ps.Query
@@ -71,6 +67,7 @@ func (ps PatchSearch) ToEntity() entity.Search {
 
 type Response struct {
 	Id          uint    `json:"id"`
+	HostId      uint    `json:"host_id"`
 	ShortUrl    *string `json:"short_url"`
 	QueryKey    string  `json:"query_key"`
 	Query       string  `json:"query"`
@@ -107,6 +104,7 @@ func (r Response) FromEntity(search entity.Search) Response {
 
 	return Response{
 		Id:          search.ID,
+		HostId:      search.HostId,
 		ShortUrl:    search.ShortUrl,
 		Publish:     search.Publish,
 		QueryKey:    search.QueryKey,
@@ -115,4 +113,10 @@ func (r Response) FromEntity(search entity.Search) Response {
 		CreatedAt:   createdAt.Format(utils.DefaultDateLayout),
 		UpdatedAt:   updatedAt.Format(utils.DefaultDateLayout),
 	}
+}
+
+type Query struct {
+	Page     pagination.Page `query:"-"`
+	QueryKey *string         `json:"query_key" query:"query_key"`
+	Query    *string         `json:"query" query:"query"`
 }

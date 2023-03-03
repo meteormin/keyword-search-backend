@@ -12,6 +12,7 @@ func Register(handler Handler) app.SubRouter {
 		router.Get("/all", handler.All).Name("api.search.all")
 		router.Get("/:id", handler.Get).Name("api.search.get")
 		router.Post("/", handler.Create).Name("api.search.create")
+		router.Patch("/:id", handler.Patch).Name("api.search.patch")
 	}
 
 }

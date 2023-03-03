@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"encoding/csv"
 	"github.com/joho/godotenv"
+	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/gollection"
 	configure "github.com/miniyus/keyword-search-backend/config"
-	"github.com/miniyus/keyword-search-backend/database"
 	"github.com/miniyus/keyword-search-backend/internal/search"
-	"github.com/miniyus/keyword-search-backend/utils"
 	"log"
 	"os"
 	"path"
@@ -63,10 +63,10 @@ func main() {
 				panic(err)
 			}
 
-			utils.NewCollection(rows).Chunk(100, func(v [][]string, i int) {
+			gollection.NewCollection(rows).Chunk(100, func(v [][]string, i int) {
 				var searchSlice []*search.CreateSearch
 
-				utils.NewCollection(v).For(func(v []string, j int) {
+				gollection.NewCollection(v).For(func(v []string, j int) {
 					if i*100+j == 0 {
 						return
 					}
@@ -82,7 +82,7 @@ func main() {
 					}
 				})
 
-				create, err := service.BatchCreate(uint(hId), searchSlice)
+				create, err := service.BatchCreate(uint(hId), 1, searchSlice)
 
 				log.Println(create)
 				if err != nil {
