@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "[docker compose up]"
+echo "[DOCKER COMPOSE]"
 
 docker_compose="docker compose"
 
@@ -28,3 +28,11 @@ fi
 
 echo "$docker_compose up -d --build"
 $docker_compose up -d --build
+
+echo "[CLEAN UP IMAGES] '<none>'"
+docker image rm $(docker image list -f 'dangling=true' -q --no-trunc)
+echo ""
+
+echo "[CLEAN UP BUILDER] until 24h"
+echo "y" | docker builder prune --filter until=24h
+echo ""
