@@ -437,12 +437,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "order_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "query",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "query_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
                         "in": "query"
                     }
                 ],
@@ -552,12 +562,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "order_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "query",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "query_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
                         "in": "query"
                     }
                 ],
@@ -1162,6 +1182,9 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "views": {
+                    "type": "integer"
                 }
             }
         },
@@ -1415,6 +1438,9 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "views": {
+                    "type": "integer"
                 }
             }
         },

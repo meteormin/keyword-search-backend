@@ -66,6 +66,8 @@ func (s *ServiceStruct) GetByHostId(hostId uint, userId uint, query Query) (pagi
 		Page:     query.Page,
 		Query:    query.Query,
 		QueryKey: query.QueryKey,
+		SortBy:   query.SortBy,
+		OrderBy:  query.OrderBy,
 	})
 
 	if err != nil {
@@ -140,8 +142,15 @@ func (s *ServiceStruct) Find(pk uint, userId uint) (*Response, error) {
 		return nil, fiber.ErrForbidden
 	}
 
+	search.Views += 1
+
+	save, err := s.repo.Save(*search)
+	if err != nil {
+		return nil, err
+	}
+
 	var sr Response
-	searchRes := sr.FromEntity(*search)
+	searchRes := sr.FromEntity(*save)
 
 	return &searchRes, err
 }

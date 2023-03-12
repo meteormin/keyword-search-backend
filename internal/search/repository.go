@@ -1,6 +1,7 @@
 package search
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gorm-extension/gormrepo"
@@ -14,6 +15,8 @@ type Filter struct {
 	Query    *string
 	QueryKey *string
 	Publish  *bool
+	SortBy   *string
+	OrderBy  *string
 }
 
 func (f Filter) FillEntity(ent *entity.Search) {
@@ -93,8 +96,8 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, filter Filter) ([]entity.Sea
 
 	if count != 0 {
 		scopes := pagination.Paginate(filter.Page)
-
-		err = r.DB().Where(where).Scopes(scopes).Order("id desc").Find(&search).Error
+		order := fmt.Sprintf("%s %s", filter.SortBy, filter.OrderBy)
+		err = r.DB().Where(where).Scopes(scopes).Order(order).Find(&search).Error
 	}
 
 	if err != nil || count == 0 {

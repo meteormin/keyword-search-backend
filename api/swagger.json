@@ -434,12 +434,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "order_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "query",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "query_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
                         "in": "query"
                     }
                 ],
@@ -549,12 +559,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "order_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "query",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "name": "query_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
                         "in": "query"
                     }
                 ],
@@ -1159,6 +1179,9 @@
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "views": {
+                    "type": "integer"
                 }
             }
         },
@@ -1412,6 +1435,9 @@
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "views": {
+                    "type": "integer"
                 }
             }
         },

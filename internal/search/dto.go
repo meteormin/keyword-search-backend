@@ -73,6 +73,7 @@ type Response struct {
 	Query       string  `json:"query"`
 	Description string  `json:"description"`
 	Publish     bool    `json:"publish"`
+	Views       uint    `json:"views"`
 	CreatedAt   string  `json:"created_at"`
 	UpdatedAt   string  `json:"updated_at"`
 }
@@ -119,4 +120,6 @@ type Query struct {
 	Page     pagination.Page `query:"-"`
 	QueryKey *string         `json:"query_key" query:"query_key"`
 	Query    *string         `json:"query" query:"query"`
+	SortBy   *string         `json:"sort_by" query:"sort_by"`
+	OrderBy  *string         `json:"order_by" query:"order_by"`
 }
