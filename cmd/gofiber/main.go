@@ -49,9 +49,7 @@ func main() {
 		fiberApp.Use(loginlogs.Middleware(database.GetDB(), fiber.MethodPost, "/api/auth/token"))
 	})
 
-	a.Register(func(app app.Application) {
-		entity.RegisterHooks(app)
-	})
+	a.Register(entity.RegisterHooks)
 
 	// register routes
 	a.Route(routes.ApiPrefix, func(router app.Router, app app.Application) {

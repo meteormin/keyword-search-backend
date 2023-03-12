@@ -18,6 +18,7 @@ type Search struct {
 	Query       string  `gorm:"column:query;type:varchar(50);index:query_unique,unique" json:"query"`
 	Description string  `gorm:"column:description;type:varchar(50)" json:"description"`
 	Publish     bool    `gorm:"column:publish;type:bool" json:"publish"`
+	Views       uint    `json:"views" gorm:"column:views;default:0"`
 	ShortUrl    *string `gorm:"column:short_url;type:varchar(255);uniqueIndex" json:"short_url"`
 }
 
