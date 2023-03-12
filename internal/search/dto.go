@@ -113,6 +113,7 @@ func (r Response) FromEntity(search entity.Search) Response {
 		Description: search.Description,
 		CreatedAt:   createdAt.Format(utils.DefaultDateLayout),
 		UpdatedAt:   updatedAt.Format(utils.DefaultDateLayout),
+		Views:       search.Views,
 	}
 }
 
