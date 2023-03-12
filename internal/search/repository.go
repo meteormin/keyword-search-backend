@@ -98,7 +98,7 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, filter Filter) ([]entity.Sea
 		scopes := pagination.Paginate(filter.Page)
 		var order string
 		if filter.SortBy != nil && filter.OrderBy != nil {
-			order = fmt.Sprintf("%s %s", filter.SortBy, filter.OrderBy)
+			order = fmt.Sprintf("%s %s, id desc", *filter.SortBy, *filter.OrderBy)
 		} else {
 			order = "id desc"
 		}
