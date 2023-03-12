@@ -96,7 +96,12 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, filter Filter) ([]entity.Sea
 
 	if count != 0 {
 		scopes := pagination.Paginate(filter.Page)
-		order := fmt.Sprintf("%s %s", filter.SortBy, filter.OrderBy)
+		var order string
+		if filter.SortBy != nil && filter.OrderBy != nil {
+			order = fmt.Sprintf("%s %s", filter.SortBy, filter.OrderBy)
+		} else {
+			order = "id desc"
+		}
 		err = r.DB().Where(where).Scopes(scopes).Order(order).Find(&search).Error
 	}
 
