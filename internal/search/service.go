@@ -142,15 +142,8 @@ func (s *ServiceStruct) Find(pk uint, userId uint) (*Response, error) {
 		return nil, fiber.ErrForbidden
 	}
 
-	search.Views += 1
-
-	save, err := s.repo.Save(*search)
-	if err != nil {
-		return nil, err
-	}
-
 	var sr Response
-	searchRes := sr.FromEntity(*save)
+	searchRes := sr.FromEntity(*search)
 
 	return &searchRes, err
 }

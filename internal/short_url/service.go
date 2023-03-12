@@ -80,10 +80,16 @@ func (s *ServiceStruct) FindRealUrl(code string, userId uint) (string, error) {
 		return "", fiber.ErrNotFound
 	}
 
-	host := searchEnt.Host.Host
-	hostPath := searchEnt.Host.Path
-	queryKey := searchEnt.QueryKey
-	queryString := searchEnt.Query
+	searchEnt.Views += 1
+	save, err := s.searchRepo.Save(*searchEnt)
+	if err != nil {
+		return "", err
+	}
+
+	host := save.Host.Host
+	hostPath := save.Host.Path
+	queryKey := save.QueryKey
+	queryString := save.Query
 
 	realUrl := utils.MakeRealUrl(host, hostPath, queryKey, queryString)
 
