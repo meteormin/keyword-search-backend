@@ -29,8 +29,9 @@ func appConfig() app.Config {
 		Locale:   os.Getenv("LOCALE"),
 		TimeZone: os.Getenv("TIME_ZONE"),
 		FiberConfig: fiber.Config{
-			AppName: os.Getenv("APP_NAME"),
-			Prefork: prefork,
+			AppName:   os.Getenv("APP_NAME"),
+			Prefork:   prefork,
+			BodyLimit: 100 * 1024 * 1024,
 		},
 	}
 }
