@@ -1,11 +1,17 @@
 package search
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/gorm-extension/gormrepo"
 	"github.com/miniyus/keyword-search-backend/entity"
+	"mime/multipart"
+	"net/http"
 	"strconv"
+	"strings"
 )
 
 type Service interface {
@@ -18,6 +24,8 @@ type Service interface {
 	Update(pk uint, userId uint, search *UpdateSearch) (*Response, error)
 	Patch(pk uint, userId uint, search *PatchSearch) (*Response, error)
 	Delete(pk uint, userId uint) (bool, error)
+	UploadImage(pk uint, userId uint, file *multipart.FileHeader) (*Response, error)
+	FindImagePath(pk uint, userId uint) (string, error)
 }
 
 type ServiceStruct struct {
@@ -295,4 +303,80 @@ func (s *ServiceStruct) Delete(pk uint, userId uint) (bool, error) {
 	}
 
 	return s.repo.Delete(pk)
+}
+
+func (s *ServiceStruct) UploadImage(pk uint, userId uint, file *multipart.FileHeader) (*Response, error) {
+	fileRepo := gormrepo.NewGenericRepository(database.GetDB(), entity.File{})
+	savePath := fmt.Sprintf("images/%s", file.Filename)
+
+	ext := ""
+	split := strings.Split(file.Filename, ".")
+	if len(split) > 1 {
+		ext = split[1]
+	}
+
+	search, err := s.repo.Find(pk)
+	if err != nil {
+		return nil, err
+	}
+
+	if search.Host.UserId != userId {
+		return nil, fiber.ErrForbidden
+	}
+
+	f, err := file.Open()
+	if err != nil {
+		return nil, err
+	}
+
+	fh := make([]byte, 512)
+	_, err = f.Read(fh)
+	if err != nil {
+		return nil, err
+	}
+
+	mimType := http.DetectContentType(fh)
+	//if !strings.Contains(mimType, "image") {
+	//	log.Print(mimType)
+	//	return nil, fiber.NewError(400, "must upload only image file")
+	//}
+
+	create, err := fileRepo.Create(entity.File{
+		Path:      savePath,
+		MimeType:  mimType,
+		Extension: ext,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	search.FileId = create.ID
+
+	save, err := s.repo.Save(*search)
+	if err != nil {
+		return nil, err
+	}
+
+	var sr Response
+	res := sr.FromEntity(*save)
+
+	return &res, nil
+}
+
+func (s *ServiceStruct) FindImagePath(pk uint, userId uint) (string, error) {
+	find, err := s.repo.Preload("File").Preload("Host").Find(pk)
+	if err != nil {
+		return "", err
+	}
+
+	if find.Host.UserId != userId {
+		return "", fiber.ErrForbidden
+	}
+
+	if find.File == nil {
+		return "", fiber.ErrNotFound
+	}
+
+	return find.File.Path, nil
 }

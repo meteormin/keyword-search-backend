@@ -13,4 +13,4 @@ migrate:
 
 .PHONY: deploy
 deploy:
-	/usr/bin/env bash ./scripts/deploy.sh
+	./scripts/deploy.sh

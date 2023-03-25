@@ -13,6 +13,7 @@ func Register(handler Handler) app.SubRouter {
 		router.Get("/:id", handler.Get).Name("api.search.get")
 		router.Post("/", handler.Create).Name("api.search.create")
 		router.Patch("/:id", handler.Patch).Name("api.search.patch")
+		router.Post("/:id/image", handler.UploadImage).Name("api.search.upload_image")
+		router.Get("/:id/image", handler.GetImage).Name("api.search.image")
 	}
-
 }

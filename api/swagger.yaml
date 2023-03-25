@@ -325,7 +325,7 @@ info:
   license:
     name: MIT
   title: keyword-search-backend Swagger API Documentation
-  version: 1.0.0
+  version: 1.0.1
 paths:
   /api/hosts:
     get:
@@ -832,6 +832,40 @@ paths:
       security:
       - BearerAuth: []
       summary: get search
+      tags:
+      - Search
+    post:
+      consumes:
+      - multipart/form-data
+      description: upload image
+      parameters:
+      - description: search pk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_search.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: upload image
       tags:
       - Search
     put:

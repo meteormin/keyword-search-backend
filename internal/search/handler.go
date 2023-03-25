@@ -1,11 +1,15 @@
 package search
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/auth"
+	"github.com/miniyus/gofiber/config"
 	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
+	"os"
+	"path"
 	"strconv"
 )
 
@@ -16,6 +20,8 @@ type Handler interface {
 	Update(c *fiber.Ctx) error
 	Patch(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
+	UploadImage(c *fiber.Ctx) error
+	GetImage(c *fiber.Ctx) error
 }
 
 type HandlerStruct struct {
@@ -240,6 +246,7 @@ func (h *HandlerStruct) Delete(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
 	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
@@ -253,4 +260,78 @@ func (h *HandlerStruct) Delete(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNoContent).JSON(utils.StatusResponse{
 		Status: rs,
 	})
+}
+
+// UploadImage
+// @Summary upload image
+// @Description upload image
+// @Tags Search
+// @Param id path int true "search pk"
+// @Success 201 {object} Response
+// @Failure 400 {object} apierrors.ValidationErrorResponse
+// @Failure 403 {object} apierrors.ErrorResponse
+// @Failure 404 {object} apierrors.ErrorResponse
+// @Accept multipart/form-data
+// @produce json
+// @Router /api/search/{id} [post]
+// @Security BearerAuth
+func (h *HandlerStruct) UploadImage(c *fiber.Ctx) error {
+	params := c.AllParams()
+	form, err := c.MultipartForm()
+	if err != nil {
+		return fiber.NewError(400, err.Error())
+	}
+
+	pk, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	user, err := auth.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
+	file := form.File["image"][0]
+	res, err := h.service.UploadImage(uint(pk), user.Id, file)
+	if err != nil {
+		return err
+	}
+
+	dataPath := config.GetConfigs().Path.DataPath
+	savePath := fmt.Sprintf("images/%s", file.Filename)
+	if _, err = os.Stat(path.Join(dataPath, "images")); err != nil {
+		err = os.Mkdir(path.Join(dataPath, "images"), 0775)
+		if err != nil {
+			return err
+		}
+	}
+	err = c.SaveFile(file, path.Join(dataPath, savePath))
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(res)
+}
+
+func (h *HandlerStruct) GetImage(c *fiber.Ctx) error {
+	params := c.AllParams()
+	pk, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	user, err := auth.GetAuthUser(c)
+	if err != nil {
+		return err
+	}
+
+	imagePath, err := h.service.FindImagePath(uint(pk), user.Id)
+	if err != nil {
+		return err
+	}
+
+	dataPath := config.GetConfigs().Path.DataPath
+
+	return c.Download(path.Join(dataPath, imagePath), path.Base(imagePath))
 }

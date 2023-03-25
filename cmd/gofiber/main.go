@@ -2,6 +2,9 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/etag"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/miniyus/gofiber"
 	"github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/app"
@@ -16,7 +19,7 @@ import (
 )
 
 // @title keyword-search-backend Swagger API Documentation
-// @version 1.0.0
+// @version 1.0.1
 // @description keyword-search-backend API
 // @contact.name miniyus
 // @contact.url https://miniyus.github.io
@@ -46,6 +49,9 @@ func main() {
 	})
 
 	a.Middleware(func(fiberApp *fiber.App, app app.Application) {
+		fiberApp.Use(compress.New())
+		fiberApp.Use(etag.New())
+		fiberApp.Use(requestid.New())
 		fiberApp.Use(loginlogs.Middleware(database.GetDB(), fiber.MethodPost, "/api/auth/token"))
 	})
 

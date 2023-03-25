@@ -28,6 +28,7 @@ func databaseConfig() map[string]database.Config {
 			&entity.GroupDetail{},
 			&entity.User{},
 			&entity.Host{},
+			&entity.File{},
 			&entity.Search{},
 			&entity.BookMark{},
 			&entity.Tag{},
