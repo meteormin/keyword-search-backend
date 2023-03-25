@@ -21,7 +21,7 @@ type Search struct {
 	Views       uint    `json:"views" gorm:"column:views;default:0"`
 	ShortUrl    *string `gorm:"column:short_url;type:varchar(255);uniqueIndex" json:"short_url"`
 	File        *File   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	FileId      uint
+	FileId      *uint
 }
 
 func (s *Search) Hooks() *gormhooks.Hooks[*Search] {

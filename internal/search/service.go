@@ -351,7 +351,7 @@ func (s *ServiceStruct) UploadImage(pk uint, userId uint, file *multipart.FileHe
 		return nil, err
 	}
 
-	search.FileId = create.ID
+	search.FileId = &create.ID
 
 	save, err := s.repo.Save(*search)
 	if err != nil {
