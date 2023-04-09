@@ -22,8 +22,6 @@ func init() {
 			Database:       databaseConfig(),
 			Path:           getPath(),
 			Auth:           auth(),
-			Cors:           cors(),
-			Csrf:           csrf(),
 			RedisConfig:    redisConfig(),
 			JobQueueConfig: jobQueueConfig(),
 			Validation:     validationConfig(),

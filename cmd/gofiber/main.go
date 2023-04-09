@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/miniyus/gofiber"
@@ -18,6 +19,34 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
+
+func register(cfg *config.Configs) app.Register {
+	return func(app app.Application) {
+		app.Bind(&cfg, func() *config.Configs {
+			return cfg
+		})
+
+		var rClient *redis.Client
+		rClientMaker := utils.RedisClientMaker(cfg.RedisConfig)
+
+		app.Bind(&rClient, func() *redis.Client {
+			return rClientMaker()
+		})
+
+		var db *gorm.DB
+		app.Resolve(&db)
+
+		permission.CreateDefaultPermissions(db, cfg.Permission)
+	}
+}
+
+func middleware(fiberApp *fiber.App, app app.Application) {
+	fiberApp.Use(cors.New())
+	fiberApp.Use(compress.New())
+	fiberApp.Use(etag.New())
+	fiberApp.Use(requestid.New())
+	fiberApp.Use(loginlogs.Middleware(database.GetDB(), fiber.MethodPost, "/api/auth/token"))
+}
 
 // @title keyword-search-backend Swagger API Documentation
 // @version 1.0.1
@@ -39,44 +68,15 @@ func main() {
 	appConfig.FiberConfig.ErrorHandler = apierrors.OverrideDefaultErrorHandler(appConfig.Env)
 	a := gofiber.New(*cfg.Configs)
 
-	a.Register(func(app app.Application) {
-		pCfg := &cfg
-		app.Bind(&pCfg, func() *config.Configs {
-			return pCfg
-		})
-
-		var rClient *redis.Client
-		rClientMaker := utils.RedisClientMaker(cfg.RedisConfig)
-
-		app.Bind(&rClient, func() *redis.Client {
-			return rClientMaker()
-		})
-	})
-
-	a.Middleware(func(fiberApp *fiber.App, app app.Application) {
-		fiberApp.Use(compress.New())
-		fiberApp.Use(etag.New())
-		fiberApp.Use(requestid.New())
-		fiberApp.Use(loginlogs.Middleware(database.GetDB(), fiber.MethodPost, "/api/auth/token"))
-	})
-
-	a.Register(func(app app.Application) {
-		var db *gorm.DB
-		app.Resolve(&db)
-
-		permission.CreateDefaultPermissions(db, cfg.Permission)
-	})
-
+	a.Register(register(&cfg))
 	a.Register(entity.RegisterHooks)
 
-	// register routes
-	a.Route(routes.ApiPrefix, func(router app.Router, app app.Application) {
-		routes.Api(router, app)
-	}, "api")
+	// register middlewares
+	a.Middleware(middleware)
 
-	a.Route(routes.WebPrefix, func(router app.Router, app app.Application) {
-		routes.Web(router, app)
-	}, "web")
+	// register routes
+	a.Route(routes.ApiPrefix, routes.Api, "api")
+	a.Route(routes.WebPrefix, routes.Web, "web")
 
 	// print status
 	a.Status()

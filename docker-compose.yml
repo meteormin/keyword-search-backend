@@ -1,97 +1,99 @@
 version: '3'
 services:
-  debugger:
-    container_name: go-fiber_debugger
-    build:
-      context: .
-      dockerfile: debug.Dockerfile
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    ports:
-      - '8000:${APP_PORT:-8000}'
-      - '2345:2345'
-    networks:
-      - ks
-    depends_on:
-      - redis
-      - pgsql
-  godoc:
-    container_name: godoc
-    image: miniyus/godoc
-    build:
-      context: .
-      dockerfile: godoc.Dockerfile
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    ports:
-      - '6060:6060'
-    networks:
-      - ks
-  keyword-search-backend:
-    container_name: keyword-search-fiber
-    image: miniyus/keyword-search-backend
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        SELECT_ENV: '.${APP_ENV:-local}'
-        GO_GROUP: '${GO_GROUP:-1000}'
-        GO_VERSION: '${GO_VERSION:-1.19}'
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    ports:
-      - '9090:${APP_PORT:-9090}'
-    environment:
-      GOARCH: '${ARCH:-arm64}'
-      GOOS: '${OS:-linux}'
-      GO_USER: '${GO_USER:-1000}'
-      TIME_ZONE: '${TIME_ZONE:-Asia\Seoul}'
-    volumes:
-      - './data:/home/gofiber/data'
-    networks:
-      - ks
-    depends_on:
-      - redis
-      - pgsql
-  pgsql:
-    container_name: ks-pgsql
-    image: 'postgres:14'
-    ports:
-      - '${FORWARD_DB_PORT:-5432}:5432'
-    environment:
-      PGPASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_DATABASE}'
-      POSTGRES_USER: '${DB_USERNAME}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-    volumes:
-      - 'go-pgsql:/var/lib/postgresql/data'
-    networks:
-      - ks
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
-      retries: 3
-      timeout: 5s
-  redis:
-    container_name: ks-redis
-    image: 'redis:alpine'
-    ports:
-      - '${FORWARD_REDIS_PORT:-6379}:6379'
-    volumes:
-      - 'go-redis:/data'
-    networks:
-      - ks
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      retries: 3
-      timeout: 5s
-
+    debugger:
+        container_name: go-fiber_debugger
+        build:
+            context: .
+            dockerfile: debug.Dockerfile
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '8000:${APP_PORT:-8000}'
+            - '2345:2345'
+        networks:
+            - ks
+        depends_on:
+            - redis
+            - pgsql
+    godoc:
+        container_name: godoc
+        image: miniyus/godoc
+        build:
+            context: .
+            dockerfile: godoc.Dockerfile
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '6060:6060'
+        networks:
+            - ks
+    keyword-search-backend:
+        container_name: keyword-search-fiber
+        image: miniyus/keyword-search-backend
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                SELECT_ENV: '.${APP_ENV:-local}'
+                GO_GROUP: '${GO_GROUP:-1000}'
+                GO_VERSION: '${GO_VERSION:-1.19}'
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '9090:${APP_PORT:-9090}'
+        environment:
+            GOARCH: '${ARCH:-arm64}'
+            GOOS: '${OS:-linux}'
+            GO_USER: '${GO_USER:-1000}'
+            TIME_ZONE: '${TIME_ZONE:-Asia\Seoul}'
+        volumes:
+            - './data:/home/gofiber/data'
+        networks:
+            - ks
+        depends_on:
+            - redis
+            - pgsql
+        restart: on-failure
+    pgsql:
+        container_name: ks-pgsql
+        image: 'postgres:14'
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        environment:
+            PGPASSWORD: '${DB_PASSWORD:-secret}'
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+        volumes:
+            - 'go-pgsql:/var/lib/postgresql/data'
+        networks:
+            - ks
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
+            retries: 3
+            timeout: 5s
+        restart: on-failure
+    redis:
+        container_name: ks-redis
+        image: 'redis:alpine'
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        volumes:
+            - 'go-redis:/data'
+        networks:
+            - ks
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            retries: 3
+            timeout: 5s
+        restart: on-failure
 networks:
-  ks:
-    driver: bridge
-    internal: true
-    external: true
+    ks:
+        driver: bridge
+        internal: true
+        external: true
 volumes:
-  go-pgsql:
-    driver: local
-  go-redis:
-    driver: local
+    go-pgsql:
+        driver: local
+    go-redis:
+        driver: local
