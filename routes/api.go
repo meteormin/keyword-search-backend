@@ -2,20 +2,25 @@ package routes
 
 import (
 	"github.com/miniyus/gofiber/app"
-	"github.com/miniyus/gofiber/auth"
-	configure "github.com/miniyus/gofiber/config"
 	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/jobqueue"
 	"github.com/miniyus/gofiber/log"
-	"github.com/miniyus/gofiber/permission"
+	"github.com/miniyus/gofiber/pkg/jwt"
+	rsGen "github.com/miniyus/gofiber/pkg/rs256"
 	"github.com/miniyus/gofiber/utils"
 	worker "github.com/miniyus/goworker"
+	configure "github.com/miniyus/keyword-search-backend/config"
+	"github.com/miniyus/keyword-search-backend/internal/auth"
+	"github.com/miniyus/keyword-search-backend/internal/groups"
 	"github.com/miniyus/keyword-search-backend/internal/host_search"
 	"github.com/miniyus/keyword-search-backend/internal/hosts"
+	"github.com/miniyus/keyword-search-backend/internal/permission"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/internal/short_url"
+	"github.com/miniyus/keyword-search-backend/internal/users"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"path"
 )
 
 const ApiPrefix = "/api"
@@ -50,11 +55,34 @@ func Api(apiRouter app.Router, a app.Application) {
 		zLogger = log.GetLogger()
 	}
 
+	privateKey := rsGen.PrivatePemDecode(path.Join(cfg.Path.DataPath, "secret/private.pem"))
+	tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
+
+	authHandler := auth.New(db, users.NewRepository(db), tokenGenerator)
+	apiRouter.Route(
+		auth.Prefix,
+		auth.Register(authHandler, cfg.Auth.Jwt),
+	).Name("api.auth")
+
 	hasPermission := permission.HasPermission(permission.HasPermissionParameter{
 		DB:           db,
 		DefaultPerms: cfg.Permission,
 		FilterFunc:   nil,
 	})
+
+	groupsHandler := groups.New(db)
+	apiRouter.Route(
+		groups.Prefix,
+		groups.Register(groupsHandler),
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
+	).Name("api.groups")
+
+	usersHandler := users.New(db)
+	apiRouter.Route(
+		users.Prefix,
+		users.Register(usersHandler),
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
+	).Name("api.users")
 
 	apiRouter.Route(
 		hosts.Prefix,

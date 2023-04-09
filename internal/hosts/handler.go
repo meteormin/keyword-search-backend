@@ -3,9 +3,9 @@ package hosts
 import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/miniyus/gofiber/apierrors"
-	"github.com/miniyus/gofiber/auth"
 	"github.com/miniyus/gofiber/pagination"
 	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/keyword-search-backend/internal/auth"
 	"strconv"
 )
 

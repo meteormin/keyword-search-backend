@@ -21,7 +21,7 @@ func databaseConfig() map[string]database.Config {
 
 	if autoMigrate {
 		autoMigrateEntities = []interface{}{
-			&mEntity.AccessToken{},
+			&entity.AccessToken{},
 			&entity.Action{},
 			&entity.Permission{},
 			&entity.Group{},

@@ -2,7 +2,6 @@ package loginlogs
 
 import (
 	"github.com/gofiber/fiber/v2"
-	mEntity "github.com/miniyus/gofiber/entity"
 	"github.com/miniyus/gorm-extension/gormhooks"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
@@ -22,9 +21,9 @@ func Middleware(db *gorm.DB, method string, path string) fiber.Handler {
 
 		repo := NewRepository(db)
 
-		at := mEntity.AccessToken{}
+		at := entity.AccessToken{}
 		atHooks := gormhooks.New(&at)
-		atHooks.HandleAfterCreate(func(c *mEntity.AccessToken, tx *gorm.DB) (err error) {
+		atHooks.HandleAfterCreate(func(c *entity.AccessToken, tx *gorm.DB) (err error) {
 			log := entity.LoginLog{
 				UserId:  c.UserId,
 				LoginAt: time.Now(),

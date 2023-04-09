@@ -178,6 +178,8 @@ github.com/miniyus/gofiber v1.8.4 h1:b1EYlX4BFZ95Qv2+sUckMPCSJzAIwbolToBZ6TbqXB0
 github.com/miniyus/gofiber v1.8.4/go.mod h1:H4cgV0oUFSUK68fB/NyVsuvp9BqkdZIfY8CTZfaOjgU=
 github.com/miniyus/gofiber v1.8.5 h1:WmHVzkT14Yp0clp5v0g3+t/NN23hHhXRnvMpmUVQ6aA=
 github.com/miniyus/gofiber v1.8.5/go.mod h1:318IOjne9JuKfikxS8ni6bNuxD5kjUqgEhv6bZBUnRQ=
+github.com/miniyus/gofiber v1.9.0 h1:M1MlMHeQxdlPmSCzxQzJog18pD400+YRYRC5O9uwkQw=
+github.com/miniyus/gofiber v1.9.0/go.mod h1:h2gZvqaeLOxeHB0OTdPTnzgoKNk3kgsOx6U0v23d7Js=
 github.com/miniyus/gollection v1.0.0 h1:pAN6mFhDkUuDHIuIFtTZVYb+GXQ+slkpxwMt/txd+WI=
 github.com/miniyus/gollection v1.0.0/go.mod h1:3FlPgGHgpBzcPGPfzsVeMI6+sGVBnF7Ns/f9YHtrOmc=
 github.com/miniyus/gollection v1.1.0 h1:E36nQsFAEnHLCB8aOvrpecrOgs5NRKAj5J01lgpMu6o=
@@ -194,6 +196,8 @@ github.com/miniyus/goworker v1.0.0 h1:A9yqjzak08POVcXeSBdZqK6KQZM+y05zyS16jZ386J
 github.com/miniyus/goworker v1.0.0/go.mod h1:2ltRgqs5IoxHBqKF2U57YpiyDNecf5sogcvBjOTo8Bg=
 github.com/miniyus/goworker v1.1.0 h1:n12qVN37QqQlaBs3lfuWEDAaLnkg1Pr5C+5V8GkiDbA=
 github.com/miniyus/goworker v1.1.0/go.mod h1:zjRbK+pP5u8Enb0OHnmy1YeJ8r0sKq4jFODDq1izTPo=
+github.com/miniyus/goworker v1.1.4 h1:lxiKdHOLO2M2XgtEg5szRQ5wtxTeyskBVtpEBShBV3I=
+github.com/miniyus/goworker v1.1.4/go.mod h1:zjRbK+pP5u8Enb0OHnmy1YeJ8r0sKq4jFODDq1izTPo=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/philhofer/fwd v1.1.1/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=
 github.com/philhofer/fwd v1.1.2 h1:bnDivRJ1EWPjUIRXV5KfORO897HTbpFAQddBdE8t7Gw=

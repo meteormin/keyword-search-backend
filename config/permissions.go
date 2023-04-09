@@ -1,6 +1,6 @@
 package config
 
-import "github.com/miniyus/gofiber/permission"
+import "github.com/miniyus/keyword-search-backend/internal/permission"
 
 // getPermissions
 // 최초 기본 값 저장을 위한 설정입니다.
