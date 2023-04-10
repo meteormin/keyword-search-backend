@@ -1,6 +1,7 @@
 package config
 
 import (
+	fCors "github.com/gofiber/fiber/v2/middleware/cors"
 	mConfig "github.com/miniyus/gofiber/config"
 	"github.com/miniyus/keyword-search-backend/internal/permission"
 )
@@ -9,6 +10,7 @@ var cfg *Configs
 
 type Configs struct {
 	*mConfig.Configs
+	Cors        fCors.Config
 	Permission  []permission.Config
 	CreateAdmin CreateAdminConfig
 }
@@ -26,6 +28,7 @@ func init() {
 			JobQueueConfig: jobQueueConfig(),
 			Validation:     validationConfig(),
 		},
+		Cors:        cors(),
 		Permission:  permissionConfig(),
 		CreateAdmin: createAdminConfig(),
 	}

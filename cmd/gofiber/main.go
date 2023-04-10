@@ -40,12 +40,14 @@ func register(cfg *config.Configs) app.Register {
 	}
 }
 
-func middleware(fiberApp *fiber.App, app app.Application) {
-	fiberApp.Use(cors.New())
-	fiberApp.Use(compress.New())
-	fiberApp.Use(etag.New())
-	fiberApp.Use(requestid.New())
-	fiberApp.Use(loginlogs.Middleware(database.GetDB(), fiber.MethodPost, "/api/auth/token"))
+func middleware(cfg *config.Configs) app.MiddlewareRegister {
+	return func(fiberApp *fiber.App, app app.Application) {
+		fiberApp.Use(cors.New(cfg.Cors))
+		fiberApp.Use(compress.New())
+		fiberApp.Use(etag.New())
+		fiberApp.Use(requestid.New())
+		fiberApp.Use(loginlogs.Middleware(database.GetDB(), fiber.MethodPost, "/api/auth/token"))
+	}
 }
 
 // @title keyword-search-backend Swagger API Documentation
@@ -72,7 +74,7 @@ func main() {
 	a.Register(entity.RegisterHooks)
 
 	// register middlewares
-	a.Middleware(middleware)
+	a.Middleware(middleware(&cfg))
 
 	// register routes
 	a.Route(routes.ApiPrefix, routes.Api, "api")
