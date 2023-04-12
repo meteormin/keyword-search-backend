@@ -1,9 +1,11 @@
 package routes
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/jobqueue"
+	"github.com/miniyus/gofiber/jobs"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/pkg/jwt"
 	rsGen "github.com/miniyus/gofiber/pkg/rs256"
@@ -114,4 +116,21 @@ func Api(apiRouter app.Router, a app.Application) {
 		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
 	).Name("api.short_url")
 
+	makeRedisClient := utils.RedisClientMaker(cfg.RedisConfig)
+
+	getAuthUserId := func(ctx *fiber.Ctx) (uint, error) {
+		user, err := auth.GetAuthUser(ctx)
+		if err != nil {
+			return 0, err
+		}
+
+		return user.Id, nil
+	}
+
+	jobsHandler := jobs.New(makeRedisClient, getAuthUserId, jDispatcher, jobqueue.GetRepository())
+	apiRouter.Route(
+		jobs.Prefix,
+		jobs.Register(jobsHandler),
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
+	)
 }

@@ -16,6 +16,7 @@ func permissionConfig() []permission.Config {
 				"/search",
 				"/redirect",
 				"/groups",
+				"/worker",
 			},
 		},
 		{
