@@ -1,27 +1,37 @@
 package tasks
 
 import (
-	"github.com/go-co-op/gocron"
 	"github.com/miniyus/gofiber/app"
-	"log"
+	"github.com/miniyus/gofiber/log"
+	"github.com/miniyus/gofiber/schedule"
+	"github.com/miniyus/keyword-search-backend/config"
 	"time"
 )
 
-func RegisterSchedule() app.Register {
-	return func(app app.Application) {
-		cfg := app.Config()
-		location, err := time.LoadLocation(cfg.TimeZone)
-		if err != nil {
-			panic(err)
-		}
+func RegisterSchedule(app app.Application) {
+	var cfg *config.Configs
 
-		scheduler := gocron.NewScheduler(location)
-		scheduler.TagsUnique()
-		_, err = scheduler.Tag("health-check").Cron("* 0 * * *").Do(func() {
-			log.Println("scheduler health check")
-		})
-		if err != nil {
-			log.Println("scheduler:", err)
-		}
+	app.Resolve(&cfg)
+
+	log.New(log.Config{
+		Name:     "tasks_schedule",
+		FilePath: cfg.Path.LogPath,
+		Filename: "tasks_schedule.log",
+	})
+
+	logger := log.GetLogger("tasks_schedule")
+
+	loc, err := time.LoadLocation(cfg.App.TimeZone)
+	if err != nil {
+		logger.Error(err)
 	}
+
+	scheduleWorker := schedule.NewWorker(schedule.WorkerConfig{
+		TagsUnique: true,
+		Logger:     logger,
+		Location:   loc,
+	})
+
+	scheduleWorker.Run()
+
 }

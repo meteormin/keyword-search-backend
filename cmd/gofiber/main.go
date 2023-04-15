@@ -15,6 +15,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/internal/loginlogs"
 	"github.com/miniyus/keyword-search-backend/internal/permission"
+	"github.com/miniyus/keyword-search-backend/internal/tasks"
 	"github.com/miniyus/keyword-search-backend/routes"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -72,6 +73,8 @@ func main() {
 
 	a.Register(register(&cfg))
 	a.Register(entity.RegisterHooks)
+	a.Register(tasks.RegisterJob)
+	a.Register(tasks.RegisterSchedule)
 
 	// register middlewares
 	a.Middleware(middleware(&cfg))
