@@ -32,6 +32,5 @@ func RegisterSchedule(app app.Application) {
 		Location:   loc,
 	})
 
-	scheduleWorker.Run()
-
+	go scheduleWorker.Run()
 }

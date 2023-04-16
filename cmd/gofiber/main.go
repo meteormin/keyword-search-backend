@@ -18,7 +18,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/tasks"
 	"github.com/miniyus/keyword-search-backend/routes"
 	"github.com/redis/go-redis/v9"
-	"gorm.io/gorm"
 )
 
 func register(cfg *config.Configs) app.Register {
@@ -33,11 +32,6 @@ func register(cfg *config.Configs) app.Register {
 		app.Bind(&rClient, func() *redis.Client {
 			return rClientMaker()
 		})
-
-		var db *gorm.DB
-		app.Resolve(&db)
-
-		permission.CreateDefaultPermissions(db, cfg.Permission)
 	}
 }
 
@@ -75,6 +69,7 @@ func main() {
 	a.Register(entity.RegisterHooks)
 	a.Register(tasks.RegisterJob)
 	a.Register(tasks.RegisterSchedule)
+	a.Register(permission.CreateDefaultPermissions(cfg.Permission))
 
 	// register middlewares
 	a.Middleware(middleware(&cfg))

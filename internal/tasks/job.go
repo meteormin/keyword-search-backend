@@ -44,7 +44,12 @@ func RegisterJob(app app.Application) {
 		if err != nil {
 			return err
 		}
-		job.Meta[job.JobId] = all
+		job.Meta[job.JobId] = map[string]interface{}{
+			"string": all.String,
+			"list":   all.List,
+			"hash":   all.Hash,
+			"sets":   all.Sets,
+		}
 
 		return nil
 	})
@@ -56,14 +61,30 @@ type Jobs struct {
 	container jobqueue.Container
 }
 
-func (j *Jobs) GetRedisCacheAll() (*cache.RedisStruct, error) {
-	job, err := j.container.SyncDispatch(redisCacheAll)
+func GetJobs() *Jobs {
+	return jobs
+}
+
+func (j *Jobs) Dispatch(jobId string) error {
+	return j.container.Dispatch(jobId)
+}
+
+func (j *Jobs) SyncDispatch(jobId string) (interface{}, error) {
+	dispatch, err := j.container.SyncDispatch(jobId)
 	if err != nil {
 		return nil, err
 	}
 
-	all := job.Meta[job.JobId]
-	if redisStruct, ok := all.(*cache.RedisStruct); ok {
+	return dispatch.Meta[dispatch.JobId], nil
+}
+
+func (j *Jobs) GetRedisCacheAll() (*cache.RedisStruct, error) {
+	data, err := j.SyncDispatch(redisCacheAll)
+	if err != nil {
+		return nil, err
+	}
+
+	if redisStruct, ok := data.(*cache.RedisStruct); ok {
 		return redisStruct, nil
 	} else {
 		return nil, errors.New("invalid Type in GetRedisCacheAll()")

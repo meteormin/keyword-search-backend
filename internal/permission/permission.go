@@ -2,10 +2,13 @@ package permission
 
 import (
 	"fmt"
+	"github.com/miniyus/gofiber/app"
 	cLog "github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gollection"
+	"github.com/miniyus/gorm-extension/gormrepo"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"log"
 )
 
@@ -156,33 +159,70 @@ func (perm Permission) FromEntity(permission entity.Permission) Permission {
 	}
 }
 
-func CreateDefaultPermissions(db *gorm.DB, cfgs []Config) {
-	perms := NewPermissionsFromConfig(cfgs)
-	permCollection := NewPermissionCollection(perms...)
+func CreateDefaultPermissions(cfg []Config) app.Register {
+	pCfg := cfg
+	return func(app app.Application) {
+		var db *gorm.DB
+		app.Resolve(&db)
 
-	repo := NewRepository(db)
-	var entities []entity.Permission
+		perms := NewPermissionsFromConfig(pCfg)
+		permCollection := NewPermissionCollection(perms...)
 
-	permCollection.For(func(perm Permission, i int) {
-		entities = append(entities, perm.ToEntity())
-	})
+		repo := NewRepository(db)
+		var entities []entity.Permission
 
-	all, err := repo.All()
-	if err != nil {
-		cLog.GetLogger().Error(err)
-		log.Print(err)
-	}
+		permCollection.For(func(perm Permission, i int) {
+			entities = append(entities, perm.ToEntity())
+		})
 
-	if len(all) != 0 {
-		return
-	}
-
-	_, err = repo.BatchCreate(entities)
-	if err != nil {
+		all, err := repo.All()
 		if err != nil {
 			cLog.GetLogger().Error(err)
-			log.Print(err)
+			log.Println(err)
+		}
+
+		if len(all) != 0 {
+			actionRepo := gormrepo.NewGenericRepository(db, entity.Action{})
+			for _, ent := range entities {
+				canInsert := false
+				for _, perm := range all {
+					canInsert = perm.Permission == ent.Permission && perm.GroupId == ent.GroupId
+					if canInsert {
+						for i, action := range ent.Actions {
+							action.PermissionId = perm.ID
+							ent.Actions[i] = action
+						}
+						break
+					}
+				}
+				if canInsert {
+					actions := ent.Actions
+					err = actionRepo.DB().Transaction(func(tx *gorm.DB) error {
+						return tx.Clauses(clause.OnConflict{
+							Columns: []clause.Column{
+								{Name: "permission_id"},
+								{Name: "method"},
+								{Name: "resource"},
+							},
+							DoUpdates: clause.AssignmentColumns([]string{"updated_at"}),
+						}).Create(&actions).Error
+					})
+					if err != nil {
+						cLog.GetLogger().Error(err)
+						log.Println(ent.Actions)
+						log.Println(err)
+					}
+				}
+			}
+			return
+		}
+
+		_, err = repo.BatchCreate(entities)
+		if err != nil {
+			if err != nil {
+				cLog.GetLogger().Error(err)
+				log.Println(err)
+			}
 		}
 	}
-
 }
