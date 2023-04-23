@@ -35,7 +35,12 @@ func NewRedisCache(client *redis.Client) *RedisCache {
 }
 
 func (rc *RedisCache) All() (*RedisStruct, error) {
-	redisStruct := &RedisStruct{}
+	redisStruct := &RedisStruct{
+		String: map[string]string{},
+		List:   map[string][]string{},
+		Hash:   map[string]map[string]string{},
+		Sets:   map[string][]string{},
+	}
 
 	allKeys, err := rc.client.Keys(ctx, "*").Result()
 	if err != nil {
