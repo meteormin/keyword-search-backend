@@ -20,6 +20,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/internal/short_url"
 	"github.com/miniyus/keyword-search-backend/internal/tasks"
+	"github.com/miniyus/keyword-search-backend/internal/test_api"
 	"github.com/miniyus/keyword-search-backend/internal/users"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -139,4 +140,6 @@ func Api(apiRouter app.Router, a app.Application) {
 		tasks.Prefix,
 		tasks.Register(),
 	)
+
+	apiRouter.Route(test_api.Prefix, test_api.Register(jDispatcher))
 }

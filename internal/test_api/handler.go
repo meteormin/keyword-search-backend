@@ -4,8 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gofiber/log"
-	jobWorker "github.com/miniyus/gofiber/pkg/worker"
 	"github.com/miniyus/gofiber/utils"
+	jobWorker "github.com/miniyus/goworker"
 	"time"
 )
 

@@ -2378,6 +2378,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "keyword-search-backend API",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {

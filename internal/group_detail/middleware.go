@@ -3,11 +3,11 @@ package group_detail
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/miniyus/gofiber/auth"
 	"github.com/miniyus/gofiber/database"
-	"github.com/miniyus/gofiber/permission"
-	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/gollection"
 	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/internal/auth"
+	"github.com/miniyus/keyword-search-backend/internal/permission"
 	"gorm.io/gorm"
 )
 
@@ -76,7 +76,7 @@ func FilterFunc(ctx *fiber.Ctx, groupId uint, perm permission.Permission) bool {
 			return *user.GroupId == perm.GroupId
 		}
 
-		filtered := utils.NewCollection(get).Filter(func(v entity.GroupDetail, i int) bool {
+		filtered := gollection.NewCollection(get).Filter(func(v entity.GroupDetail, i int) bool {
 			return v.GroupId == perm.GroupId
 		})
 
