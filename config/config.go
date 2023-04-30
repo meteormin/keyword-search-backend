@@ -10,6 +10,7 @@ var cfg *Configs
 
 type Configs struct {
 	*mConfig.Configs
+	Auth        Auth
 	Cors        fCors.Config
 	Permission  []permission.Config
 	CreateAdmin CreateAdminConfig
@@ -17,13 +18,13 @@ type Configs struct {
 
 func init() {
 	cfg = &Configs{
+		Auth: auth(),
 		Configs: &mConfig.Configs{
 			App:            appConfig(),
 			Logger:         flogger(),
 			CustomLogger:   loggerConfig(),
 			Database:       databaseConfig(),
 			Path:           getPath(),
-			Auth:           auth(),
 			RedisConfig:    redisConfig(),
 			JobQueueConfig: jobQueueConfig(),
 			Validation:     validationConfig(),

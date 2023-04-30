@@ -8,7 +8,6 @@ import (
 	"github.com/miniyus/gofiber/jobs"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/pkg/jwt"
-	rsGen "github.com/miniyus/gofiber/pkg/rs256"
 	"github.com/miniyus/gofiber/utils"
 	worker "github.com/miniyus/goworker"
 	configure "github.com/miniyus/keyword-search-backend/config"
@@ -24,7 +23,6 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/users"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"path"
 )
 
 const ApiPrefix = "/api"
@@ -59,7 +57,7 @@ func Api(apiRouter app.Router, a app.Application) {
 		zLogger = log.GetLogger()
 	}
 
-	privateKey := rsGen.PrivatePemDecode(path.Join(cfg.Path.DataPath, "secret/private.pem"))
+	privateKey := cfg.Auth.PrivateKey
 	tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
 
 	authHandler := auth.New(db, users.NewRepository(db), tokenGenerator)

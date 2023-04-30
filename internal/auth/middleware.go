@@ -59,7 +59,7 @@ func jwtError() fiber.ErrorHandler {
 			return fiber.NewError(status, err.Error())
 		}
 
-		return fiber.NewError(status, err.Error())
+		return err
 	}
 }
 
