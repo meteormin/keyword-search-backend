@@ -238,6 +238,12 @@ github.com/miniyus/gofiber v1.9.21 h1:7ZcgwHwq9NIA9xXwZwG45nkbGKf2jQSadUdG2h8mVw
 github.com/miniyus/gofiber v1.9.21/go.mod h1:jEYWU7ZmGdjmMK2C7xmGTH+1swZM5y7upsPpNad15XY=
 github.com/miniyus/gofiber v1.9.22 h1:O9V9q3LdRx6BOkVVyKlfv4nwmMZtfi7VVg4QJ9xt8/E=
 github.com/miniyus/gofiber v1.9.22/go.mod h1:jEYWU7ZmGdjmMK2C7xmGTH+1swZM5y7upsPpNad15XY=
+github.com/miniyus/gofiber v1.9.23 h1:w143ntpOufDGcZle/T6BSfzzCrZPgJ83sLgMVw1EdU8=
+github.com/miniyus/gofiber v1.9.23/go.mod h1:WuF0ZibprHfaLtSKoxyCjIyeU5zExMV4uBZ2WPj0N6c=
+github.com/miniyus/gofiber v1.9.24 h1:TKh/SVQ9UufBTIbWvaguslPOXS4Wv8YqpcytoF2RLgk=
+github.com/miniyus/gofiber v1.9.24/go.mod h1:cDYqrPdZnliAuOz3VhALxa3WfFujm6NgRWhnBAn166A=
+github.com/miniyus/gofiber v1.9.25 h1:h1A+sEFMKtB0koBWmVi+SyxvcNEEERWKohIJ5IE94SQ=
+github.com/miniyus/gofiber v1.9.25/go.mod h1:12c3Q+H62haeKD16jCD+jelN/xcZ1JvrlxCsPjNR7yQ=
 github.com/miniyus/gollection v1.0.0 h1:pAN6mFhDkUuDHIuIFtTZVYb+GXQ+slkpxwMt/txd+WI=
 github.com/miniyus/gollection v1.0.0/go.mod h1:3FlPgGHgpBzcPGPfzsVeMI6+sGVBnF7Ns/f9YHtrOmc=
 github.com/miniyus/gollection v1.1.0 h1:E36nQsFAEnHLCB8aOvrpecrOgs5NRKAj5J01lgpMu6o=
@@ -280,6 +286,12 @@ github.com/miniyus/goworker v1.1.16 h1:T3R16woVuBqcRraxpp6/fj8c154milwKqIQMlNW66
 github.com/miniyus/goworker v1.1.16/go.mod h1:zjRbK+pP5u8Enb0OHnmy1YeJ8r0sKq4jFODDq1izTPo=
 github.com/miniyus/goworker v1.1.17 h1:kv/21v8+f5wxJHVDrCWWtwGZKVxUX3CPvTSlsFQqfjk=
 github.com/miniyus/goworker v1.1.17/go.mod h1:zjRbK+pP5u8Enb0OHnmy1YeJ8r0sKq4jFODDq1izTPo=
+github.com/miniyus/goworker v1.1.18 h1:bYQdhy64EthlkhHfhBuVkZROC6HuWbCpT7dTXhS/g8A=
+github.com/miniyus/goworker v1.1.18/go.mod h1:zjRbK+pP5u8Enb0OHnmy1YeJ8r0sKq4jFODDq1izTPo=
+github.com/miniyus/goworker v1.1.19 h1:n/fM8sBgEyRoK3UYLF8o+xejCYyoyHLL95EBZia/CAw=
+github.com/miniyus/goworker v1.1.19/go.mod h1:zjRbK+pP5u8Enb0OHnmy1YeJ8r0sKq4jFODDq1izTPo=
+github.com/miniyus/goworker v1.1.20 h1:f2RxEbTiVJnP6ITCWMEe5FneIy0dyZDaDfH5Lek//eU=
+github.com/miniyus/goworker v1.1.20/go.mod h1:zjRbK+pP5u8Enb0OHnmy1YeJ8r0sKq4jFODDq1izTPo=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/philhofer/fwd v1.1.1/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=
 github.com/philhofer/fwd v1.1.2 h1:bnDivRJ1EWPjUIRXV5KfORO897HTbpFAQddBdE8t7Gw=

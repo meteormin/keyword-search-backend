@@ -139,5 +139,5 @@ func Api(apiRouter app.Router, a app.Application) {
 		tasks.Register(),
 	)
 
-	apiRouter.Route(test_api.Prefix, test_api.Register(jDispatcher))
+	apiRouter.Route(test_api.Prefix, test_api.Register(jDispatcher, utils.RedisClientMaker(cfg.RedisConfig)()))
 }

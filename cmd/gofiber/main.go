@@ -22,15 +22,15 @@ import (
 
 func register(cfg *config.Configs) app.Register {
 	return func(app app.Application) {
-		app.Bind(&cfg, func() *config.Configs {
+		app.Singleton(func() *config.Configs {
 			return cfg
 		})
 
 		var rClient *redis.Client
 		rClientMaker := utils.RedisClientMaker(cfg.RedisConfig)
-
-		app.Bind(&rClient, func() *redis.Client {
-			return rClientMaker()
+		rClient = rClientMaker()
+		app.Singleton(func() *redis.Client {
+			return rClient
 		})
 	}
 }

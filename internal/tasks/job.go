@@ -3,8 +3,11 @@ package tasks
 import (
 	"errors"
 	"github.com/miniyus/gofiber/app"
+	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/gofiber/entity"
 	"github.com/miniyus/gofiber/jobqueue"
 	"github.com/miniyus/gofiber/log"
+	"github.com/miniyus/gorm-extension/gormrepo"
 	worker "github.com/miniyus/goworker"
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/cache"
@@ -15,7 +18,8 @@ import (
 var jobs *Jobs
 
 var (
-	redisCacheAll = "cache.redis.all"
+	redisCacheAll   = "cache.redis.all"
+	pruneJobHistory = "job_history.prune"
 )
 
 func RegisterJob(app app.Application) {
@@ -35,11 +39,11 @@ func RegisterJob(app app.Application) {
 	})
 
 	container := jobqueue.GetContainer()
+	var redisClient *redis.Client
+	app.Resolve(&redisClient)
+	rc := cache.NewRedisCache(redisClient)
 
 	container.AddJob(redisCacheAll, func(job *worker.Job) error {
-		var redisClient *redis.Client
-		app.Resolve(&redisClient)
-		rc := cache.NewRedisCache(redisClient)
 		all, err := rc.All()
 		if err != nil {
 			return err
@@ -51,6 +55,12 @@ func RegisterJob(app app.Application) {
 			"sets":   all.Sets,
 		}
 
+		return nil
+	})
+
+	repo := gormrepo.NewGenericRepository(database.GetDB(), entity.JobHistory{})
+	container.AddJob(pruneJobHistory, func(job *worker.Job) error {
+		repo.DB().Where("created_at BETWEEN ? AND ?")
 		return nil
 	})
 

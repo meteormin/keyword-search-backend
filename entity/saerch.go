@@ -55,8 +55,11 @@ func (sh *SearchHookHandler) AfterSave(s *Search, tx *gorm.DB) (err error) {
 		}
 
 		rKey := "short_url." + strconv.Itoa(int(h.UserId))
+
+		redisCtx := context.Background()
+
 		cached, err := rClient.HGet(
-			context.Background(),
+			redisCtx,
 			rKey,
 			*s.ShortUrl,
 		).Result()
@@ -64,7 +67,7 @@ func (sh *SearchHookHandler) AfterSave(s *Search, tx *gorm.DB) (err error) {
 		if cached != "" && err == nil {
 			realUrl := utils.MakeRealUrl(h.Host, h.Path, s.QueryKey, s.Query)
 			rClient.HSet(
-				context.Background(),
+				redisCtx,
 				rKey,
 				*s.ShortUrl,
 				realUrl,
