@@ -1,5 +1,7 @@
 package bookmarks
 
+import "github.com/miniyus/keyword-search-backend/repo"
+
 type Service interface {
 	All()
 	Find(pk uint)
@@ -9,7 +11,7 @@ type Service interface {
 }
 
 type ServiceStruct struct {
-	repo Repository
+	repo repo.BookmarkRepository
 }
 
 func (s *ServiceStruct) All() {

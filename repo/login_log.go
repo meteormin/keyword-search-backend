@@ -1,4 +1,4 @@
-package loginlogs
+package repo
 
 import (
 	"github.com/miniyus/gorm-extension/gormrepo"
@@ -6,22 +6,22 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository interface {
+type LoginLogRepository interface {
 	gormrepo.GenericRepository[entity.LoginLog]
 	Create(log entity.LoginLog) (*entity.LoginLog, error)
 	GetByUserId(userId uint) ([]entity.LoginLog, error)
 }
 
-type RepositoryStruct struct {
+type LoginLogRepositoryStruct struct {
 	gormrepo.GenericRepository[entity.LoginLog]
 }
 
-func (r RepositoryStruct) GetByUserId(userId uint) ([]entity.LoginLog, error) {
+func (r LoginLogRepositoryStruct) GetByUserId(userId uint) ([]entity.LoginLog, error) {
 	return r.GetByEntity(entity.LoginLog{UserId: userId})
 }
 
-func NewRepository(db *gorm.DB) Repository {
-	return &RepositoryStruct{
+func NewLoginLogRepository(db *gorm.DB) LoginLogRepository {
+	return &LoginLogRepositoryStruct{
 		gormrepo.NewGenericRepository(db, entity.LoginLog{}),
 	}
 }

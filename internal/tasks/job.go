@@ -12,6 +12,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/cache"
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -60,7 +61,21 @@ func RegisterJob(app app.Application) {
 
 	repo := gormrepo.NewGenericRepository(database.GetDB(), entity.JobHistory{})
 	container.AddJob(pruneJobHistory, func(job *worker.Job) error {
-		repo.DB().Where("created_at BETWEEN ? AND ?")
+		get, err := repo.Get(func(tx *gorm.DB) (*gorm.DB, error) {
+			now := time.Now()
+			year, month, _ := now.Date()
+			loc := now.Location()
+			currentMonth := time.Date(year, month, 1, 0, 0, 0, 0, loc)
+			tx.Where("created_at < ?", currentMonth)
+			return tx, nil
+		})
+
+		if err != nil {
+			return err
+		}
+
+		job.Meta[job.JobId] = get
+
 		return nil
 	})
 
@@ -98,5 +113,18 @@ func (j *Jobs) GetRedisCacheAll() (*cache.RedisStruct, error) {
 		return redisStruct, nil
 	} else {
 		return nil, errors.New("invalid Type in GetRedisCacheAll()")
+	}
+}
+
+func (j *Jobs) GetPruneJobHistory() ([]entity.JobHistory, error) {
+	data, err := j.SyncDispatch(pruneJobHistory)
+	if err != nil {
+		return nil, err
+	}
+
+	if histories, ok := data.([]entity.JobHistory); ok {
+		return histories, nil
+	} else {
+		return nil, errors.New("invalid Type in GetPruneJobHistory")
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/gorm-extension/gormrepo"
 	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -24,15 +25,15 @@ type Service interface {
 	Update(pk uint, userId uint, search *UpdateSearch) (*Response, error)
 	Patch(pk uint, userId uint, search *PatchSearch) (*Response, error)
 	Delete(pk uint, userId uint) (bool, error)
-	UploadImage(pk uint, userId uint, file *multipart.FileHeader) (*Response, error)
-	FindImagePath(pk uint, userId uint) (string, error)
+	UploadImages(pk uint, userId uint, files []*multipart.FileHeader) (*Response, error)
+	FindImagePath(pk uint, searchFilePk uint, userId uint) (string, error)
 }
 
 type ServiceStruct struct {
-	repo Repository
+	repo repo.SearchRepository
 }
 
-func NewService(repo Repository) Service {
+func NewService(repo repo.SearchRepository) Service {
 	return &ServiceStruct{
 		repo: repo,
 	}
@@ -70,7 +71,7 @@ func (s *ServiceStruct) GetByHostId(hostId uint, userId uint, query Query) (pagi
 		}, fiber.ErrForbidden
 	}
 
-	data, count, err := s.repo.GetByHostId(hostId, Filter{
+	data, count, err := s.repo.GetByHostId(hostId, repo.SearchFilter{
 		Page:     query.Page,
 		Query:    query.Query,
 		QueryKey: query.QueryKey,
@@ -108,7 +109,7 @@ func (s *ServiceStruct) GetDescriptionsByHostId(hostId uint, userId uint, query 
 		}, fiber.ErrForbidden
 	}
 
-	data, count, err := s.repo.GetByHostId(hostId, Filter{
+	data, count, err := s.repo.GetByHostId(hostId, repo.SearchFilter{
 		Page:     query.Page,
 		Query:    query.Query,
 		QueryKey: query.QueryKey,
@@ -305,14 +306,47 @@ func (s *ServiceStruct) Delete(pk uint, userId uint) (bool, error) {
 	return s.repo.Delete(pk)
 }
 
-func (s *ServiceStruct) UploadImage(pk uint, userId uint, file *multipart.FileHeader) (*Response, error) {
-	fileRepo := gormrepo.NewGenericRepository(database.GetDB(), entity.File{})
-	savePath := fmt.Sprintf("images/%s", file.Filename)
+func (s *ServiceStruct) UploadImages(pk uint, userId uint, fs []*multipart.FileHeader) (*Response, error) {
+	fileRepo := repo.NewFileRepository(database.GetDB())
+	fileEntities := make([]entity.File, 0)
+	for _, file := range fs {
+		savePath := fmt.Sprintf("images/%s", file.Filename)
+		ext := ""
+		split := strings.Split(file.Filename, ".")
+		if len(split) > 1 {
+			ext = split[1]
+		}
 
-	ext := ""
-	split := strings.Split(file.Filename, ".")
-	if len(split) > 1 {
-		ext = split[1]
+		f, err := file.Open()
+		if err != nil {
+			return nil, err
+		}
+
+		fh := make([]byte, 512)
+		_, err = f.Read(fh)
+		if err != nil {
+			return nil, err
+		}
+
+		mimType := http.DetectContentType(fh)
+		//if !strings.Contains(mimType, "image") {
+		//	log.Print(mimType)
+		//	return nil, fiber.NewError(400, "must upload only image file")
+		//}
+
+		fileEntity := entity.File{
+			Path:      savePath,
+			Size:      file.Size,
+			MimeType:  mimType,
+			Extension: ext,
+		}
+
+		fileEntities = append(fileEntities, fileEntity)
+	}
+
+	create, err := fileRepo.BatchCreate(fileEntities)
+	if err != nil {
+		return nil, err
 	}
 
 	search, err := s.repo.Find(pk)
@@ -324,34 +358,15 @@ func (s *ServiceStruct) UploadImage(pk uint, userId uint, file *multipart.FileHe
 		return nil, fiber.ErrForbidden
 	}
 
-	f, err := file.Open()
-	if err != nil {
-		return nil, err
+	search.SearchFiles = make([]entity.SearchFile, 0)
+
+	for _, createFile := range create {
+		sfEntity := entity.SearchFile{
+			SearchId: search.ID,
+			FileId:   createFile.ID,
+		}
+		search.SearchFiles = append(search.SearchFiles, sfEntity)
 	}
-
-	fh := make([]byte, 512)
-	_, err = f.Read(fh)
-	if err != nil {
-		return nil, err
-	}
-
-	mimType := http.DetectContentType(fh)
-	//if !strings.Contains(mimType, "image") {
-	//	log.Print(mimType)
-	//	return nil, fiber.NewError(400, "must upload only image file")
-	//}
-
-	create, err := fileRepo.Create(entity.File{
-		Path:      savePath,
-		MimeType:  mimType,
-		Extension: ext,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	search.FileId = &create.ID
 
 	save, err := s.repo.Save(*search)
 	if err != nil {
@@ -364,19 +379,27 @@ func (s *ServiceStruct) UploadImage(pk uint, userId uint, file *multipart.FileHe
 	return &res, nil
 }
 
-func (s *ServiceStruct) FindImagePath(pk uint, userId uint) (string, error) {
-	find, err := s.repo.Preload("File").Preload("Host").Find(pk)
-	if err != nil {
-		return "", err
+func (s *ServiceStruct) FindImagePath(pk uint, searchFilePk uint, userId uint) (string, error) {
+	var filePath string
+
+	searchFileRepo := gormrepo.NewGenericRepository(database.GetDB(), entity.SearchFile{})
+	searchFileEntity := &entity.SearchFile{}
+	tx := searchFileRepo.Preload("Search").
+		Preload("File").DB().
+		Where(entity.SearchFile{
+			SearchId: pk,
+		}).First(searchFileEntity, searchFilePk)
+
+	if tx.Error != nil {
+		return filePath, tx.Error
 	}
 
-	if find.Host.UserId != userId {
-		return "", fiber.ErrForbidden
+	host := searchFileEntity.Search.Host
+	if host.UserId != userId {
+		return filePath, fiber.ErrForbidden
 	}
 
-	if find.File == nil {
-		return "", fiber.ErrNotFound
-	}
+	filePath = searchFileEntity.File.Path
 
-	return find.File.Path, nil
+	return filePath, nil
 }

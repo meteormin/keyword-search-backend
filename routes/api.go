@@ -21,6 +21,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/tasks"
 	"github.com/miniyus/keyword-search-backend/internal/test_api"
 	"github.com/miniyus/keyword-search-backend/internal/users"
+	repo "github.com/miniyus/keyword-search-backend/repo"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -60,7 +61,7 @@ func Api(apiRouter app.Router, a app.Application) {
 	privateKey := cfg.Auth.PrivateKey
 	tokenGenerator := jwt.NewGenerator(privateKey, privateKey.Public(), cfg.Auth.Exp)
 
-	authHandler := auth.New(db, users.NewRepository(db), tokenGenerator)
+	authHandler := auth.New(db, repo.NewUserRepository(db), tokenGenerator)
 	apiRouter.Route(
 		auth.Prefix,
 		auth.Register(authHandler, cfg.Auth.Jwt),

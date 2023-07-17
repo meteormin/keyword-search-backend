@@ -8,6 +8,7 @@ import (
 	"github.com/miniyus/gofiber/database"
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/utils"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"time"
@@ -189,7 +190,7 @@ func checkExpired(token string, gormDB ...*gorm.DB) error {
 		db = database.GetDB()
 	}
 
-	tokenRepository := NewRepository(db)
+	tokenRepository := repo.NewAuthRepository(db)
 
 	accessToken, err := tokenRepository.FindByToken(token)
 	if err != nil {

@@ -1696,8 +1696,7 @@
                 "description",
                 "host_id",
                 "publish",
-                "query",
-                "query_key"
+                "query"
             ],
             "properties": {
                 "description": {
@@ -2203,8 +2202,7 @@
                 "description",
                 "host_id",
                 "publish",
-                "query",
-                "query_key"
+                "query"
             ],
             "properties": {
                 "description": {
@@ -2305,8 +2303,7 @@
                 "description",
                 "host_id",
                 "publish",
-                "query",
-                "query_key"
+                "query"
             ],
             "properties": {
                 "description": {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gofiber/log"
-	"github.com/miniyus/keyword-search-backend/internal/search"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"github.com/miniyus/keyword-search-backend/utils"
 	"github.com/redis/go-redis/v9"
 	"strconv"
@@ -18,12 +18,12 @@ type Service interface {
 }
 
 type ServiceStruct struct {
-	searchRepo search.Repository
+	searchRepo repo.SearchRepository
 	makeRedis  func() *redis.Client
 	redis      *redis.Client
 }
 
-func NewService(repository search.Repository, redisClient func() *redis.Client) Service {
+func NewService(repository repo.SearchRepository, redisClient func() *redis.Client) Service {
 	return &ServiceStruct{
 		searchRepo: repository,
 		makeRedis:  redisClient,

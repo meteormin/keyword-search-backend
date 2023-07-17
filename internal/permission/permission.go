@@ -7,6 +7,7 @@ import (
 	"github.com/miniyus/gollection"
 	"github.com/miniyus/gorm-extension/gormrepo"
 	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"log"
@@ -168,14 +169,14 @@ func CreateDefaultPermissions(cfg []Config) app.Register {
 		perms := NewPermissionsFromConfig(pCfg)
 		permCollection := NewPermissionCollection(perms...)
 
-		repo := NewRepository(db)
+		repository := repo.NewPermissionRepository(db)
 		var entities []entity.Permission
 
 		permCollection.For(func(perm Permission, i int) {
 			entities = append(entities, perm.ToEntity())
 		})
 
-		all, err := repo.All()
+		all, err := repository.All()
 		if err != nil {
 			cLog.GetLogger().Error(err)
 			log.Println(err)
@@ -217,7 +218,7 @@ func CreateDefaultPermissions(cfg []Config) app.Register {
 			return
 		}
 
-		_, err = repo.BatchCreate(entities)
+		_, err = repository.BatchCreate(entities)
 		if err != nil {
 			if err != nil {
 				cLog.GetLogger().Error(err)

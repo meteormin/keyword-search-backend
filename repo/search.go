@@ -1,4 +1,4 @@
-package search
+package repo
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type Filter struct {
+type SearchFilter struct {
 	pagination.Page
 	Query    *string
 	QueryKey *string
@@ -19,7 +19,7 @@ type Filter struct {
 	OrderBy  *string
 }
 
-func (f Filter) FillEntity(ent *entity.Search) {
+func (f SearchFilter) FillEntity(ent *entity.Search) {
 	if f.QueryKey != nil {
 		ent.QueryKey = *f.QueryKey
 	}
@@ -33,27 +33,27 @@ func (f Filter) FillEntity(ent *entity.Search) {
 	}
 }
 
-type Repository interface {
+type SearchRepository interface {
 	gormrepo.GenericRepository[entity.Search]
 	AllWithPage(page pagination.Page) ([]entity.Search, int64, error)
-	GetByHostId(hostId uint, filter Filter) ([]entity.Search, int64, error)
+	GetByHostId(hostId uint, filter SearchFilter) ([]entity.Search, int64, error)
 	GetDescriptionsByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error)
 	BatchCreate(entities []entity.Search) ([]entity.Search, error)
 	FindByShortUrl(code string, userId uint) (*entity.Search, error)
 	HasHost(hostId uint, userId uint) bool
 }
 
-type RepositoryStruct struct {
+type SearchRepositoryStruct struct {
 	gormrepo.GenericRepository[entity.Search]
 }
 
-func NewRepository(db *gorm.DB) Repository {
-	return &RepositoryStruct{
+func NewSearchRepository(db *gorm.DB) SearchRepository {
+	return &SearchRepositoryStruct{
 		gormrepo.NewGenericRepository(db, entity.Search{}),
 	}
 }
 
-func (r *RepositoryStruct) HasHost(hostId uint, userId uint) bool {
+func (r *SearchRepositoryStruct) HasHost(hostId uint, userId uint) bool {
 	var host entity.Host
 	err := r.DB().Where(&entity.Host{UserId: userId}).First(&host, hostId).Error
 	if err != nil {
@@ -63,7 +63,7 @@ func (r *RepositoryStruct) HasHost(hostId uint, userId uint) bool {
 	return true
 }
 
-func (r *RepositoryStruct) Count(search entity.Search) (int64, error) {
+func (r *SearchRepositoryStruct) Count(search entity.Search) (int64, error) {
 	var count int64 = 0
 
 	err := r.DB().Model(&search).Count(&count).Error
@@ -71,7 +71,7 @@ func (r *RepositoryStruct) Count(search entity.Search) (int64, error) {
 	return count, err
 }
 
-func (r *RepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Search, int64, error) {
+func (r *SearchRepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
 	count, err := r.Count(entity.Search{})
 
@@ -86,7 +86,7 @@ func (r *RepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Search, i
 	return search, count, err
 }
 
-func (r *RepositoryStruct) GetByHostId(hostId uint, filter Filter) ([]entity.Search, int64, error) {
+func (r *SearchRepositoryStruct) GetByHostId(hostId uint, filter SearchFilter) ([]entity.Search, int64, error) {
 	var search []entity.Search
 	var count int64
 
@@ -112,7 +112,7 @@ func (r *RepositoryStruct) GetByHostId(hostId uint, filter Filter) ([]entity.Sea
 	return search, count, err
 }
 
-func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error) {
+func (r *SearchRepositoryStruct) GetDescriptionsByHostId(hostId uint, page pagination.Page) ([]entity.Search, int64, error) {
 	var search []entity.Search
 	var count int64
 
@@ -140,7 +140,7 @@ func (r *RepositoryStruct) GetDescriptionsByHostId(hostId uint, page pagination.
 	return search, count, err
 }
 
-func (r *RepositoryStruct) Find(pk uint) (*entity.Search, error) {
+func (r *SearchRepositoryStruct) Find(pk uint) (*entity.Search, error) {
 	var search entity.Search
 	err := r.DB().Joins("Host", r.DB().Where(&entity.Host{Publish: true})).First(&search, pk).Error
 
@@ -155,7 +155,7 @@ func (r *RepositoryStruct) Find(pk uint) (*entity.Search, error) {
 	return &search, nil
 }
 
-func (r *RepositoryStruct) BatchCreate(search []entity.Search) ([]entity.Search, error) {
+func (r *SearchRepositoryStruct) BatchCreate(search []entity.Search) ([]entity.Search, error) {
 	err := r.DB().Transaction(func(tx *gorm.DB) error {
 		return tx.Clauses(clause.OnConflict{
 			Columns: []clause.Column{
@@ -172,7 +172,7 @@ func (r *RepositoryStruct) BatchCreate(search []entity.Search) ([]entity.Search,
 	return search, err
 }
 
-func (r *RepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Search, error) {
+func (r *SearchRepositoryStruct) FindByShortUrl(code string, userId uint) (*entity.Search, error) {
 	var search entity.Search
 	err := r.DB().Joins("Host", r.DB().Where(&entity.Host{Publish: true})).
 		Where(&entity.Search{ShortUrl: &code}).

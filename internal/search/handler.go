@@ -292,23 +292,26 @@ func (h *HandlerStruct) UploadImage(c *fiber.Ctx) error {
 		return err
 	}
 
-	file := form.File["image"][0]
-	res, err := h.service.UploadImage(uint(pk), user.Id, file)
+	files := form.File["image"]
+	res, err := h.service.UploadImages(uint(pk), user.Id, files)
 	if err != nil {
 		return err
 	}
 
-	dataPath := config.GetConfigs().Path.DataPath
-	savePath := fmt.Sprintf("images/%s", file.Filename)
-	if _, err = os.Stat(path.Join(dataPath, "images")); err != nil {
-		err = os.Mkdir(path.Join(dataPath, "images"), 0775)
+	for _, file := range files {
+		dataPath := config.GetConfigs().Path.DataPath
+		savePath := fmt.Sprintf("images/%s", file.Filename)
+		if _, err = os.Stat(path.Join(dataPath, "images")); err != nil {
+			err = os.Mkdir(path.Join(dataPath, "images"), 0775)
+			if err != nil {
+				return err
+			}
+		}
+
+		err = c.SaveFile(file, path.Join(dataPath, savePath))
 		if err != nil {
 			return err
 		}
-	}
-	err = c.SaveFile(file, path.Join(dataPath, savePath))
-	if err != nil {
-		return err
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(res)
@@ -321,12 +324,17 @@ func (h *HandlerStruct) GetImage(c *fiber.Ctx) error {
 		return err
 	}
 
+	fileId, err := strconv.ParseUint(params["fileId"], 10, 64)
+	if err != nil {
+		return err
+	}
+
 	user, err := auth.GetAuthUser(c)
 	if err != nil {
 		return err
 	}
 
-	imagePath, err := h.service.FindImagePath(uint(pk), user.Id)
+	imagePath, err := h.service.FindImagePath(uint(pk), uint(fileId), user.Id)
 	if err != nil {
 		return err
 	}
@@ -335,3 +343,25 @@ func (h *HandlerStruct) GetImage(c *fiber.Ctx) error {
 
 	return c.Download(path.Join(dataPath, imagePath), path.Base(imagePath))
 }
+
+//func (h *HandlerStruct) GetImages(c *fiber.Ctx) error {
+//	params := c.AllParams()
+//	pk, err := strconv.ParseUint(params["id"], 10, 64)
+//	if err != nil {
+//		return err
+//	}
+//
+//	user, err := auth.GetAuthUser(c)
+//	if err != nil {
+//		return err
+//	}
+//
+//	imagePath, err := h.service.FindImagePath(uint(pk), user.Id)
+//	if err != nil {
+//		return err
+//	}
+//
+//	dataPath := config.GetConfigs().Path.DataPath
+//
+//	return c.Download(path.Join(dataPath, imagePath), path.Base(imagePath))
+//}

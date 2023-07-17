@@ -1,4 +1,4 @@
-package permission
+package repo
 
 import (
 	"github.com/miniyus/gorm-extension/gormrepo"
@@ -7,23 +7,23 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type Repository interface {
+type PermissionRepository interface {
 	gormrepo.GenericRepository[entity.Permission]
 	BatchCreate(permission []entity.Permission) ([]entity.Permission, error)
 	GetByGroupId(groupId uint) ([]entity.Permission, error)
 }
 
-type RepositoryStruct struct {
+type PermissionRepositoryStruct struct {
 	gormrepo.GenericRepository[entity.Permission]
 }
 
-func NewRepository(db *gorm.DB) Repository {
-	return &RepositoryStruct{
+func NewPermissionRepository(db *gorm.DB) PermissionRepository {
+	return &PermissionRepositoryStruct{
 		gormrepo.NewGenericRepository(db, entity.Permission{}),
 	}
 }
 
-func (r *RepositoryStruct) BatchCreate(permission []entity.Permission) ([]entity.Permission, error) {
+func (r *PermissionRepositoryStruct) BatchCreate(permission []entity.Permission) ([]entity.Permission, error) {
 	err := r.DB().Transaction(func(tx *gorm.DB) error {
 		return tx.Clauses(clause.OnConflict{
 			Columns: []clause.Column{
@@ -41,7 +41,7 @@ func (r *RepositoryStruct) BatchCreate(permission []entity.Permission) ([]entity
 	return permission, nil
 }
 
-func (r *RepositoryStruct) GetByGroupId(groupId uint) ([]entity.Permission, error) {
+func (r *PermissionRepositoryStruct) GetByGroupId(groupId uint) ([]entity.Permission, error) {
 	permissions := make([]entity.Permission, 0)
 	err := r.DB().Preload("Actions").Where(entity.Permission{GroupId: groupId}).Find(&permissions).Error
 

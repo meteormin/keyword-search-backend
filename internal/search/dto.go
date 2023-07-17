@@ -12,7 +12,7 @@ type MultiCreateSearch struct {
 
 type CreateSearch struct {
 	HostId      uint   `json:"host_id" validate:"required"`
-	QueryKey    string `json:"query_key" validate:"required"`
+	QueryKey    string `json:"query_key"`
 	Query       string `json:"query" validate:"required"`
 	Description string `json:"description" validate:"required"`
 	Publish     bool   `json:"publish" validate:"required,boolean"`
@@ -20,7 +20,7 @@ type CreateSearch struct {
 
 type UpdateSearch struct {
 	HostId      uint   `json:"host_id" validate:"required"`
-	QueryKey    string `json:"query_key" validate:"required"`
+	QueryKey    string `json:"query_key"`
 	Query       string `json:"query" validate:"required"`
 	Description string `json:"description" validate:"required"`
 	Publish     bool   `json:"publish" validate:"required,boolean"`

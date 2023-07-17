@@ -53,7 +53,6 @@ definitions:
     - host_id
     - publish
     - query
-    - query_key
     type: object
   github_com_miniyus_keyword-search-backend_internal_search.Description:
     properties:
@@ -389,7 +388,6 @@ definitions:
     - host_id
     - publish
     - query
-    - query_key
     type: object
   internal_search.PatchSearch:
     properties:
@@ -457,7 +455,6 @@ definitions:
     - host_id
     - publish
     - query
-    - query_key
     type: object
   internal_short_url.Response:
     properties:

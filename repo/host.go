@@ -1,4 +1,4 @@
-package hosts
+package repo
 
 import (
 	"github.com/miniyus/gofiber/pagination"
@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository interface {
+type HostRepository interface {
 	gormrepo.GenericRepository[entity.Host]
 	AllWithPage(page pagination.Page) ([]entity.Host, int64, error)
 	GetByUserId(userId uint, page pagination.Page) ([]entity.Host, int64, error)
@@ -17,17 +17,17 @@ type Repository interface {
 	Update(pk uint, ent entity.Host) (*entity.Host, error)
 }
 
-type RepositoryStruct struct {
+type HostRepositoryStruct struct {
 	gormrepo.GenericRepository[entity.Host]
 }
 
-func NewRepository(db *gorm.DB) Repository {
-	return &RepositoryStruct{
+func NewHostRepository(db *gorm.DB) HostRepository {
+	return &HostRepositoryStruct{
 		gormrepo.NewGenericRepository(db, entity.Host{}),
 	}
 }
 
-func (r *RepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Host, int64, error) {
+func (r *HostRepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Host, int64, error) {
 	var hosts []entity.Host
 	count, err := r.Count(entity.Host{})
 
@@ -42,7 +42,7 @@ func (r *RepositoryStruct) AllWithPage(page pagination.Page) ([]entity.Host, int
 	return hosts, count, err
 }
 
-func (r *RepositoryStruct) Count(host entity.Host) (int64, error) {
+func (r *HostRepositoryStruct) Count(host entity.Host) (int64, error) {
 	var count int64 = 0
 
 	err := r.DB().Model(&host).Count(&count).Error
@@ -50,7 +50,7 @@ func (r *RepositoryStruct) Count(host entity.Host) (int64, error) {
 	return count, err
 }
 
-func (r *RepositoryStruct) GetByUserId(userId uint, page pagination.Page) (host []entity.Host, count int64, e error) {
+func (r *HostRepositoryStruct) GetByUserId(userId uint, page pagination.Page) (host []entity.Host, count int64, e error) {
 	var hosts []entity.Host
 	var cnt int64 = 0
 
@@ -70,7 +70,7 @@ func (r *RepositoryStruct) GetByUserId(userId uint, page pagination.Page) (host 
 	return hosts, cnt, err
 }
 
-func (r *RepositoryStruct) GetByGroupId(groupId uint, page pagination.Page) ([]entity.Host, int64, error) {
+func (r *HostRepositoryStruct) GetByGroupId(groupId uint, page pagination.Page) ([]entity.Host, int64, error) {
 	var group entity.Group
 	var count int64
 	hosts := make([]entity.Host, 0)
@@ -95,7 +95,7 @@ func (r *RepositoryStruct) GetByGroupId(groupId uint, page pagination.Page) ([]e
 	return hosts, count, nil
 }
 
-func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page pagination.Page) ([]entity.Host, int64, error) {
+func (r *HostRepositoryStruct) GetSubjectsByUserId(userId uint, page pagination.Page) ([]entity.Host, int64, error) {
 	var hosts []entity.Host
 	var cnt int64 = 0
 
@@ -114,7 +114,7 @@ func (r *RepositoryStruct) GetSubjectsByUserId(userId uint, page pagination.Page
 	return hosts, cnt, err
 }
 
-func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page pagination.Page) ([]entity.Host, int64, error) {
+func (r *HostRepositoryStruct) GetSubjectsByGroupId(groupId uint, page pagination.Page) ([]entity.Host, int64, error) {
 	var group entity.Group
 	hosts := make([]entity.Host, 0)
 
@@ -139,7 +139,7 @@ func (r *RepositoryStruct) GetSubjectsByGroupId(groupId uint, page pagination.Pa
 	return hosts, int64(len(hosts)), err
 }
 
-func (r *RepositoryStruct) Update(pk uint, ent entity.Host) (*entity.Host, error) {
+func (r *HostRepositoryStruct) Update(pk uint, ent entity.Host) (*entity.Host, error) {
 	find, err := r.Find(pk)
 	if err != nil {
 		return nil, err

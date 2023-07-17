@@ -8,6 +8,7 @@ import (
 	"github.com/miniyus/gollection"
 	configure "github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/search"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"log"
 	"os"
 	"path"
@@ -33,8 +34,8 @@ func main() {
 	config := configure.GetConfigs()
 	db := database.New(config.Database["default"])
 
-	repo := search.NewRepository(db)
-	service := search.NewService(repo)
+	repository := repo.NewSearchRepository(db)
+	service := search.NewService(repository)
 
 	batchPath := path.Join(config.Path.DataPath, "/batch")
 

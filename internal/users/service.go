@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/repo"
 )
 
 type Service interface {
@@ -13,10 +14,10 @@ type Service interface {
 }
 
 type ServiceStruct struct {
-	repo Repository
+	repo repo.UserRepository
 }
 
-func NewService(repo Repository) Service {
+func NewService(repo repo.UserRepository) Service {
 	return &ServiceStruct{repo: repo}
 }
 

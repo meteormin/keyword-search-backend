@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/miniyus/gorm-extension/gormhooks"
 	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"gorm.io/gorm"
 	"strings"
 	"time"
@@ -19,7 +20,7 @@ func Middleware(db *gorm.DB, method string, path string) fiber.Handler {
 			return ctx.Next()
 		}
 
-		repo := NewRepository(db)
+		repository := repo.NewLoginLogRepository(db)
 
 		at := entity.AccessToken{}
 		atHooks := gormhooks.New(&at)
@@ -30,7 +31,7 @@ func Middleware(db *gorm.DB, method string, path string) fiber.Handler {
 				Ip:      ctx.IP(),
 			}
 
-			_, err = repo.Create(log)
+			_, err = repository.Create(log)
 			return err
 		})
 

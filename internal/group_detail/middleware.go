@@ -8,11 +8,12 @@ import (
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/internal/auth"
 	"github.com/miniyus/keyword-search-backend/internal/permission"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"gorm.io/gorm"
 )
 
 func HandleCreatedUser(u *entity.User, db *gorm.DB) error {
-	repo := NewRepository(db)
+	repository := repo.NewGroupDetailRepository(db)
 
 	if u.GroupId == nil {
 		group := entity.Group{
@@ -50,7 +51,7 @@ func HandleCreatedUser(u *entity.User, db *gorm.DB) error {
 		Role:    entity.Owner,
 	}
 
-	create, err := repo.Create(groupDetail)
+	create, err := repository.Create(groupDetail)
 	if err != nil {
 		return err
 	}
@@ -66,12 +67,12 @@ func HandleCreatedUser(u *entity.User, db *gorm.DB) error {
 }
 
 func FilterFunc(ctx *fiber.Ctx, groupId uint, perm permission.Permission) bool {
-	repo := NewRepository(database.GetDB())
+	repository := repo.NewGroupDetailRepository(database.GetDB())
 
 	if groupId != 0 {
 		user, err := auth.GetAuthUser(ctx)
 
-		get, err := repo.GetByUserId(user.Id)
+		get, err := repository.GetByUserId(user.Id)
 		if err != nil {
 			return *user.GroupId == perm.GroupId
 		}

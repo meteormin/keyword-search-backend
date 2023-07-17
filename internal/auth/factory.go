@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/miniyus/gofiber/pkg/jwt"
 	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +16,8 @@ type UserRepository interface {
 }
 
 func New(db *gorm.DB, userRepository UserRepository, generator jwt.Generator) Handler {
-	repo := NewRepository(db)
-	service := NewService(repo, userRepository, generator)
+	repository := repo.NewAuthRepository(db)
+	service := NewService(repository, userRepository, generator)
 	handler := NewHandler(service)
 
 	return handler

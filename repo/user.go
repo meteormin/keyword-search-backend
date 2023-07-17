@@ -1,4 +1,4 @@
-package users
+package repo
 
 import (
 	"github.com/miniyus/gorm-extension/gormrepo"
@@ -6,21 +6,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository interface {
+type UserRepository interface {
 	gormrepo.GenericRepository[entity.User]
 	FindByUsername(username string) (*entity.User, error)
 }
 
-type RepositoryStruct struct {
+type UserRepositoryStruct struct {
 	gormrepo.GenericRepository[entity.User]
 }
 
-func NewRepository(db *gorm.DB) Repository {
-	return &RepositoryStruct{
+func NewUserRepository(db *gorm.DB) UserRepository {
+	return &UserRepositoryStruct{
 		gormrepo.NewGenericRepository[entity.User](db, entity.User{}),
 	}
 }
 
-func (repo *RepositoryStruct) FindByUsername(username string) (*entity.User, error) {
+func (repo *UserRepositoryStruct) FindByUsername(username string) (*entity.User, error) {
 	return repo.FindByEntity(entity.User{Username: username})
 }

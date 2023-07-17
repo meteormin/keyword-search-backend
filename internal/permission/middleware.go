@@ -6,6 +6,7 @@ import (
 	"github.com/miniyus/gollection"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/internal/auth"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -36,9 +37,9 @@ func HasPermission(parameter HasPermissionParameter) func(permissions ...Permiss
 
 			authUser, err := auth.GetAuthUser(c)
 
-			repo := NewRepository(db)
+			repository := repo.NewPermissionRepository(db)
 
-			get, err := repo.GetByGroupId(*authUser.GroupId)
+			get, err := repository.GetByGroupId(*authUser.GroupId)
 			if err == nil {
 				permCollection = NewPermissionCollection()
 				var perm Permission

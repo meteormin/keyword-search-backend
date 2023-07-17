@@ -6,6 +6,7 @@ import (
 	"github.com/miniyus/gofiber/pkg/jwt"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/entity"
+	"github.com/miniyus/keyword-search-backend/repo"
 	"time"
 )
 
@@ -18,12 +19,12 @@ type Service interface {
 }
 
 type ServiceStruct struct {
-	repo           Repository
+	repo           repo.AuthRepository
 	userRepo       UserRepository
 	tokenGenerator jwt.Generator
 }
 
-func NewService(repo Repository, userRepo UserRepository, generator jwt.Generator) Service {
+func NewService(repo repo.AuthRepository, userRepo UserRepository, generator jwt.Generator) Service {
 	return &ServiceStruct{
 		repo:           repo,
 		userRepo:       userRepo,

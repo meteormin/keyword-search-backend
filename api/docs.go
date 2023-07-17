@@ -1700,8 +1700,7 @@ const docTemplate = `{
                 "description",
                 "host_id",
                 "publish",
-                "query",
-                "query_key"
+                "query"
             ],
             "properties": {
                 "description": {
@@ -2207,8 +2206,7 @@ const docTemplate = `{
                 "description",
                 "host_id",
                 "publish",
-                "query",
-                "query_key"
+                "query"
             ],
             "properties": {
                 "description": {
@@ -2309,8 +2307,7 @@ const docTemplate = `{
                 "description",
                 "host_id",
                 "publish",
-                "query",
-                "query_key"
+                "query"
             ],
             "properties": {
                 "description": {

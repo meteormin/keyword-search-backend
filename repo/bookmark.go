@@ -1,11 +1,11 @@
-package bookmarks
+package repo
 
 import (
 	"github.com/miniyus/keyword-search-backend/entity"
 	"gorm.io/gorm"
 )
 
-type Repository interface {
+type BookmarkRepository interface {
 	All() ([]entity.BookMark, error)
 	Find(pk uint) (*entity.BookMark, error)
 	Create(mark entity.BookMark) (*entity.BookMark, error)
@@ -13,11 +13,11 @@ type Repository interface {
 	Delete(pk uint) (bool, error)
 }
 
-type RepositoryStruct struct {
+type BookmarkRepositoryStruct struct {
 	db *gorm.DB
 }
 
-func (repo *RepositoryStruct) All() ([]entity.BookMark, error) {
+func (repo *BookmarkRepositoryStruct) All() ([]entity.BookMark, error) {
 	marks := make([]entity.BookMark, 0)
 
 	if err := repo.db.Find(&marks).Error; err != nil {
@@ -27,7 +27,7 @@ func (repo *RepositoryStruct) All() ([]entity.BookMark, error) {
 	return marks, nil
 }
 
-func (repo *RepositoryStruct) Find(pk uint) (*entity.BookMark, error) {
+func (repo *BookmarkRepositoryStruct) Find(pk uint) (*entity.BookMark, error) {
 	mark := &entity.BookMark{}
 	err := repo.db.Find(mark, pk).Error
 
@@ -38,7 +38,7 @@ func (repo *RepositoryStruct) Find(pk uint) (*entity.BookMark, error) {
 	return mark, nil
 }
 
-func (repo *RepositoryStruct) Create(mark *entity.BookMark) (*entity.BookMark, error) {
+func (repo *BookmarkRepositoryStruct) Create(mark *entity.BookMark) (*entity.BookMark, error) {
 	err := repo.db.Transaction(func(tx *gorm.DB) error {
 		return tx.Create(mark).Error
 	})
@@ -50,7 +50,7 @@ func (repo *RepositoryStruct) Create(mark *entity.BookMark) (*entity.BookMark, e
 	return mark, nil
 }
 
-func (repo *RepositoryStruct) Update(pk uint, mark *entity.BookMark) (*entity.BookMark, error) {
+func (repo *BookmarkRepositoryStruct) Update(pk uint, mark *entity.BookMark) (*entity.BookMark, error) {
 	exists, err := repo.Find(pk)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (repo *RepositoryStruct) Update(pk uint, mark *entity.BookMark) (*entity.Bo
 	return mark, nil
 }
 
-func (repo *RepositoryStruct) Delete(pk uint) (bool, error) {
+func (repo *BookmarkRepositoryStruct) Delete(pk uint) (bool, error) {
 	exists, err := repo.Find(pk)
 	if err != nil {
 		return false, err
