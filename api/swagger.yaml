@@ -371,6 +371,44 @@ definitions:
     - publish
     - subject
     type: object
+  internal_photos.BatchCreateRequest:
+    properties:
+      photos:
+        items:
+          $ref: '#/definitions/internal_photos.Request'
+        type: array
+    type: object
+  internal_photos.FileInfo:
+    properties:
+      extension:
+        type: string
+      mimType:
+        type: string
+      path:
+        type: string
+      size:
+        type: integer
+    type: object
+  internal_photos.Request:
+    properties:
+      caption:
+        type: string
+      file_info:
+        $ref: '#/definitions/internal_photos.FileInfo'
+      galleryId:
+        type: integer
+      restapi.RequestDTO[entity.Photo]: {}
+    type: object
+  internal_photos.Response:
+    properties:
+      caption:
+        type: string
+      file_info:
+        $ref: '#/definitions/internal_photos.FileInfo'
+      gallery_id:
+        type: integer
+      restapi.ResponseDTO[entity.Photo]: {}
+    type: object
   internal_search.CreateSearch:
     properties:
       description:
@@ -603,6 +641,34 @@ paths:
       summary: login
       tags:
       - Auth
+  /api/gallery{gallery_id}/photo:
+    post:
+      consumes:
+      - application/json
+      description: create photo
+      parameters:
+      - description: create photos
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_photos.BatchCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_photos.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ValidationErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create photo
+      tags:
+      - Hosts
   /api/groups:
     get:
       consumes:

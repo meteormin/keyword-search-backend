@@ -10,6 +10,7 @@ import (
 	"github.com/miniyus/gofiber/apierrors"
 	"github.com/miniyus/gofiber/app"
 	"github.com/miniyus/gofiber/database"
+	"github.com/miniyus/gofiber/monitor"
 	"github.com/miniyus/gofiber/utils"
 	"github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/entity"
@@ -66,10 +67,10 @@ func main() {
 	a := gofiber.New(*cfg.Configs)
 
 	a.Register(register(&cfg))
-	a.Register(entity.RegisterHooks)
-	a.Register(tasks.RegisterJob)
-	a.Register(tasks.RegisterSchedule)
-	a.Register(permission.CreateDefaultPermissions(cfg.Permission))
+	a.Boot(entity.RegisterHooks)
+	a.Boot(tasks.RegisterJob)
+	a.Boot(tasks.RegisterSchedule)
+	a.Boot(permission.CreateDefaultPermissions(cfg.Permission))
 
 	// register middlewares
 	a.Middleware(middleware(&cfg))
@@ -77,6 +78,9 @@ func main() {
 	// register routes
 	a.Route(routes.ApiPrefix, routes.Api, "api")
 	a.Route(routes.WebPrefix, routes.Web, "web")
+	a.Route("monitor", func(router app.Router, app app.Application) {
+		router.Route("/", monitor.New(app))
+	})
 
 	// print status
 	a.Status()

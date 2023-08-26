@@ -206,6 +206,51 @@
                 }
             }
         },
+        "/api/gallery{gallery_id}/photo": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "create photo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hosts"
+                ],
+                "summary": "create photo",
+                "parameters": [
+                    {
+                        "description": "create photos",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_photos.BatchCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal_photos.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apierrors.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/groups": {
             "get": {
                 "security": [
@@ -2194,6 +2239,64 @@
                 "subject": {
                     "type": "string"
                 }
+            }
+        },
+        "internal_photos.BatchCreateRequest": {
+            "type": "object",
+            "properties": {
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_photos.Request"
+                    }
+                }
+            }
+        },
+        "internal_photos.FileInfo": {
+            "type": "object",
+            "properties": {
+                "extension": {
+                    "type": "string"
+                },
+                "mimType": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_photos.Request": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "file_info": {
+                    "$ref": "#/definitions/internal_photos.FileInfo"
+                },
+                "galleryId": {
+                    "type": "integer"
+                },
+                "restapi.RequestDTO[entity.Photo]": {}
+            }
+        },
+        "internal_photos.Response": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "file_info": {
+                    "$ref": "#/definitions/internal_photos.FileInfo"
+                },
+                "gallery_id": {
+                    "type": "integer"
+                },
+                "restapi.ResponseDTO[entity.Photo]": {}
             }
         },
         "internal_search.CreateSearch": {

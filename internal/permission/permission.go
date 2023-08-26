@@ -160,11 +160,14 @@ func (perm Permission) FromEntity(permission entity.Permission) Permission {
 	}
 }
 
-func CreateDefaultPermissions(cfg []Config) app.Register {
+func CreateDefaultPermissions(cfg []Config) app.Boot {
 	pCfg := cfg
 	return func(app app.Application) {
 		var db *gorm.DB
-		app.Resolve(&db)
+		err := app.Resolve(&db)
+		if err != nil {
+			log.Println(err)
+		}
 
 		perms := NewPermissionsFromConfig(pCfg)
 		permCollection := NewPermissionCollection(perms...)

@@ -11,7 +11,7 @@ import (
 func appConfig() app.Config {
 	prefork := false
 	appEnv := os.Getenv("APP_ENV")
-	if appEnv == string(app.PRD) {
+	if appEnv == string(app.PROD) {
 		prefork = true
 	}
 

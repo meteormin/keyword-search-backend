@@ -17,6 +17,7 @@ func permissionConfig() []permission.Config {
 				"/redirect",
 				"/groups",
 				"/worker",
+				"/galleries",
 			},
 		},
 		{
@@ -40,6 +41,7 @@ func permissionConfig() []permission.Config {
 				"/search",
 				"/redirect",
 				"/groups",
+				"/galleries",
 			},
 		},
 		{
@@ -50,6 +52,7 @@ func permissionConfig() []permission.Config {
 				"/hosts",
 				"/search",
 				"/redirect",
+				"/galleries",
 			},
 		},
 	}

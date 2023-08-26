@@ -13,6 +13,7 @@ import (
 	"github.com/miniyus/keyword-search-backend/internal/cache"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
+	goLog "log"
 	"time"
 )
 
@@ -41,7 +42,10 @@ func RegisterJob(app app.Application) {
 
 	container := jobqueue.GetContainer()
 	var redisClient *redis.Client
-	app.Resolve(&redisClient)
+	err := app.Resolve(&redisClient)
+	if err != nil {
+		goLog.Print(err)
+	}
 	rc := cache.NewRedisCache(redisClient)
 
 	container.AddJob(redisCacheAll, func(job *worker.Job) error {

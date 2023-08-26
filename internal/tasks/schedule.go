@@ -5,13 +5,17 @@ import (
 	"github.com/miniyus/gofiber/log"
 	"github.com/miniyus/gofiber/schedule"
 	"github.com/miniyus/keyword-search-backend/config"
+	goLog "log"
 	"time"
 )
 
 func RegisterSchedule(app app.Application) {
 	var cfg *config.Configs
 
-	app.Resolve(&cfg)
+	err := app.Resolve(&cfg)
+	if err != nil {
+		goLog.Println(err)
+	}
 
 	log.New(log.Config{
 		Name:     "tasks_schedule",

@@ -9,10 +9,9 @@ import (
 	"github.com/miniyus/gorm-extension/gormrepo"
 	"github.com/miniyus/keyword-search-backend/entity"
 	"github.com/miniyus/keyword-search-backend/repo"
+	util "github.com/miniyus/keyword-search-backend/utils"
 	"mime/multipart"
-	"net/http"
 	"strconv"
-	"strings"
 )
 
 type Service interface {
@@ -311,34 +310,15 @@ func (s *ServiceStruct) UploadImages(pk uint, userId uint, fs []*multipart.FileH
 	fileEntities := make([]entity.File, 0)
 	for _, file := range fs {
 		savePath := fmt.Sprintf("images/%s", file.Filename)
-		ext := ""
-		split := strings.Split(file.Filename, ".")
-		if len(split) > 1 {
-			ext = split[1]
-		}
-
-		f, err := file.Open()
+		fileInfo, err := util.GetFileInfo(file)
 		if err != nil {
 			return nil, err
 		}
-
-		fh := make([]byte, 512)
-		_, err = f.Read(fh)
-		if err != nil {
-			return nil, err
-		}
-
-		mimType := http.DetectContentType(fh)
-		//if !strings.Contains(mimType, "image") {
-		//	log.Print(mimType)
-		//	return nil, fiber.NewError(400, "must upload only image file")
-		//}
-
 		fileEntity := entity.File{
 			Path:      savePath,
-			Size:      file.Size,
-			MimeType:  mimType,
-			Extension: ext,
+			Size:      fileInfo.Size,
+			MimeType:  fileInfo.MimeType,
+			Extension: fileInfo.Extension,
 		}
 
 		fileEntities = append(fileEntities, fileEntity)

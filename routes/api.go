@@ -12,10 +12,12 @@ import (
 	worker "github.com/miniyus/goworker"
 	configure "github.com/miniyus/keyword-search-backend/config"
 	"github.com/miniyus/keyword-search-backend/internal/auth"
+	"github.com/miniyus/keyword-search-backend/internal/galleries"
 	"github.com/miniyus/keyword-search-backend/internal/groups"
 	"github.com/miniyus/keyword-search-backend/internal/host_search"
 	"github.com/miniyus/keyword-search-backend/internal/hosts"
 	"github.com/miniyus/keyword-search-backend/internal/permission"
+	"github.com/miniyus/keyword-search-backend/internal/photos"
 	"github.com/miniyus/keyword-search-backend/internal/search"
 	"github.com/miniyus/keyword-search-backend/internal/short_url"
 	"github.com/miniyus/keyword-search-backend/internal/tasks"
@@ -24,13 +26,17 @@ import (
 	repo "github.com/miniyus/keyword-search-backend/repo"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	goLog "log"
 )
 
 const ApiPrefix = "/api"
 
 func Api(apiRouter app.Router, a app.Application) {
 	var cfg *configure.Configs
-	a.Resolve(&cfg)
+	err := a.Resolve(&cfg)
+	if err != nil {
+		goLog.Println(err)
+	}
 
 	if cfg == nil {
 		configs := configure.GetConfigs()
@@ -38,7 +44,10 @@ func Api(apiRouter app.Router, a app.Application) {
 	}
 
 	var db *gorm.DB
-	a.Resolve(&db)
+	err = a.Resolve(&db)
+	if err != nil {
+		goLog.Println(err)
+	}
 
 	if db == nil {
 		db = database.GetDB()
@@ -48,11 +57,17 @@ func Api(apiRouter app.Router, a app.Application) {
 	jDispatcher = jobqueue.GetDispatcher()
 
 	if jDispatcher == nil {
-		a.Resolve(&jDispatcher)
+		err = a.Resolve(&jDispatcher)
+		if err != nil {
+			goLog.Println(err)
+		}
 	}
 
 	var zLogger *zap.SugaredLogger
-	a.Resolve(&zLogger)
+	err = a.Resolve(&zLogger)
+	if err != nil {
+		goLog.Println(err)
+	}
 
 	if zLogger == nil {
 		zLogger = log.GetLogger()
@@ -138,6 +153,17 @@ func Api(apiRouter app.Router, a app.Application) {
 	apiRouter.Route(
 		tasks.Prefix,
 		tasks.Register(),
+	)
+
+	apiRouter.Route(
+		galleries.Prefix,
+		galleries.New(db),
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
+	)
+	apiRouter.Route(
+		photos.Prefix,
+		photos.New(db),
+		auth.JwtMiddleware(cfg.Auth.Jwt), auth.Middlewares(), hasPermission(),
 	)
 
 	apiRouter.Route(test_api.Prefix, test_api.Register(jDispatcher, utils.RedisClientMaker(cfg.RedisConfig)()))
